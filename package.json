@@ -1,0 +1,26 @@
+{
+  "name": "dev-tools-suite",
+  "version": "1.0.0",
+  "description": "A collection of developer utility tools",
+  "private": true,
+  "workspaces": [
+    "tools/*",
+    "infrastructure/cdk"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=tools",
+    "build": "npm run build --workspace=tools",
+    "deploy:dev": "npm run deploy:dev --workspace=infrastructure/cdk",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

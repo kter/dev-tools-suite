@@ -1,0 +1,26 @@
+{
+  "name": "dev-tools-cdk",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy:dev": "cdk deploy --profile dev --context environment=dev",
+    "deploy:prd": "cdk deploy --profile prd --context environment=prd",
+    "destroy:dev": "cdk destroy --profile dev --context environment=dev",
+    "destroy:prd": "cdk destroy --profile prd --context environment=prd"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.4.0",
+    "@types/node": "20.1.0",
+    "jest": "^29.4.0",
+    "ts-jest": "^29.0.5",
+    "typescript": "~5.0.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.100.0",
+    "constructs": "^10.0.0"
+  }
+}

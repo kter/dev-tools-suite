@@ -1,0 +1,64 @@
+name: Deploy to Dev Environment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build hash-generator
+        working-directory: tools/hash-generator
+        run: |
+          npm ci
+          npm run generate
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEV_ROLE_ARN }}
+          role-session-name: dev-tools-deploy
+          aws-region: ap-northeast-1
+
+      - name: Deploy CDK Stack
+        working-directory: infrastructure/cdk
+        run: |
+          npm ci
+          npm run deploy:dev -- --require-approval never
+
+      - name: Deploy to S3
+        run: |
+          BUCKET_NAME=$(aws cloudformation describe-stacks \
+            --stack-name DevToolsStack-dev \
+            --query 'Stacks[0].Outputs[?OutputKey==`hash-generator-bucket-name`].OutputValue' \
+            --output text)
+          
+          aws s3 sync tools/hash-generator/dist/ s3://$BUCKET_NAME/ --delete
+          
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+            --stack-name DevToolsStack-dev \
+            --query 'Stacks[0].Outputs[?OutputKey==`hash-generator-distribution-id`].OutputValue' \
+            --output text)
+          
+          aws cloudfront create-invalidation \
+            --distribution-id $DISTRIBUTION_ID \
+            --paths "/*"
