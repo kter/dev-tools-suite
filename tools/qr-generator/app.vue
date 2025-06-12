@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-gray-900 mb-2">QR Code Generator</h1>
-        <p class="text-lg text-gray-600">Generate QR codes from any text input</p>
+        <p class="text-lg text-gray-600">Generate QR codes from text, URLs, or any content instantly</p>
       </div>
 
       <!-- Input Section -->
