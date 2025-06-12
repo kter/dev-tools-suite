@@ -111,7 +111,7 @@
       <div v-else class="bg-white rounded-lg shadow-md p-6 text-center">
         <div class="text-gray-500">
           <h2 class="text-xl font-semibold mb-2">How to use</h2>
-          <p class="mb-4">Enter any text, URL, or content in the text area above to generate a QR code.</p>
+          <p class="mb-4">Enter any text, URL, or content in the text area above to instantly generate a QR code.</p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
             <div class="p-4 bg-gray-50 rounded-lg">
               <h3 class="font-medium mb-2">📱 Website URLs</h3>
