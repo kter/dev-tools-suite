@@ -12,6 +12,11 @@ export default defineNuxtConfig({
       ]
     }
   },
+  runtimeConfig: {
+    public: {
+      environment: process.env.NODE_ENV === 'production' ? 'production' : 'development'
+    }
+  },
   modules: [
     '@nuxtjs/tailwindcss'
   ],

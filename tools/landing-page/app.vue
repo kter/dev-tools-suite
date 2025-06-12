@@ -109,12 +109,30 @@
 </template>
 
 <script setup lang="ts">
+const { $config } = useNuxtApp()
+const runtimeConfig = useRuntimeConfig()
+
+// Add noindex for development environment
+if (process.client && window.location.hostname.includes('dev.devtools.site')) {
+  useHead({
+    meta: [
+      { name: 'robots', content: 'noindex, nofollow' }
+    ]
+  })
+}
+
+// Determine URLs based on environment
+const isDevEnvironment = process.client && window.location.hostname.includes('dev.devtools.site')
+const hashGeneratorUrl = isDevEnvironment 
+  ? 'https://hash-generator.dev.devtools.site'
+  : 'https://hash-generator.devtools.site'
+
 const availableTools = [
   {
     name: 'Hash Generator',
     description: 'Generate SHA-256, SHA-1, MD5, and SHA-512 hashes from text input',
     icon: '#',
-    url: 'https://hash-generator.devtools.site'
+    url: hashGeneratorUrl
   }
 ]
 

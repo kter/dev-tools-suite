@@ -54,6 +54,15 @@
 <script setup lang="ts">
 import CryptoJS from 'crypto-js'
 
+// Add noindex for development environment
+if (process.client && window.location.hostname.includes('dev.devtools.site')) {
+  useHead({
+    meta: [
+      { name: 'robots', content: 'noindex, nofollow' }
+    ]
+  })
+}
+
 const inputText = ref('')
 const copyMessage = ref('')
 
