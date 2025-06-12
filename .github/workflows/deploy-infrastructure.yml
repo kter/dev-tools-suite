@@ -33,11 +33,13 @@ jobs:
       matrix:
         include:
           - environment: dev
+            github_environment: develop
             branch_condition: ${{ github.ref == 'refs/heads/develop' || github.event.inputs.environment == 'dev' }}
           - environment: prd
+            github_environment: main
             branch_condition: ${{ github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd' }}
     
-    environment: ${{ matrix.environment }}
+    environment: ${{ matrix.github_environment }}
     if: ${{ matrix.branch_condition }}
     
     steps:
