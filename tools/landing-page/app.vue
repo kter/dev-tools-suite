@@ -114,7 +114,7 @@ const availableTools = [
     name: 'Hash Generator',
     description: 'Generate SHA-256, SHA-1, MD5, and SHA-512 hashes from text input',
     icon: '#',
-    url: 'https://hash-generator.dev.devtools.site'
+    url: 'https://hash-generator.devtools.site'
   }
 ]
 
