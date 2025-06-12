@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { DevToolsStack } from '../lib/dev-tools-stack';
 import { CertificateStack } from '../lib/certificate-stack';
+import { GitHubActionsStack } from '../lib/github-actions-stack';
 
 const app = new cdk.App();
 
@@ -43,3 +44,10 @@ const devToolsStack = new DevToolsStack(app, `DevToolsStack-${environment}`, {
 });
 
 devToolsStack.addDependency(certificateStack);
+
+// GitHub Actions IAM Stack
+const githubActionsStack = new GitHubActionsStack(app, `GitHubActionsStack-${environment}`, {
+  env: config[environment as keyof typeof config].env,
+  environment: environment as 'dev' | 'prd',
+  githubRepo: 'kter/dev-tools-suite'
+});
