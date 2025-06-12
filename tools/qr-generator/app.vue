@@ -114,20 +114,20 @@
           <p class="mb-4">Enter any text, URL, or content in the text area above to generate a QR code.</p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
             <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">📱 URLs</h3>
+              <h3 class="font-medium mb-2">📱 Website URLs</h3>
               <p class="text-sm">https://example.com</p>
             </div>
             <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">📧 Email</h3>
+              <h3 class="font-medium mb-2">📧 Email Address</h3>
               <p class="text-sm">mailto:user@example.com</p>
             </div>
             <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">📞 Phone</h3>
+              <h3 class="font-medium mb-2">📞 Phone Number</h3>
               <p class="text-sm">tel:+1234567890</p>
             </div>
             <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">💬 Text</h3>
-              <p class="text-sm">Any plain text</p>
+              <h3 class="font-medium mb-2">💬 Plain Text</h3>
+              <p class="text-sm">Any text content</p>
             </div>
           </div>
         </div>
