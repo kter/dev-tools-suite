@@ -126,6 +126,9 @@ const isDevEnvironment = process.client && window.location.hostname.includes('de
 const hashGeneratorUrl = isDevEnvironment 
   ? 'https://hash-generator.dev.devtools.site'
   : 'https://hash-generator.devtools.site'
+const qrGeneratorUrl = isDevEnvironment 
+  ? 'https://qr-generator.dev.devtools.site'
+  : 'https://qr-generator.devtools.site'
 
 const availableTools = [
   {
@@ -133,6 +136,12 @@ const availableTools = [
     description: 'Generate SHA-256, SHA-1, MD5, and SHA-512 hashes from text input',
     icon: '#',
     url: hashGeneratorUrl
+  },
+  {
+    name: 'QR Code Generator',
+    description: 'Generate QR codes from text, URLs, or any content with customizable options',
+    icon: '⬛',
+    url: qrGeneratorUrl
   }
 ]
 
@@ -141,11 +150,6 @@ const comingSoonTools = [
     name: 'Unix Time Converter',
     description: 'Convert between Unix timestamps and human-readable dates',
     icon: '🕐'
-  },
-  {
-    name: 'QR Code Generator',
-    description: 'Generate QR codes from text, URLs, and other data',
-    icon: '⚡'
   },
   {
     name: 'Password Generator',

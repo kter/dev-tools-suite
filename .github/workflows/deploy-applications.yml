@@ -1,0 +1,195 @@
+name: Deploy Applications
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'tools/**'
+      - '.github/workflows/deploy-applications.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prd
+      tool:
+        description: 'Specific tool to deploy (leave empty for all changed tools)'
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-1
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      hash-generator: ${{ steps.changes.outputs.hash-generator }}
+      qr-generator: ${{ steps.changes.outputs.qr-generator }}
+      landing-page: ${{ steps.changes.outputs.landing-page }}
+      environment: ${{ steps.env.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect environment
+        id: env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event.inputs.environment }}" == "prd" ]]; then
+            echo "environment=prd" >> $GITHUB_OUTPUT
+          else
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            hash-generator:
+              - 'tools/hash-generator/**'
+            qr-generator:
+              - 'tools/qr-generator/**'
+            landing-page:
+              - 'tools/landing-page/**'
+
+  deploy:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
+    strategy:
+      matrix:
+        tool: 
+          - name: hash-generator
+            changed: ${{ needs.detect-changes.outputs.hash-generator }}
+          - name: qr-generator
+            changed: ${{ needs.detect-changes.outputs.qr-generator }}
+          - name: landing-page
+            changed: ${{ needs.detect-changes.outputs.landing-page }}
+        environment:
+          - ${{ needs.detect-changes.outputs.environment }}
+    
+    environment: ${{ matrix.environment }}
+    env:
+      ENVIRONMENT: ${{ matrix.environment }}
+      TOOL_NAME: ${{ matrix.tool.name }}
+    
+    steps:
+      - name: Skip if tool not changed
+        if: ${{ matrix.tool.changed != 'true' && github.event.inputs.tool == '' }}
+        run: |
+          echo "Skipping ${{ matrix.tool.name }} - no changes detected"
+          exit 0
+
+      - name: Deploy specific tool if specified
+        if: ${{ github.event.inputs.tool != '' && github.event.inputs.tool != matrix.tool.name }}
+        run: |
+          echo "Skipping ${{ matrix.tool.name }} - not the requested tool"
+          exit 0
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: tools/${{ matrix.tool.name }}/package-lock.json
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install tool dependencies
+        working-directory: tools/${{ matrix.tool.name }}
+        run: npm ci
+
+      - name: Build application
+        working-directory: tools/${{ matrix.tool.name }}
+        run: npm run generate
+
+      - name: Get S3 bucket name
+        id: bucket
+        run: |
+          if [[ "${{ matrix.environment }}" == "prd" ]]; then
+            if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
+              echo "bucket_name=landing-page-devtools-site" >> $GITHUB_OUTPUT
+            else
+              echo "bucket_name=${{ matrix.tool.name }}-devtools-site" >> $GITHUB_OUTPUT
+            fi
+          else
+            if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
+              echo "bucket_name=landing-page-dev-devtools-site" >> $GITHUB_OUTPUT
+            else
+              echo "bucket_name=${{ matrix.tool.name }}-dev-devtools-site" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Deploy to S3
+        working-directory: tools/${{ matrix.tool.name }}
+        run: |
+          echo "Deploying to S3 bucket: ${{ steps.bucket.outputs.bucket_name }}"
+          aws s3 sync .output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
+          echo "✅ Successfully deployed ${{ matrix.tool.name }} to ${{ matrix.environment }} environment"
+
+      - name: Get CloudFront distribution ID
+        id: cloudfront
+        run: |
+          STACK_NAME="DevToolsStack-${{ matrix.environment }}"
+          if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
+            OUTPUT_KEY="landingpagedistributionid"
+          else
+            OUTPUT_KEY="${{ matrix.tool.name }}distributionid"
+          fi
+          
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+            --stack-name $STACK_NAME \
+            --query "Stacks[0].Outputs[?OutputKey=='$OUTPUT_KEY'].OutputValue" \
+            --output text)
+          
+          echo "distribution_id=$DISTRIBUTION_ID" >> $GITHUB_OUTPUT
+          echo "Found CloudFront distribution: $DISTRIBUTION_ID"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          echo "Invalidating CloudFront distribution: ${{ steps.cloudfront.outputs.distribution_id }}"
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ steps.cloudfront.outputs.distribution_id }} \
+            --paths "/*"
+          echo "✅ CloudFront cache invalidation initiated"
+
+      - name: Output deployment info
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tool**: ${{ matrix.tool.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ matrix.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Bucket**: ${{ steps.bucket.outputs.bucket_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **CloudFront**: ${{ steps.cloudfront.outputs.distribution_id }}" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ matrix.environment }}" == "prd" ]]; then
+            if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
+              echo "- **URL**: https://devtools.site" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- **URL**: https://${{ matrix.tool.name }}.devtools.site" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
+              echo "- **URL**: https://dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- **URL**: https://${{ matrix.tool.name }}.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
