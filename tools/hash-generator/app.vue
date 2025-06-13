@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4 py-8">
       <header class="text-center mb-8">
         <h1 class="text-4xl font-bold text-gray-900 mb-2">Hash Generator</h1>
-        <p class="text-gray-600">Generate cryptographic hashes from your text</p>
+        <p class="text-gray-600">Generate secure cryptographic hashes from your text</p>
       </header>
 
       <div class="max-w-4xl mx-auto">
