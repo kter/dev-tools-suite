@@ -122,7 +122,7 @@ jobs:
       - name: Get S3 bucket name
         id: bucket
         run: |
-          if [[ "${{ matrix.environment }}" == "prd" ]]; then
+          if [[ "${{ env.ENVIRONMENT }}" == "prd" ]]; then
             if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
               echo "bucket_name=landing-page-devtools-site" >> $GITHUB_OUTPUT
             else
@@ -141,12 +141,12 @@ jobs:
         run: |
           echo "Deploying to S3 bucket: ${{ steps.bucket.outputs.bucket_name }}"
           aws s3 sync .output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
-          echo "✅ Successfully deployed ${{ matrix.tool.name }} to ${{ matrix.environment }} environment"
+          echo "✅ Successfully deployed ${{ matrix.tool.name }} to ${{ env.ENVIRONMENT }} environment"
 
       - name: Get CloudFront distribution ID
         id: cloudfront
         run: |
-          STACK_NAME="DevToolsStack-${{ matrix.environment }}"
+          STACK_NAME="DevToolsStack-${{ env.ENVIRONMENT }}"
           if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
             OUTPUT_KEY="landingpagedistributionid"
           else
@@ -173,10 +173,10 @@ jobs:
         run: |
           echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Tool**: ${{ matrix.tool.name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Environment**: ${{ matrix.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ env.ENVIRONMENT }}" >> $GITHUB_STEP_SUMMARY
           echo "- **S3 Bucket**: ${{ steps.bucket.outputs.bucket_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **CloudFront**: ${{ steps.cloudfront.outputs.distribution_id }}" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ matrix.environment }}" == "prd" ]]; then
+          if [[ "${{ env.ENVIRONMENT }}" == "prd" ]]; then
             if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
               echo "- **URL**: https://devtools.site" >> $GITHUB_STEP_SUMMARY
             else
