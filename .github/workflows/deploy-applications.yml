@@ -122,19 +122,22 @@ jobs:
       - name: Get S3 bucket name
         id: bucket
         run: |
-          if [[ "${{ env.ENVIRONMENT }}" == "prd" ]]; then
-            if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
-              echo "bucket_name=landing-page-devtools-site" >> $GITHUB_OUTPUT
-            else
-              echo "bucket_name=${{ matrix.tool.name }}-devtools-site" >> $GITHUB_OUTPUT
-            fi
+          STACK_NAME="DevToolsStack-${{ env.ENVIRONMENT }}"
+          if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
+            BUCKET_OUTPUT_KEY="landingpagebucketname"
           else
-            if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
-              echo "bucket_name=landing-page-dev-devtools-site" >> $GITHUB_OUTPUT
-            else
-              echo "bucket_name=${{ matrix.tool.name }}-dev-devtools-site" >> $GITHUB_OUTPUT
-            fi
+            # Remove hyphens from tool name for output key
+            TOOL_NAME_CLEAN=$(echo "${{ matrix.tool.name }}" | sed 's/-//g')
+            BUCKET_OUTPUT_KEY="${TOOL_NAME_CLEAN}bucketname"
           fi
+          
+          BUCKET_NAME=$(aws cloudformation describe-stacks \
+            --stack-name $STACK_NAME \
+            --query "Stacks[0].Outputs[?OutputKey=='$BUCKET_OUTPUT_KEY'].OutputValue" \
+            --output text)
+          
+          echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+          echo "Found S3 bucket: $BUCKET_NAME"
 
       - name: Deploy to S3
         working-directory: tools/${{ matrix.tool.name }}
@@ -150,7 +153,9 @@ jobs:
           if [[ "${{ matrix.tool.name }}" == "landing-page" ]]; then
             OUTPUT_KEY="landingpagedistributionid"
           else
-            OUTPUT_KEY="${{ matrix.tool.name }}distributionid"
+            # Remove hyphens from tool name for output key
+            TOOL_NAME_CLEAN=$(echo "${{ matrix.tool.name }}" | sed 's/-//g')
+            OUTPUT_KEY="${TOOL_NAME_CLEAN}distributionid"
           fi
           
           DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
