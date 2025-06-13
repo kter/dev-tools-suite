@@ -36,6 +36,7 @@ jobs:
     outputs:
       hash-generator: ${{ steps.changes.outputs.hash-generator }}
       qr-generator: ${{ steps.changes.outputs.qr-generator }}
+      unix-time-converter: ${{ steps.changes.outputs.unix-time-converter }}
       landing-page: ${{ steps.changes.outputs.landing-page }}
       environment: ${{ steps.env.outputs.environment }}
     steps:
@@ -62,13 +63,15 @@ jobs:
               - 'tools/hash-generator/**'
             qr-generator:
               - 'tools/qr-generator/**'
+            unix-time-converter:
+              - 'tools/unix-time-converter/**'
             landing-page:
               - 'tools/landing-page/**'
 
   deploy:
     needs: detect-changes
     runs-on: ubuntu-latest
-    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
+    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
     strategy:
       matrix:
         tool: 
@@ -76,6 +79,8 @@ jobs:
             changed: ${{ needs.detect-changes.outputs.hash-generator }}
           - name: qr-generator
             changed: ${{ needs.detect-changes.outputs.qr-generator }}
+          - name: unix-time-converter
+            changed: ${{ needs.detect-changes.outputs.unix-time-converter }}
           - name: landing-page
             changed: ${{ needs.detect-changes.outputs.landing-page }}
     

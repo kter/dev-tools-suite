@@ -129,6 +129,9 @@ const hashGeneratorUrl = isDevEnvironment
 const qrGeneratorUrl = isDevEnvironment 
   ? 'https://qr-generator.dev.devtools.site'
   : 'https://qr-generator.devtools.site'
+const unixTimeConverterUrl = isDevEnvironment 
+  ? 'https://unix-time-converter.dev.devtools.site'
+  : 'https://unix-time-converter.devtools.site'
 
 const availableTools = [
   {
@@ -142,15 +145,16 @@ const availableTools = [
     description: 'Generate QR codes from text, URLs, or any content with customizable options',
     icon: '⬛',
     url: qrGeneratorUrl
+  },
+  {
+    name: 'Unix Time Converter',
+    description: 'Convert between Unix timestamps and human-readable dates',
+    icon: '🕐',
+    url: unixTimeConverterUrl
   }
 ]
 
 const comingSoonTools = [
-  {
-    name: 'Unix Time Converter',
-    description: 'Convert between Unix timestamps and human-readable dates',
-    icon: '🕐'
-  },
   {
     name: 'Password Generator',
     description: 'Generate secure passwords with customizable options',
