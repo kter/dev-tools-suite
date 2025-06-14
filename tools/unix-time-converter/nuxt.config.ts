@@ -1,10 +1,20 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
+  app: {
+    baseURL: '/'
+  },
+  head: {
+    title: 'Unix Time Converter - DevTools Suite',
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: 'Convert between Unix timestamps and human-readable dates - Part of DevTools Suite' }
+    ]
+  },
   modules: [
     '@nuxtjs/tailwindcss'
   ],
-  css: ['~/assets/css/main.css'],
   nitro: {
     preset: 'static'
   }
