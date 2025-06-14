@@ -31,6 +31,7 @@ export class DevToolsStack extends cdk.Stack {
     // Create tool-specific infrastructure
     this.createToolInfrastructure('hash-generator', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('qr-generator', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('unix-time-converter', props.domain, certificate, hostedZone);
     
     // Create landing page for root domain
     this.createLandingPageInfrastructure(props.domain, certificate, hostedZone);
