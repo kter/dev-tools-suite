@@ -1,3 +1,2 @@
-# Development environment - block all crawlers
 User-agent: *
 Disallow: /

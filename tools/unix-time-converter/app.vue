@@ -1,125 +1,124 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="container mx-auto px-4 py-8">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Unix Time Converter</h1>
-        <p class="text-gray-600">Convert between Unix timestamps and human-readable dates</p>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="container mx-auto px-4 py-12">
+      <header class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            Unix Time Converter
+          </span>
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Convert between Unix timestamps and human-readable dates
+        </p>
       </header>
 
-      <div class="max-w-4xl mx-auto space-y-6">
+      <div class="max-w-4xl mx-auto space-y-8">
         <!-- Current Time Display -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Current Time</h3>
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Current Time</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-blue-50 rounded p-3">
-              <label class="block text-sm font-medium text-blue-700 mb-1">Unix Timestamp</label>
-              <div class="text-lg font-mono text-blue-900">{{ currentUnixTime }}</div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp</label>
+              <div class="p-3 bg-gray-50 rounded-lg font-mono text-lg">{{ currentUnixTime }}</div>
             </div>
-            <div class="bg-green-50 rounded p-3">
-              <label class="block text-sm font-medium text-green-700 mb-1">Human Readable</label>
-              <div class="text-lg text-green-900">{{ currentDateTime }}</div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Human Readable</label>
+              <div class="p-3 bg-gray-50 rounded-lg">{{ currentHumanTime }}</div>
             </div>
           </div>
         </div>
 
-        <!-- Unix to Date Converter -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Unix Timestamp to Date</h3>
+        <!-- Unix to Human Converter -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Unix Timestamp to Date</h2>
           <div class="space-y-4">
             <div>
-              <label for="unix-input" class="block text-sm font-medium text-gray-700 mb-2">
-                Unix Timestamp
-              </label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp</label>
               <input
-                id="unix-input"
                 v-model="unixInput"
-                type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                type="number"
                 placeholder="1640995200"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                @input="convertUnixToHuman"
               />
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-gray-50 rounded p-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Local Time</label>
-                <div class="text-gray-900">{{ unixToLocal }}</div>
+            <div v-if="unixResult.local" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Local Time</label>
+                <div class="p-3 bg-gray-50 rounded-lg">{{ unixResult.local }}</div>
               </div>
-              <div class="bg-gray-50 rounded p-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">UTC Time</label>
-                <div class="text-gray-900">{{ unixToUtc }}</div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">UTC Time</label>
+                <div class="p-3 bg-gray-50 rounded-lg">{{ unixResult.utc }}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Date to Unix Converter -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Date to Unix Timestamp</h3>
+        <!-- Human to Unix Converter -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Date to Unix Timestamp</h2>
           <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label for="date-input" class="block text-sm font-medium text-gray-700 mb-2">
-                  Date
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
                 <input
-                  id="date-input"
                   v-model="dateInput"
                   type="date"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  @input="convertHumanToUnix"
                 />
               </div>
               <div>
-                <label for="time-input" class="block text-sm font-medium text-gray-700 mb-2">
-                  Time
-                </label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Time</label>
                 <input
-                  id="time-input"
                   v-model="timeInput"
                   type="time"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  @input="convertHumanToUnix"
                 />
               </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-gray-50 rounded p-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Unix Timestamp (Local)</label>
-                <div class="text-gray-900 font-mono">{{ dateToUnixLocal }}</div>
+            <div v-if="humanResult.local" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp (Local)</label>
+                <div class="p-3 bg-gray-50 rounded-lg font-mono">{{ humanResult.local }}</div>
               </div>
-              <div class="bg-gray-50 rounded p-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Unix Timestamp (UTC)</label>
-                <div class="text-gray-900 font-mono">{{ dateToUnixUtc }}</div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp (UTC)</label>
+                <div class="p-3 bg-gray-50 rounded-lg font-mono">{{ humanResult.utc }}</div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Common Timestamps -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Common Timestamps</h3>
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Common Timestamps</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div
-              v-for="common in commonTimestamps"
-              :key="common.name"
-              class="bg-gray-50 rounded p-3 cursor-pointer hover:bg-gray-100 transition-colors"
-              @click="setUnixInput(common.timestamp)"
+            <button
+              v-for="preset in commonTimestamps"
+              :key="preset.name"
+              @click="usePreset(preset.timestamp)"
+              class="p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-colors"
             >
-              <div class="text-sm font-medium text-gray-700">{{ common.name }}</div>
-              <div class="text-xs text-gray-500 font-mono">{{ common.timestamp }}</div>
-              <div class="text-sm text-gray-600">{{ formatTimestamp(common.timestamp) }}</div>
-            </div>
+              <div class="font-semibold text-gray-900">{{ preset.name }}</div>
+              <div class="text-sm text-gray-600 font-mono">{{ preset.timestamp }}</div>
+              <div class="text-xs text-gray-500">{{ preset.description }}</div>
+            </button>
           </div>
         </div>
-
-        <!-- Copy Success Message -->
-        <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
-          {{ copyMessage }}
-        </div>
       </div>
+
+      <footer class="mt-16 text-center text-gray-500">
+        <p>All conversions are performed locally in your browser</p>
+      </footer>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Add noindex for development environment
+// SEO protection for dev environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   useHead({
     meta: [
@@ -128,148 +127,125 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
+useHead({
+  title: 'Unix Time Converter - DevTools'
+})
+
+// Reactive data
+const currentUnixTime = ref(0)
+const currentHumanTime = ref('')
 const unixInput = ref('')
 const dateInput = ref('')
 const timeInput = ref('')
-const copyMessage = ref('')
 
-// Current time reactive values
-const currentUnixTime = ref(0)
-const currentDateTime = ref('')
-
-// Initialize with current time
-const initializeCurrentTime = () => {
-  const now = new Date()
-  currentUnixTime.value = Math.floor(now.getTime() / 1000)
-  currentDateTime.value = now.toLocaleString()
-}
-
-// Update current time every second
-let timeInterval: NodeJS.Timeout | null = null
-
-onMounted(() => {
-  initializeCurrentTime()
-  timeInterval = setInterval(initializeCurrentTime, 1000)
-  
-  // Set default date/time inputs to current time
-  const now = new Date()
-  dateInput.value = now.toISOString().split('T')[0]
-  timeInput.value = now.toTimeString().substring(0, 5)
+const unixResult = ref({
+  local: '',
+  utc: ''
 })
 
-onUnmounted(() => {
-  if (timeInterval) {
-    clearInterval(timeInterval)
-  }
-})
-
-// Unix to Date conversions
-const unixToLocal = computed(() => {
-  if (!unixInput.value || isNaN(Number(unixInput.value))) {
-    return 'Invalid timestamp'
-  }
-  
-  const timestamp = Number(unixInput.value)
-  const date = new Date(timestamp * 1000)
-  
-  if (isNaN(date.getTime())) {
-    return 'Invalid timestamp'
-  }
-  
-  return date.toLocaleString()
-})
-
-const unixToUtc = computed(() => {
-  if (!unixInput.value || isNaN(Number(unixInput.value))) {
-    return 'Invalid timestamp'
-  }
-  
-  const timestamp = Number(unixInput.value)
-  const date = new Date(timestamp * 1000)
-  
-  if (isNaN(date.getTime())) {
-    return 'Invalid timestamp'
-  }
-  
-  return date.toUTCString()
-})
-
-// Date to Unix conversions
-const dateToUnixLocal = computed(() => {
-  if (!dateInput.value || !timeInput.value) {
-    return 'Select date and time'
-  }
-  
-  const dateTime = new Date(`${dateInput.value}T${timeInput.value}`)
-  
-  if (isNaN(dateTime.getTime())) {
-    return 'Invalid date/time'
-  }
-  
-  return Math.floor(dateTime.getTime() / 1000)
-})
-
-const dateToUnixUtc = computed(() => {
-  if (!dateInput.value || !timeInput.value) {
-    return 'Select date and time'
-  }
-  
-  const dateTime = new Date(`${dateInput.value}T${timeInput.value}:00.000Z`)
-  
-  if (isNaN(dateTime.getTime())) {
-    return 'Invalid date/time'
-  }
-  
-  return Math.floor(dateTime.getTime() / 1000)
+const humanResult = ref({
+  local: '',
+  utc: ''
 })
 
 // Common timestamps
 const commonTimestamps = [
   {
     name: 'Unix Epoch',
-    timestamp: 0
+    timestamp: 0,
+    description: 'January 1, 1970'
   },
   {
     name: 'Y2K',
-    timestamp: 946684800
+    timestamp: 946684800,
+    description: 'January 1, 2000'
   },
   {
-    name: '2010-01-01',
-    timestamp: 1262304000
+    name: '2038 Problem',
+    timestamp: 2147483647,
+    description: 'January 19, 2038'
   },
   {
-    name: '2020-01-01',
-    timestamp: 1577836800
+    name: 'New Year 2024',
+    timestamp: 1704067200,
+    description: 'January 1, 2024'
   },
   {
-    name: '2030-01-01',
-    timestamp: 1893456000
+    name: 'New Year 2025',
+    timestamp: 1735689600,
+    description: 'January 1, 2025'
   },
   {
-    name: 'One Week Ago',
-    timestamp: Math.floor((Date.now() - 7 * 24 * 60 * 60 * 1000) / 1000)
+    name: 'New Year 2030',
+    timestamp: 1893456000,
+    description: 'January 1, 2030'
   }
 ]
 
-// Helper functions
-const formatTimestamp = (timestamp: number) => {
+// Update current time every second
+const updateCurrentTime = () => {
+  const now = new Date()
+  currentUnixTime.value = Math.floor(now.getTime() / 1000)
+  currentHumanTime.value = now.toLocaleString()
+}
+
+// Convert Unix timestamp to human readable
+const convertUnixToHuman = () => {
+  if (!unixInput.value) {
+    unixResult.value = { local: '', utc: '' }
+    return
+  }
+
+  const timestamp = parseInt(unixInput.value)
+  if (isNaN(timestamp)) {
+    unixResult.value = { local: 'Invalid timestamp', utc: 'Invalid timestamp' }
+    return
+  }
+
   const date = new Date(timestamp * 1000)
-  return date.toLocaleDateString()
-}
-
-const setUnixInput = (timestamp: number) => {
-  unixInput.value = timestamp.toString()
-}
-
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text)
-    copyMessage.value = 'Copied to clipboard!'
-    setTimeout(() => {
-      copyMessage.value = ''
-    }, 2000)
-  } catch (err) {
-    console.error('Failed to copy text: ', err)
+  unixResult.value = {
+    local: date.toLocaleString(),
+    utc: date.toUTCString()
   }
 }
+
+// Convert human readable to Unix timestamp
+const convertHumanToUnix = () => {
+  if (!dateInput.value || !timeInput.value) {
+    humanResult.value = { local: '', utc: '' }
+    return
+  }
+
+  const localDate = new Date(`${dateInput.value}T${timeInput.value}`)
+  const utcDate = new Date(`${dateInput.value}T${timeInput.value}Z`)
+
+  if (isNaN(localDate.getTime()) || isNaN(utcDate.getTime())) {
+    humanResult.value = { local: 'Invalid date/time', utc: 'Invalid date/time' }
+    return
+  }
+
+  humanResult.value = {
+    local: Math.floor(localDate.getTime() / 1000).toString(),
+    utc: Math.floor(utcDate.getTime() / 1000).toString()
+  }
+}
+
+// Use preset timestamp
+const usePreset = (timestamp: number) => {
+  unixInput.value = timestamp.toString()
+  convertUnixToHuman()
+}
+
+// Initialize
+onMounted(() => {
+  updateCurrentTime()
+  // Update current time every second
+  setInterval(updateCurrentTime, 1000)
+  
+  // Set default date and time to current
+  const now = new Date()
+  dateInput.value = now.toISOString().split('T')[0]
+  timeInput.value = now.toTimeString().split(' ')[0].substring(0, 5)
+  convertHumanToUnix()
+})
 </script>
