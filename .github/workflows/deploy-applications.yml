@@ -71,7 +71,7 @@ jobs:
   deploy:
     needs: detect-changes
     runs-on: ubuntu-latest
-    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
+    if: ${{ always() && (needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event_name == 'workflow_dispatch') }}
     strategy:
       matrix:
         tool: 
@@ -90,17 +90,26 @@ jobs:
       TOOL_NAME: ${{ matrix.tool.name }}
     
     steps:
-      - name: Skip if tool not changed
-        if: ${{ matrix.tool.changed != 'true' && github.event.inputs.tool == '' }}
-        run: |
-          echo "Skipping ${{ matrix.tool.name }} - no changes detected"
-          exit 0
-
-      - name: Deploy specific tool if specified
-        if: ${{ github.event.inputs.tool != '' && github.event.inputs.tool != matrix.tool.name }}
+      - name: Skip if tool not changed and no manual deploy
+        if: ${{ matrix.tool.changed != 'true' && github.event.inputs.tool != '' && github.event.inputs.tool != matrix.tool.name }}
         run: |
           echo "Skipping ${{ matrix.tool.name }} - not the requested tool"
           exit 0
+
+      - name: Force deploy all tools if tool input is empty
+        if: ${{ github.event.inputs.tool == '' }}
+        run: |
+          echo "🚀 Force deploying ${{ matrix.tool.name }} - manual deploy all requested"
+
+      - name: Deploy detected changes
+        if: ${{ matrix.tool.changed == 'true' && github.event.inputs.tool == '' }}
+        run: |
+          echo "📦 Deploying ${{ matrix.tool.name }} - changes detected"
+
+      - name: Deploy specific tool
+        if: ${{ github.event.inputs.tool != '' && github.event.inputs.tool == matrix.tool.name }}
+        run: |
+          echo "🎯 Deploying ${{ matrix.tool.name }} - specifically requested"
 
       - name: Checkout code
         uses: actions/checkout@v4
