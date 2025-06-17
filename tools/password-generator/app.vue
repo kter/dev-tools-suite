@@ -1,4 +1,5 @@
 <template>
+  <!-- Password Generator Tool -->
   <div class="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100">
     <div class="container mx-auto px-4 py-12">
       <header class="text-center mb-12">
