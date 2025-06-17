@@ -15,5 +15,13 @@ export default defineNuxtConfig({
         { name: 'keywords', content: 'password, generator, secure, random, strong' }
       ]
     }
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['oxc-parser']
+    },
+    ssr: {
+      noExternal: []
+    }
   }
 })

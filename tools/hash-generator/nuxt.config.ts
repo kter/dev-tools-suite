@@ -18,5 +18,13 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
     typeCheck: false
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['oxc-parser']
+    },
+    ssr: {
+      noExternal: []
+    }
   }
 })

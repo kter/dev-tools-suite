@@ -15,5 +15,13 @@ export default defineNuxtConfig({
         { name: 'keywords', content: 'unix time, timestamp, converter, epoch, date' }
       ]
     }
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['oxc-parser']
+    },
+    ssr: {
+      noExternal: []
+    }
   }
 })
