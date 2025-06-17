@@ -130,22 +130,22 @@ jobs:
           export NODE_ENV=production
           # Install dependencies with npm ci (faster and more reliable for CI)
           npm ci --prefer-offline --no-audit --no-fund
-          # Create a mock oxc-parser module to prevent loading errors
-          mkdir -p node_modules/oxc-parser
-          cat > node_modules/oxc-parser/index.js << 'EOF'
-          // Mock oxc-parser to prevent native binding errors
-          module.exports = {
-            parseSync: function() { throw new Error('oxc-parser disabled in CI'); },
-            parse: function() { return Promise.reject(new Error('oxc-parser disabled in CI')); }
-          };
-          EOF
-          cat > node_modules/oxc-parser/package.json << 'EOF'
-          {
-            "name": "oxc-parser",
-            "version": "0.0.0-mock",
-            "main": "index.js"
-          }
-          EOF
+          # After installation, replace oxc-parser with mock to prevent native binding errors
+          if [ -d "node_modules/oxc-parser" ]; then
+            echo "Replacing oxc-parser with mock version..."
+            rm -rf node_modules/oxc-parser
+            mkdir -p node_modules/oxc-parser
+            echo "// Mock oxc-parser to prevent native binding errors" > node_modules/oxc-parser/index.js
+            echo "module.exports = {" >> node_modules/oxc-parser/index.js
+            echo "  parseSync: function() { throw new Error('oxc-parser disabled in CI'); }," >> node_modules/oxc-parser/index.js
+            echo "  parse: function() { return Promise.reject(new Error('oxc-parser disabled in CI')); }" >> node_modules/oxc-parser/index.js
+            echo "};" >> node_modules/oxc-parser/index.js
+            echo "{" > node_modules/oxc-parser/package.json
+            echo '  "name": "oxc-parser",' >> node_modules/oxc-parser/package.json
+            echo '  "version": "0.0.0-mock",' >> node_modules/oxc-parser/package.json
+            echo '  "main": "index.js"' >> node_modules/oxc-parser/package.json
+            echo "}" >> node_modules/oxc-parser/package.json
+          fi
 
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
