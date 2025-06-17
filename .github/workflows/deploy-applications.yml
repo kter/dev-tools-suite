@@ -123,8 +123,12 @@ jobs:
           rm -f package-lock.json
           # Clear npm cache to avoid native binding issues
           npm cache clean --force
-          # Use npm install instead of npm ci for better compatibility with native modules
-          npm install
+          # Remove node_modules to ensure clean install
+          rm -rf node_modules
+          # Use npm install with --force flag to handle native module issues
+          npm install --force
+          # Explicitly install oxc-parser bindings for the current platform
+          npm install @oxc-parser/binding-linux-x64-gnu --force || true
 
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
