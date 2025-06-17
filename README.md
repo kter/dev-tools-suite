@@ -108,3 +108,10 @@ npx playwright test tests/password-generator.spec.js
 # Run all tests
 npx playwright test
 ```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+- **fsevents errors on GitHub Actions**: Fixed by using `npm install` instead of `npm ci` in workflows
+- **Platform-specific packages**: Root package.json is kept minimal to avoid platform conflicts
