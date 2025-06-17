@@ -137,7 +137,16 @@ jobs:
           
           # Install dependencies with npm install instead of npm ci for better compatibility
           echo "Installing dependencies..."
-          npm install --prefer-offline --no-audit --no-fund
+          # Temporarily disable postinstall scripts to avoid circular dependency
+          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
+          
+          # After installation, run nuxt prepare manually
+          echo "Running nuxt prepare..."
+          if [ -f "node_modules/.bin/nuxt" ]; then
+            ./node_modules/.bin/nuxt prepare
+          else
+            echo "Warning: nuxt binary not found, skipping prepare step"
+          fi
           
           # Debug: Check if nuxt is installed
           echo "Checking nuxt installation..."
