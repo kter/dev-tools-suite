@@ -136,20 +136,25 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install dependencies and handle nuxt prepare manually
+          # Install dependencies with proper handling of postinstall scripts
           echo "Installing dependencies..."
-          npm install --prefer-offline --no-audit --no-fund
+          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
           
-          # Verify nuxt installation and version
-          echo "Verifying nuxt installation..."
+          # Run postinstall manually after all packages are installed
+          echo "Running postinstall script manually..."
           if [ -f "node_modules/.bin/nuxt" ]; then
-            echo "✅ nuxt binary found at node_modules/.bin/nuxt"
-            ls -la node_modules/.bin/nuxt
-            echo "nuxt version:"
-            ./node_modules/.bin/nuxt --version
+            echo "✅ nuxt binary found"
+            ./node_modules/.bin/nuxt prepare
           else
-            echo "❌ nuxt binary not found"
-            exit 1
+            echo "❌ nuxt binary not found, installing explicitly"
+            npm install nuxt --ignore-scripts
+            if [ -f "node_modules/.bin/nuxt" ]; then
+              echo "✅ nuxt binary found after explicit installation"
+              ./node_modules/.bin/nuxt prepare
+            else
+              echo "❌ Failed to install nuxt binary"
+              exit 1
+            fi
           fi
 
       - name: Build application
