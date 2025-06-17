@@ -119,17 +119,37 @@ jobs:
       - name: Install tool dependencies
         working-directory: tools/${{ matrix.tool.name }}
         run: |
+          # Debug: Show current directory and package.json
+          echo "Current directory: $(pwd)"
+          echo "Package.json contents:"
+          cat package.json
+          
           # Remove package-lock.json to avoid version conflicts with native modules
           rm -f package-lock.json
           # Clear npm cache to avoid native binding issues
           npm cache clean --force
           # Remove node_modules to ensure clean install
           rm -rf node_modules
+          
           # Set environment variable to disable oxc-parser usage in Nuxt
           export NUXT_OXCPARSER_DISABLE=true
           export NODE_ENV=production
-          # Install dependencies with npm ci (faster and more reliable for CI)
-          npm ci --prefer-offline --no-audit --no-fund
+          
+          # Install dependencies with npm install instead of npm ci for better compatibility
+          echo "Installing dependencies..."
+          npm install --prefer-offline --no-audit --no-fund
+          
+          # Debug: Check if nuxt is installed
+          echo "Checking nuxt installation..."
+          if [ -f "node_modules/.bin/nuxt" ]; then
+            echo "✅ nuxt binary found at node_modules/.bin/nuxt"
+            ls -la node_modules/.bin/nuxt
+          else
+            echo "❌ nuxt binary not found"
+            echo "Contents of node_modules/.bin/:"
+            ls -la node_modules/.bin/ || echo "node_modules/.bin/ does not exist"
+          fi
+          
           # After installation, replace oxc-parser with mock to prevent native binding errors
           if [ -d "node_modules/oxc-parser" ]; then
             echo "Replacing oxc-parser with mock version..."
@@ -145,11 +165,29 @@ jobs:
             echo '  "version": "0.0.0-mock",' >> node_modules/oxc-parser/package.json
             echo '  "main": "index.js"' >> node_modules/oxc-parser/package.json
             echo "}" >> node_modules/oxc-parser/package.json
+          else
+            echo "oxc-parser not found in node_modules, skipping mock replacement"
           fi
 
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
-        run: npm run generate
+        run: |
+          # Debug: Check PATH and nuxt availability
+          echo "PATH: $PATH"
+          echo "Checking for nuxt command..."
+          which nuxt || echo "nuxt not found in PATH"
+          
+          # Try different ways to run nuxt generate
+          if [ -f "node_modules/.bin/nuxt" ]; then
+            echo "Using node_modules/.bin/nuxt"
+            ./node_modules/.bin/nuxt generate
+          elif command -v npx >/dev/null 2>&1; then
+            echo "Using npx nuxt"
+            npx nuxt generate
+          else
+            echo "Using npm run generate"
+            npm run generate
+          fi
 
       - name: Get S3 bucket name
         id: bucket
