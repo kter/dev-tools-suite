@@ -123,7 +123,7 @@ jobs:
 
       - name: Install tool dependencies
         working-directory: tools/${{ matrix.tool.name }}
-        run: npm ci
+        run: npm install
 
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
