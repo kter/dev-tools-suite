@@ -136,36 +136,21 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install dependencies ignoring postinstall to avoid nuxt prepare failure
+          # Install dependencies and handle nuxt prepare manually
           echo "Installing dependencies..."
-          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
+          npm install --prefer-offline --no-audit --no-fund
           
-          # Verify nuxt installation
+          # Verify nuxt installation and version
           echo "Verifying nuxt installation..."
           if [ -f "node_modules/.bin/nuxt" ]; then
             echo "✅ nuxt binary found at node_modules/.bin/nuxt"
             ls -la node_modules/.bin/nuxt
+            echo "nuxt version:"
+            ./node_modules/.bin/nuxt --version
           else
-            echo "❌ nuxt binary not found, attempting to install nuxt explicitly"
-            npm install nuxt@^3.8.0
-            if [ -f "node_modules/.bin/nuxt" ]; then
-              echo "✅ nuxt binary found after explicit installation"
-            else
-              echo "❌ Failed to install nuxt binary"
-              exit 1
-            fi
+            echo "❌ nuxt binary not found"
+            exit 1
           fi
-          
-          # Run nuxt prepare to ensure proper setup
-          echo "Running nuxt prepare..."
-          ./node_modules/.bin/nuxt prepare
-          
-          # Debug: Check final installation state
-          echo "Final verification:"
-          echo "node_modules/.bin/ contents:"
-          ls -la node_modules/.bin/ | head -10
-          echo "nuxt version:"
-          ./node_modules/.bin/nuxt --version
 
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
