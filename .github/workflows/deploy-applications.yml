@@ -131,71 +131,75 @@ jobs:
           # Remove node_modules to ensure clean install
           rm -rf node_modules
           
-          # Set environment variable to disable oxc-parser usage in Nuxt
+          # Set environment variables for better compatibility
           export NUXT_OXCPARSER_DISABLE=true
           export NODE_ENV=production
+          export CI=true
           
-          # Install dependencies with npm install instead of npm ci for better compatibility
+          # Install dependencies without ignoring scripts to ensure proper setup
           echo "Installing dependencies..."
-          # Temporarily disable postinstall scripts to avoid circular dependency
-          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
+          npm install --prefer-offline --no-audit --no-fund
           
-          # After installation, run nuxt prepare manually
-          echo "Running nuxt prepare..."
-          if [ -f "node_modules/.bin/nuxt" ]; then
-            ./node_modules/.bin/nuxt prepare
-          else
-            echo "Warning: nuxt binary not found, skipping prepare step"
-          fi
-          
-          # Debug: Check if nuxt is installed
-          echo "Checking nuxt installation..."
+          # Verify nuxt installation
+          echo "Verifying nuxt installation..."
           if [ -f "node_modules/.bin/nuxt" ]; then
             echo "✅ nuxt binary found at node_modules/.bin/nuxt"
             ls -la node_modules/.bin/nuxt
           else
-            echo "❌ nuxt binary not found"
-            echo "Contents of node_modules/.bin/:"
-            ls -la node_modules/.bin/ || echo "node_modules/.bin/ does not exist"
+            echo "❌ nuxt binary not found, attempting to install nuxt explicitly"
+            npm install nuxt@^3.8.0
+            if [ -f "node_modules/.bin/nuxt" ]; then
+              echo "✅ nuxt binary found after explicit installation"
+            else
+              echo "❌ Failed to install nuxt binary"
+              exit 1
+            fi
           fi
           
-          # After installation, replace oxc-parser with mock to prevent native binding errors
-          if [ -d "node_modules/oxc-parser" ]; then
-            echo "Replacing oxc-parser with mock version..."
-            rm -rf node_modules/oxc-parser
-            mkdir -p node_modules/oxc-parser
-            echo "// Mock oxc-parser to prevent native binding errors" > node_modules/oxc-parser/index.js
-            echo "module.exports = {" >> node_modules/oxc-parser/index.js
-            echo "  parseSync: function() { throw new Error('oxc-parser disabled in CI'); }," >> node_modules/oxc-parser/index.js
-            echo "  parse: function() { return Promise.reject(new Error('oxc-parser disabled in CI')); }" >> node_modules/oxc-parser/index.js
-            echo "};" >> node_modules/oxc-parser/index.js
-            echo "{" > node_modules/oxc-parser/package.json
-            echo '  "name": "oxc-parser",' >> node_modules/oxc-parser/package.json
-            echo '  "version": "0.0.0-mock",' >> node_modules/oxc-parser/package.json
-            echo '  "main": "index.js"' >> node_modules/oxc-parser/package.json
-            echo "}" >> node_modules/oxc-parser/package.json
-          else
-            echo "oxc-parser not found in node_modules, skipping mock replacement"
-          fi
+          # Run nuxt prepare to ensure proper setup
+          echo "Running nuxt prepare..."
+          ./node_modules/.bin/nuxt prepare
+          
+          # Debug: Check final installation state
+          echo "Final verification:"
+          echo "node_modules/.bin/ contents:"
+          ls -la node_modules/.bin/ | head -10
+          echo "nuxt version:"
+          ./node_modules/.bin/nuxt --version
 
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
         run: |
-          # Debug: Check PATH and nuxt availability
-          echo "PATH: $PATH"
-          echo "Checking for nuxt command..."
-          which nuxt || echo "nuxt not found in PATH"
+          # Set environment variables for build
+          export NODE_ENV=production
+          export NUXT_OXCPARSER_DISABLE=true
+          export CI=true
           
-          # Try different ways to run nuxt generate
+          # Debug: Check nuxt availability
+          echo "Verifying nuxt before build..."
           if [ -f "node_modules/.bin/nuxt" ]; then
-            echo "Using node_modules/.bin/nuxt"
-            ./node_modules/.bin/nuxt generate
-          elif command -v npx >/dev/null 2>&1; then
-            echo "Using npx nuxt"
-            npx nuxt generate
+            echo "✅ nuxt binary available at node_modules/.bin/nuxt"
+            ./node_modules/.bin/nuxt --version
           else
-            echo "Using npm run generate"
-            npm run generate
+            echo "❌ nuxt binary not found"
+            exit 1
+          fi
+          
+          # Build the application
+          echo "Building application with nuxt generate..."
+          ./node_modules/.bin/nuxt generate
+          
+          # Verify build output
+          echo "Verifying build output..."
+          if [ -d ".output/public" ]; then
+            echo "✅ Build output directory exists"
+            echo "Build output contents:"
+            ls -la .output/public/
+          else
+            echo "❌ Build output directory not found"
+            echo "Available directories:"
+            ls -la .output/ || echo ".output directory not found"
+            exit 1
           fi
 
       - name: Get S3 bucket name
