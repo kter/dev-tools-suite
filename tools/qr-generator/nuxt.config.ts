@@ -24,6 +24,12 @@ export default defineNuxtConfig({
     },
     ssr: {
       noExternal: []
+    },
+    define: {
+      'process.env.NUXT_OXCPARSER_DISABLE': 'true'
     }
+  },
+  experimental: {
+    payloadExtraction: false
   }
 })
