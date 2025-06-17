@@ -25,7 +25,7 @@ export class DevToolsStack extends cdk.Stack {
       zoneName: props.domain
     });
 
-    // Import certificate from certificate stack
+    // Import certificate from certificate stack (created in us-east-1)
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
 
     // Create tool-specific infrastructure

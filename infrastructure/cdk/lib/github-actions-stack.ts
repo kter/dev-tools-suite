@@ -35,8 +35,8 @@ export class GitHubActionsStack extends cdk.Stack {
               : `repo:${props.githubRepo}:ref:refs/heads/main`,
             // Environment経由のアクセス（修正版）
             props.environment === 'dev'
-              ? `repo:${props.githubRepo}:environment:develop`
-              : `repo:${props.githubRepo}:environment:main`
+              ? `repo:${props.githubRepo}:environment:dev`
+              : `repo:${props.githubRepo}:environment:prd`
           ]
         }
       }),

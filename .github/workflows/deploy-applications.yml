@@ -96,7 +96,7 @@ jobs:
           echo "Skipping ${{ matrix.tool.name }} - no changes detected"
           exit 0
 
-      - name: Deploy specific tool if specified
+      - name: Skip if specific tool requested and this is not it
         if: ${{ github.event.inputs.tool != '' && github.event.inputs.tool != matrix.tool.name }}
         run: |
           echo "Skipping ${{ matrix.tool.name }} - not the requested tool"
@@ -109,6 +109,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: tools/${{ matrix.tool.name }}/package-lock.json
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -118,7 +120,13 @@ jobs:
 
       - name: Install tool dependencies
         working-directory: tools/${{ matrix.tool.name }}
-        run: npm ci
+        run: |
+          # Remove package-lock.json to avoid version conflicts with native modules
+          rm -f package-lock.json
+          # Clear npm cache to avoid native binding issues
+          npm cache clean --force
+          # Use npm install instead of npm ci for better compatibility with native modules
+          npm install
 
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
