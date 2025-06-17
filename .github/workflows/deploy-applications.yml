@@ -37,6 +37,7 @@ jobs:
       hash-generator: ${{ steps.changes.outputs.hash-generator }}
       qr-generator: ${{ steps.changes.outputs.qr-generator }}
       unix-time-converter: ${{ steps.changes.outputs.unix-time-converter }}
+      password-generator: ${{ steps.changes.outputs.password-generator }}
       landing-page: ${{ steps.changes.outputs.landing-page }}
       environment: ${{ steps.env.outputs.environment }}
     steps:
@@ -65,13 +66,15 @@ jobs:
               - 'tools/qr-generator/**'
             unix-time-converter:
               - 'tools/unix-time-converter/**'
+            password-generator:
+              - 'tools/password-generator/**'
             landing-page:
               - 'tools/landing-page/**'
 
   deploy:
     needs: detect-changes
     runs-on: ubuntu-latest
-    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
+    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.password-generator == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
     strategy:
       matrix:
         tool: 
@@ -81,6 +84,8 @@ jobs:
             changed: ${{ needs.detect-changes.outputs.qr-generator }}
           - name: unix-time-converter
             changed: ${{ needs.detect-changes.outputs.unix-time-converter }}
+          - name: password-generator
+            changed: ${{ needs.detect-changes.outputs.password-generator }}
           - name: landing-page
             changed: ${{ needs.detect-changes.outputs.landing-page }}
     

@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Unix Time Converter', () => {
   test('should load and display Unix Time Converter interface', async ({ page }) => {
-    await page.goto('https://unix-time-converter.dev.devtools.site');
+    await page.goto('https://unix-time-converter.devtools.site');
     
     // Wait for SPA to load and set title
     await page.waitForTimeout(3000);
@@ -26,7 +26,7 @@ test.describe('Unix Time Converter', () => {
   });
 
   test('should convert Unix timestamp to human readable date', async ({ page }) => {
-    await page.goto('https://unix-time-converter.dev.devtools.site');
+    await page.goto('https://unix-time-converter.devtools.site');
     
     // Enter a known Unix timestamp (2022-01-01 00:00:00 UTC = 1640995200)
     await page.fill('input[placeholder*="1640995200"]', '1640995200');
@@ -43,7 +43,7 @@ test.describe('Unix Time Converter', () => {
   });
 
   test('should convert date to Unix timestamp', async ({ page }) => {
-    await page.goto('https://unix-time-converter.dev.devtools.site');
+    await page.goto('https://unix-time-converter.devtools.site');
     
     // Set a specific date and time
     await page.fill('input[type="date"]', '2022-01-01');
@@ -61,7 +61,7 @@ test.describe('Unix Time Converter', () => {
   });
 
   test('should display common timestamps', async ({ page }) => {
-    await page.goto('https://unix-time-converter.dev.devtools.site');
+    await page.goto('https://unix-time-converter.devtools.site');
     
     // Check that common timestamps section is visible
     await expect(page.locator('text=Common Timestamps')).toBeVisible();
@@ -79,12 +79,12 @@ test.describe('Unix Time Converter', () => {
     await expect(page.locator('input[placeholder*="1640995200"]')).toHaveValue('0');
   });
 
-  test('should have SEO protection for dev environment', async ({ page }) => {
-    await page.goto('https://unix-time-converter.dev.devtools.site');
+  test('should not have SEO protection for production environment', async ({ page }) => {
+    await page.goto('https://unix-time-converter.devtools.site');
     
-    // Check robots meta tag
+    // Check that robots meta tag should not exist in production
     const robotsMeta = page.locator('meta[name="robots"]');
-    await expect(robotsMeta).toHaveAttribute('content', 'noindex, nofollow');
+    await expect(robotsMeta).toHaveCount(0);
   });
 
   test.skip('should load robots.txt correctly', async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe('Unix Time Converter', () => {
   test('should be responsive on mobile', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('https://unix-time-converter.dev.devtools.site');
+    await page.goto('https://unix-time-converter.devtools.site');
     
     // Check that content is still visible and accessible
     await expect(page.locator('h1')).toBeVisible();

@@ -132,6 +132,9 @@ const qrGeneratorUrl = isDevEnvironment
 const unixTimeConverterUrl = isDevEnvironment 
   ? 'https://unix-time-converter.dev.devtools.site'
   : 'https://unix-time-converter.devtools.site'
+const passwordGeneratorUrl = isDevEnvironment 
+  ? 'https://password-generator.dev.devtools.site'
+  : 'https://password-generator.devtools.site'
 
 const availableTools = [
   {
@@ -151,15 +154,16 @@ const availableTools = [
     description: 'Convert between Unix timestamps and human-readable dates',
     icon: '🕐',
     url: unixTimeConverterUrl
+  },
+  {
+    name: 'Password Generator',
+    description: 'Generate secure passwords with customizable options',
+    icon: '🔐',
+    url: passwordGeneratorUrl
   }
 ]
 
 const comingSoonTools = [
-  {
-    name: 'Password Generator',
-    description: 'Generate secure passwords with customizable options',
-    icon: '🔐'
-  },
   {
     name: 'JSON/YAML Converter',
     description: 'Convert between JSON, YAML, and TOML formats',
