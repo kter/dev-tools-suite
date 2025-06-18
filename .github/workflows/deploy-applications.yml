@@ -116,7 +116,7 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install tool dependencies
+      - name: Install dependencies and build application
         working-directory: tools/${{ matrix.tool.name }}
         run: |
           # Debug: Show current directory and package.json
@@ -155,29 +155,14 @@ jobs:
           echo "Running nuxt prepare manually..."
           if [ -f "node_modules/.bin/nuxt" ]; then
             ./node_modules/.bin/nuxt prepare
-          else
-            echo "Warning: nuxt binary not found"
-          fi
-
-      - name: Build application
-        working-directory: tools/${{ matrix.tool.name }}
-        run: |
-          # Set environment variables for build
-          export NODE_ENV=production
-          export NUXT_OXCPARSER_DISABLE=true
-          export CI=true
-          
-          # Debug: Check nuxt availability
-          echo "Verifying nuxt before build..."
-          if [ -f "node_modules/.bin/nuxt" ]; then
             echo "✅ nuxt binary available at node_modules/.bin/nuxt"
             ./node_modules/.bin/nuxt --version
           else
-            echo "❌ nuxt binary not found"
+            echo "❌ nuxt binary not found after installation"
             exit 1
           fi
           
-          # Build the application
+          # Build the application immediately after installation in the same step
           echo "Building application with nuxt generate..."
           ./node_modules/.bin/nuxt generate
           
