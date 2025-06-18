@@ -117,71 +117,35 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install dependencies and build application
-        working-directory: tools/${{ matrix.tool.name }}
         run: |
-          # Debug: Show current directory and package.json
+          # Debug: Show current directory and workspace structure
           echo "Current directory: $(pwd)"
-          echo "Package.json contents:"
-          cat package.json
-          
-          # Remove package-lock.json to avoid version conflicts with native modules
-          rm -f package-lock.json
-          # Clear npm cache to avoid native binding issues
-          npm cache clean --force
-          # Remove node_modules to ensure clean install
-          rm -rf node_modules
+          echo "Workspace tool: ${{ matrix.tool.name }}"
           
           # Set environment variables for better compatibility
           export NUXT_OXCPARSER_DISABLE=true
           export NODE_ENV=production
           export CI=true
           
-          # Install dependencies normally, allowing postinstall to fail gracefully
-          echo "Installing dependencies..."
-          set +e  # Temporarily disable exit on error
-          npm install --prefer-offline --no-audit --no-fund 2>&1 | tee install.log
-          install_exit_code=$?
-          set -e  # Re-enable exit on error
+          # Install all workspace dependencies from root
+          echo "Installing workspace dependencies..."
+          npm install --prefer-offline --no-audit --no-fund
           
-          echo "Install completed with exit code: $install_exit_code"
-          
-          # Ensure nuxt binary is available by adding node_modules/.bin to PATH
-          export PATH="$(pwd)/node_modules/.bin:$PATH"
-          echo "Updated PATH: $PATH"
-          
-          # Verify nuxt is now available
-          echo "Checking nuxt availability..."
-          which nuxt || echo "nuxt not found in PATH"
-          
-          # If nuxt is still not available, try to create the binary manually
-          if ! command -v nuxt >/dev/null 2>&1; then
-            echo "Creating nuxt binary manually..."
-            mkdir -p node_modules/.bin
-            if [ -f "node_modules/nuxt/bin/nuxt.mjs" ]; then
-              echo '#!/usr/bin/env node' > node_modules/.bin/nuxt
-              echo 'import("../nuxt/bin/nuxt.mjs")' >> node_modules/.bin/nuxt
-              chmod +x node_modules/.bin/nuxt
-            elif [ -f "node_modules/@nuxt/cli/bin/nuxt.mjs" ]; then
-              echo '#!/usr/bin/env node' > node_modules/.bin/nuxt
-              echo 'import("../@nuxt/cli/bin/nuxt.mjs")' >> node_modules/.bin/nuxt
-              chmod +x node_modules/.bin/nuxt
-            fi
-          fi
-          
-          # Attempt to build
-          echo "Attempting to build with npm run generate..."
-          npm run generate
+          # Build the specific tool using npm workspace
+          echo "Building ${{ matrix.tool.name }} using npm workspace..."
+          npm run generate --workspace=tools/${{ matrix.tool.name }}
           
           # Verify build output
           echo "Verifying build output..."
-          if [ -d ".output/public" ]; then
+          if [ -d "tools/${{ matrix.tool.name }}/.output/public" ]; then
             echo "✅ Build output directory exists"
             echo "Build output contents:"
-            ls -la .output/public/
+            ls -la tools/${{ matrix.tool.name }}/.output/public/
           else
             echo "❌ Build output directory not found"
             echo "Available directories:"
-            ls -la .output/ || echo ".output directory not found"
+            ls -la tools/${{ matrix.tool.name }}/.output/ || echo ".output directory not found"
+            ls -la tools/${{ matrix.tool.name }}/ || echo "Tool directory not found"
             exit 1
           fi
 
