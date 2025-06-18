@@ -136,23 +136,18 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install dependencies with --ignore-scripts to avoid postinstall issues
-          echo "Installing dependencies with --ignore-scripts..."
-          npm install --ignore-scripts --prefer-offline --no-audit --no-fund
+          # Install dependencies normally, allowing postinstall to fail gracefully
+          echo "Installing dependencies..."
+          set +e  # Temporarily disable exit on error
+          npm install --prefer-offline --no-audit --no-fund 2>&1 | tee install.log
+          install_exit_code=$?
+          set -e  # Re-enable exit on error
           
-          # Show nuxt version using npx
-          echo "Nuxt version:"
-          npx nuxt --version || echo "Could not determine nuxt version"
+          echo "Install completed with exit code: $install_exit_code"
           
-          # Run nuxt prepare using npx to ensure project setup
-          echo "Running nuxt prepare using npx..."
-          npx nuxt prepare || {
-            echo "⚠️ nuxt prepare failed, but continuing with build attempt..."
-          }
-          
-          # Build the application using npx to ensure reliable execution
-          echo "Building application with npx nuxt generate..."
-          npx nuxt generate
+          # Regardless of postinstall success/failure, attempt to build
+          echo "Attempting to build with npm run generate..."
+          npm run generate
           
           # Verify build output
           echo "Verifying build output..."
