@@ -136,35 +136,40 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Create backup of package.json and temporarily modify postinstall
-          echo "Backing up package.json..."
-          cp package.json package.json.backup
-          
-          # Replace postinstall script with a safe version
-          npm pkg set scripts.postinstall="echo 'Skipping nuxt prepare during install...'"
-          
-          # Install dependencies without nuxt prepare issues
+          # Install dependencies normally - let postinstall run but handle errors gracefully
           echo "Installing dependencies..."
-          npm install --prefer-offline --no-audit --no-fund
+          npm install --prefer-offline --no-audit --no-fund || {
+            echo "First install failed, trying with --ignore-scripts and manual nuxt install..."
+            npm install --ignore-scripts --prefer-offline --no-audit --no-fund
+            
+            # Install nuxt globally for this run to ensure binary is available
+            npm install -g nuxt@latest
+            
+            # Run nuxt prepare manually
+            echo "Running nuxt prepare manually with global nuxt..."
+            nuxt prepare
+          }
           
-          # Restore original package.json
-          echo "Restoring original package.json..."
-          mv package.json.backup package.json
-          
-          # Run nuxt prepare manually after installation
-          echo "Running nuxt prepare manually..."
+          # Verify nuxt is available (either from local install or global)
+          echo "Verifying nuxt availability..."
           if [ -f "node_modules/.bin/nuxt" ]; then
-            ./node_modules/.bin/nuxt prepare
-            echo "✅ nuxt binary available at node_modules/.bin/nuxt"
-            ./node_modules/.bin/nuxt --version
+            echo "✅ Using local nuxt binary"
+            NUXT_CMD="./node_modules/.bin/nuxt"
+          elif command -v nuxt >/dev/null 2>&1; then
+            echo "✅ Using global nuxt binary"
+            NUXT_CMD="nuxt"
           else
-            echo "❌ nuxt binary not found after installation"
+            echo "❌ No nuxt binary found anywhere"
             exit 1
           fi
           
-          # Build the application immediately after installation in the same step
+          # Show nuxt version
+          echo "Nuxt version:"
+          $NUXT_CMD --version
+          
+          # Build the application
           echo "Building application with nuxt generate..."
-          ./node_modules/.bin/nuxt generate
+          $NUXT_CMD generate
           
           # Verify build output
           echo "Verifying build output..."
