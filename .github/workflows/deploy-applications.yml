@@ -136,31 +136,22 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install dependencies normally - let postinstall run but handle errors gracefully
-          echo "Installing dependencies..."
-          npm install --prefer-offline --no-audit --no-fund || {
-            echo "First install failed, trying with --ignore-scripts and manual nuxt install..."
-            npm install --ignore-scripts --prefer-offline --no-audit --no-fund
-            
-            # Install nuxt globally for this run to ensure binary is available
-            npm install -g nuxt@latest
-            
-            # Run nuxt prepare manually
-            echo "Running nuxt prepare manually with global nuxt..."
-            nuxt prepare
-          }
+          # Install dependencies with --ignore-scripts to avoid postinstall issues
+          echo "Installing dependencies with --ignore-scripts..."
+          npm install --ignore-scripts --prefer-offline --no-audit --no-fund
           
-          # Verify nuxt is available (either from local install or global)
+          # Manually run nuxt prepare using npx (which will use the locally installed nuxt)
+          echo "Running nuxt prepare manually with npx..."
+          npx nuxt prepare
+          
+          # Verify nuxt is available
           echo "Verifying nuxt availability..."
           if [ -f "node_modules/.bin/nuxt" ]; then
             echo "✅ Using local nuxt binary"
             NUXT_CMD="./node_modules/.bin/nuxt"
-          elif command -v nuxt >/dev/null 2>&1; then
-            echo "✅ Using global nuxt binary"
-            NUXT_CMD="nuxt"
           else
-            echo "❌ No nuxt binary found anywhere"
-            exit 1
+            echo "✅ Using npx nuxt"
+            NUXT_CMD="npx nuxt"
           fi
           
           # Show nuxt version
