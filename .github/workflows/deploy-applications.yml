@@ -145,34 +145,22 @@ jobs:
           
           if [ $install_exit_code -ne 0 ]; then
             echo "⚠️ npm install failed with postinstall script, trying to recover..."
-            # If postinstall failed, the packages are likely still installed
-            # Let's verify and try to run nuxt prepare manually
-            if [ ! -f "node_modules/.bin/nuxt" ]; then
-              echo "❌ nuxt binary not found, installation completely failed"
-              exit 1
-            fi
+            # If postinstall failed, try to run nuxt prepare manually using npm script
+            echo "Running nuxt prepare manually after failed postinstall..."
+            npm run postinstall || {
+              echo "⚠️ Manual nuxt prepare also failed, but continuing with build attempt..."
+            }
           else
             echo "✅ npm install completed successfully"
           fi
           
-          # Ensure nuxt binary is executable
-          chmod +x node_modules/.bin/nuxt
-          
-          # If postinstall failed, try to run nuxt prepare manually
-          if [ $install_exit_code -ne 0 ]; then
-            echo "Running nuxt prepare manually after failed postinstall..."
-            ./node_modules/.bin/nuxt prepare || {
-              echo "⚠️ nuxt prepare also failed, but continuing with build attempt..."
-            }
-          fi
-          
-          # Show nuxt version
+          # Show nuxt version using npm script
           echo "Nuxt version:"
-          ./node_modules/.bin/nuxt --version
+          npx nuxt --version || echo "Could not determine nuxt version"
           
-          # Build the application
-          echo "Building application with nuxt generate..."
-          ./node_modules/.bin/nuxt generate
+          # Build the application using npm script
+          echo "Building application with npm run generate..."
+          npm run generate
           
           # Verify build output
           echo "Verifying build output..."
