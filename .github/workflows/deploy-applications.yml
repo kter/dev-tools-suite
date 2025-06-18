@@ -145,7 +145,30 @@ jobs:
           
           echo "Install completed with exit code: $install_exit_code"
           
-          # Regardless of postinstall success/failure, attempt to build
+          # Ensure nuxt binary is available by adding node_modules/.bin to PATH
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+          echo "Updated PATH: $PATH"
+          
+          # Verify nuxt is now available
+          echo "Checking nuxt availability..."
+          which nuxt || echo "nuxt not found in PATH"
+          
+          # If nuxt is still not available, try to create the binary manually
+          if ! command -v nuxt >/dev/null 2>&1; then
+            echo "Creating nuxt binary manually..."
+            mkdir -p node_modules/.bin
+            if [ -f "node_modules/nuxt/bin/nuxt.mjs" ]; then
+              echo '#!/usr/bin/env node' > node_modules/.bin/nuxt
+              echo 'import("../nuxt/bin/nuxt.mjs")' >> node_modules/.bin/nuxt
+              chmod +x node_modules/.bin/nuxt
+            elif [ -f "node_modules/@nuxt/cli/bin/nuxt.mjs" ]; then
+              echo '#!/usr/bin/env node' > node_modules/.bin/nuxt
+              echo 'import("../@nuxt/cli/bin/nuxt.mjs")' >> node_modules/.bin/nuxt
+              chmod +x node_modules/.bin/nuxt
+            fi
+          fi
+          
+          # Attempt to build
           echo "Attempting to build with npm run generate..."
           npm run generate
           
