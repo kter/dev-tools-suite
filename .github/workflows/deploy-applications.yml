@@ -140,27 +140,26 @@ jobs:
           echo "Installing dependencies with --ignore-scripts..."
           npm install --ignore-scripts --prefer-offline --no-audit --no-fund
           
-          # Manually run nuxt prepare using npx (which will use the locally installed nuxt)
-          echo "Running nuxt prepare manually with npx..."
-          npx nuxt prepare
+          # Make sure nuxt binary is executable and available
+          echo "Setting up nuxt binary..."
+          chmod +x node_modules/.bin/nuxt
           
-          # Verify nuxt is available
-          echo "Verifying nuxt availability..."
-          if [ -f "node_modules/.bin/nuxt" ]; then
-            echo "✅ Using local nuxt binary"
-            NUXT_CMD="./node_modules/.bin/nuxt"
-          else
-            echo "✅ Using npx nuxt"
-            NUXT_CMD="npx nuxt"
-          fi
+          # Create necessary directories that nuxt prepare would normally create
+          echo "Creating .nuxt directory structure..."
+          mkdir -p .nuxt
+          mkdir -p .output
+          
+          # Manually run nuxt prepare using the locally installed nuxt binary
+          echo "Running nuxt prepare manually..."
+          ./node_modules/.bin/nuxt prepare
           
           # Show nuxt version
           echo "Nuxt version:"
-          $NUXT_CMD --version
+          ./node_modules/.bin/nuxt --version
           
           # Build the application
           echo "Building application with nuxt generate..."
-          $NUXT_CMD generate
+          ./node_modules/.bin/nuxt generate
           
           # Verify build output
           echo "Verifying build output..."
