@@ -136,31 +136,23 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install dependencies and let postinstall run, but don't fail if it errors
-          echo "Installing dependencies..."
-          set +e  # Temporarily disable 'exit on error'
-          npm install --prefer-offline --no-audit --no-fund
-          install_exit_code=$?
-          set -e  # Re-enable 'exit on error'
+          # Install dependencies with --ignore-scripts to avoid postinstall issues
+          echo "Installing dependencies with --ignore-scripts..."
+          npm install --ignore-scripts --prefer-offline --no-audit --no-fund
           
-          if [ $install_exit_code -ne 0 ]; then
-            echo "⚠️ npm install failed with postinstall script, trying to recover..."
-            # If postinstall failed, try to run nuxt prepare manually using npm script
-            echo "Running nuxt prepare manually after failed postinstall..."
-            npm run postinstall || {
-              echo "⚠️ Manual nuxt prepare also failed, but continuing with build attempt..."
-            }
-          else
-            echo "✅ npm install completed successfully"
-          fi
-          
-          # Show nuxt version using npm script
+          # Show nuxt version using npx
           echo "Nuxt version:"
           npx nuxt --version || echo "Could not determine nuxt version"
           
-          # Build the application using npm script
-          echo "Building application with npm run generate..."
-          npm run generate
+          # Run nuxt prepare using npx to ensure project setup
+          echo "Running nuxt prepare using npx..."
+          npx nuxt prepare || {
+            echo "⚠️ nuxt prepare failed, but continuing with build attempt..."
+          }
+          
+          # Build the application using npx to ensure reliable execution
+          echo "Building application with npx nuxt generate..."
+          npx nuxt generate
           
           # Verify build output
           echo "Verifying build output..."
