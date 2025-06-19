@@ -127,19 +127,15 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install all workspace dependencies from root
+          # Install workspace dependencies from root
           echo "Installing workspace dependencies..."
-          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
+          npm install --prefer-offline --no-audit --no-fund
           
-          # Run postinstall scripts manually for the specific tool
-          echo "Running postinstall for ${{ matrix.tool.name }}..."
+          # Change to tool directory and build directly
+          echo "Building ${{ matrix.tool.name }} in its directory..."
           cd tools/${{ matrix.tool.name }}
-          npx nuxt prepare
+          npm run generate
           cd ../..
-          
-          # Build the specific tool using npm workspace
-          echo "Building ${{ matrix.tool.name }} using npm workspace..."
-          npm run generate --workspace=${{ matrix.tool.name }}
           
           # Verify build output
           echo "Verifying build output..."
