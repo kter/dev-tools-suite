@@ -135,9 +135,11 @@ jobs:
           echo "Building ${{ matrix.tool.name }} in its directory..."
           cd tools/${{ matrix.tool.name }}
           echo "Running nuxt prepare..."
-          ../../node_modules/.bin/nuxt prepare
+          ../../node_modules/.bin/nuxt prepare || { echo "nuxt prepare failed"; exit 1; }
           echo "Running nuxt generate..."
-          ../../node_modules/.bin/nuxt generate
+          ../../node_modules/.bin/nuxt generate || { echo "nuxt generate failed"; exit 1; }
+          echo "Build completed successfully!"
+          ls -la .output/
           cd ../..
           
           # Verify build output
