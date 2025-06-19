@@ -1,7 +1,7 @@
 {
   "name": "hash-generator",
   "private": true,
-  "version": "1.0.30",
+  "version": "1.0.31",
   "type": "module",
   "scripts": {
     "build": "nuxt build",
