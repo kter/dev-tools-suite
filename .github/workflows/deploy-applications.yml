@@ -133,7 +133,7 @@ jobs:
           
           # Build the specific tool using npm workspace
           echo "Building ${{ matrix.tool.name }} using npm workspace..."
-          npm run generate --workspace=tools/${{ matrix.tool.name }}
+          npm run generate --workspace=${{ matrix.tool.name }}
           
           # Verify build output
           echo "Verifying build output..."
