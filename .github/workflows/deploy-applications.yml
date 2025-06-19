@@ -133,19 +133,20 @@ jobs:
           
           # Build the specific tool using npm workspace
           echo "Building ${{ matrix.tool.name }} using npm workspace..."
-          npm run generate --workspace=${{ matrix.tool.name }}
+          cd tools/${{ matrix.tool.name }}
+          npx nuxt generate
           
           # Verify build output
           echo "Verifying build output..."
-          if [ -d "tools/${{ matrix.tool.name }}/.output/public" ]; then
+          if [ -d ".output/public" ]; then
             echo "✅ Build output directory exists"
             echo "Build output contents:"
-            ls -la tools/${{ matrix.tool.name }}/.output/public/
+            ls -la .output/public/
           else
             echo "❌ Build output directory not found"
             echo "Available directories:"
-            ls -la tools/${{ matrix.tool.name }}/.output/ || echo ".output directory not found"
-            ls -la tools/${{ matrix.tool.name }}/ || echo "Tool directory not found"
+            ls -la .output/ || echo ".output directory not found"
+            ls -la . || echo "Tool directory not found"
             exit 1
           fi
 
