@@ -129,7 +129,7 @@ jobs:
           
           # Install all workspace dependencies from root
           echo "Installing workspace dependencies..."
-          npm install --prefer-offline --no-audit --no-fund
+          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
           
           # Build the specific tool using npm workspace
           echo "Building ${{ matrix.tool.name }} using npm workspace..."
