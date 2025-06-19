@@ -129,7 +129,13 @@ jobs:
           
           # Install all workspace dependencies from root
           echo "Installing workspace dependencies..."
-          npm install --prefer-offline --no-audit --no-fund
+          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
+          
+          # Run postinstall scripts manually for the specific tool
+          echo "Running postinstall for ${{ matrix.tool.name }}..."
+          cd tools/${{ matrix.tool.name }}
+          npx nuxt prepare
+          cd ../..
           
           # Build the specific tool using npm workspace
           echo "Building ${{ matrix.tool.name }} using npm workspace..."
