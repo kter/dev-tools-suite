@@ -108,7 +108,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -116,46 +116,48 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install dependencies and build application
+      - name: Install workspace dependencies
         run: |
-          # Debug: Show current directory and workspace structure
+          # Debug: Show current directory and workspace info
           echo "Current directory: $(pwd)"
-          echo "Workspace tool: ${{ matrix.tool.name }}"
+          echo "Building tool: ${{ matrix.tool.name }}"
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
           
-          # Set environment variables for better compatibility
-          export NUXT_OXCPARSER_DISABLE=true
+          # Set environment variables for CI compatibility
           export NODE_ENV=production
           export CI=true
           
-          # Install workspace dependencies from root (skip postinstall scripts)
+          # Install all workspace dependencies from root
           echo "Installing workspace dependencies..."
-          npm install --prefer-offline --no-audit --no-fund --ignore-scripts
+          npm ci
+      - name: Build application
+        working-directory: tools/${{ matrix.tool.name }}
+        run: |
+          # Set environment variables for build
+          export NODE_ENV=production
+          export CI=true
           
-          # Change to tool directory and run prepare, then build
-          echo "Building ${{ matrix.tool.name }} in its directory..."
-          cd tools/${{ matrix.tool.name }}
-          echo "Checking nuxt binary locations..."
-          ls -la ../../node_modules/.bin/ | grep nuxt || echo "nuxt not found in ../../node_modules/.bin/"
-          ls -la ../../node_modules/.bin/nuxi || echo "nuxi not found in ../../node_modules/.bin/"
+          echo "Building ${{ matrix.tool.name }} application..."
+          echo "Working directory: $(pwd)"
+          
+          # Run nuxt prepare to set up types and configuration
           echo "Running nuxt prepare..."
-          npx nuxt prepare || { echo "nuxt prepare failed"; exit 1; }
+          npx nuxt prepare
+          
+          # Generate static site
           echo "Running nuxt generate..."
-          npx nuxt generate || { echo "nuxt generate failed"; exit 1; }
-          echo "Build completed successfully!"
-          ls -la .output/
-          cd ../..
+          npx nuxt generate
           
           # Verify build output
-          echo "Verifying build output..."
-          if [ -d "tools/${{ matrix.tool.name }}/.output/public" ]; then
+          echo "Build completed successfully!"
+          if [ -d ".output/public" ]; then
             echo "✅ Build output directory exists"
             echo "Build output contents:"
-            ls -la tools/${{ matrix.tool.name }}/.output/public/
+            ls -la .output/public/
           else
             echo "❌ Build output directory not found"
-            echo "Available directories:"
-            ls -la tools/${{ matrix.tool.name }}/.output/ || echo ".output directory not found"
-            ls -la tools/${{ matrix.tool.name }}/ || echo "Tool directory not found"
+            ls -la .output/ || echo ".output directory not found"
             exit 1
           fi
 
