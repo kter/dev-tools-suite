@@ -37,6 +37,7 @@ jobs:
           - name: qr-generator
           - name: unix-time-converter
           - name: password-generator
+          - name: ip-calculator
           - name: landing-page
     
     environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}

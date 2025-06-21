@@ -135,6 +135,9 @@ const unixTimeConverterUrl = isDevEnvironment
 const passwordGeneratorUrl = isDevEnvironment 
   ? 'https://password-generator.dev.devtools.site'
   : 'https://password-generator.devtools.site'
+const ipCalculatorUrl = isDevEnvironment 
+  ? 'https://ip-calculator.dev.devtools.site'
+  : 'https://ip-calculator.devtools.site'
 
 const availableTools = [
   {
@@ -160,6 +163,12 @@ const availableTools = [
     description: 'Generate secure passwords with customizable options',
     icon: '🔐',
     url: passwordGeneratorUrl
+  },
+  {
+    name: 'IP Calculator',
+    description: 'Calculate subnet masks, network addresses, and IP ranges',
+    icon: '🌐',
+    url: ipCalculatorUrl
   }
 ]
 
@@ -173,11 +182,6 @@ const comingSoonTools = [
     name: 'JWT Decoder',
     description: 'Decode and validate JSON Web Tokens',
     icon: '🔍'
-  },
-  {
-    name: 'IP Calculator',
-    description: 'Calculate CIDR ranges and subnet information',
-    icon: '🌐'
   },
   {
     name: 'Regex Tester',
