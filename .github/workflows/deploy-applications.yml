@@ -86,8 +86,10 @@ jobs:
           
           # Verify installation
           echo "Dependencies installed successfully"
-          echo "Nuxt version check:"
-          npx nuxt --version || echo "Failed to get nuxt version"
+          echo "Nuxi version check:"
+          npx nuxi --version || echo "Failed to get nuxi version"
+          echo "Node modules check:"
+          ls -la node_modules/.bin/ | grep nuxi || echo "nuxi binary not found"
       - name: Build application
         run: |
           # Set environment variables for build
