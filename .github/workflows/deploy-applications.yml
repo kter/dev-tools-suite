@@ -104,7 +104,7 @@ jobs:
           
           # Run nuxt generate using npm script
           echo "Running nuxt generate for ${{ matrix.tool.name }}..."
-          npm run generate
+          npx nuxi generate
           
           # Verify build output
           echo "Build completed successfully!"
@@ -141,7 +141,8 @@ jobs:
       - name: Deploy to S3
         run: |
           echo "Deploying to S3 bucket: ${{ steps.bucket.outputs.bucket_name }}"
-          aws s3 sync tools/${{ matrix.tool.name }}/.output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
+          cd tools/${{ matrix.tool.name }}
+          aws s3 sync .output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
           echo "Successfully deployed ${{ matrix.tool.name }} to ${{ env.ENVIRONMENT }} environment"
 
       - name: Get CloudFront distribution ID
