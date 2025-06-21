@@ -97,7 +97,6 @@ jobs:
           echo "Nuxt version check:"
           nuxt --version || nuxi --version || echo "Failed to get version"
       - name: Build application
-        working-directory: tools/${{ matrix.tool.name }}
         run: |
           # Set environment variables for build
           export NODE_ENV=production
@@ -105,41 +104,34 @@ jobs:
           export NITRO_PRESET=static
           
           echo "Building ${{ matrix.tool.name }} application..."
-          echo "Working directory: $(pwd)"
+          echo "Current directory: $(pwd)"
+          echo "Tool directory: tools/${{ matrix.tool.name }}"
           
-          # Use global nuxt command or fallback to npx with workspace context
-          echo "Checking available nuxt commands..."
-          if command -v nuxt &> /dev/null; then
-            NUXT_COMMAND="nuxt"
-            echo "Using global nuxt command"
-          elif command -v nuxi &> /dev/null; then
-            NUXT_COMMAND="nuxi"
-            echo "Using global nuxi command"
-          else
-            NUXT_COMMAND="npx --yes nuxt"
-            echo "Using npx nuxt as fallback"
+          # Use workspace-aware npm commands to run nuxt from root
+          echo "Running nuxt prepare for ${{ matrix.tool.name }}..."
+          npm run --workspace=tools/${{ matrix.tool.name }} build:prepare || echo "No build:prepare script, trying direct nuxt prepare"
+          
+          # If build:prepare script doesn't exist, add it to package.json
+          if ! npm run --workspace=tools/${{ matrix.tool.name }} build:prepare 2>/dev/null; then
+            echo "Adding build:prepare script to package.json..."
+            cd tools/${{ matrix.tool.name }}
+            npm pkg set scripts.build:prepare="nuxt prepare"
+            cd ../..
+            npm run --workspace=tools/${{ matrix.tool.name }} build:prepare
           fi
           
-          echo "Nuxt command: $NUXT_COMMAND"
-          $NUXT_COMMAND --version
-          
-          # Run nuxt prepare
-          echo "Running nuxt prepare..."
-          $NUXT_COMMAND prepare
-          
-          # Generate static site
-          echo "Running nuxt generate..."
-          $NUXT_COMMAND generate
+          echo "Running nuxt generate for ${{ matrix.tool.name }}..."
+          npm run --workspace=tools/${{ matrix.tool.name }} generate
           
           # Verify build output
           echo "Build completed successfully!"
-          if [ -d ".output/public" ]; then
+          if [ -d "tools/${{ matrix.tool.name }}/.output/public" ]; then
             echo "Build output directory exists"
             echo "Build output contents:"
-            ls -la .output/public/
+            ls -la tools/${{ matrix.tool.name }}/.output/public/
           else
             echo "❌ Build output directory not found"
-            ls -la .output/ || echo ".output directory not found"
+            ls -la tools/${{ matrix.tool.name }}/.output/ || echo ".output directory not found"
             exit 1
           fi
 
@@ -164,10 +156,9 @@ jobs:
           echo "Found S3 bucket: $BUCKET_NAME"
 
       - name: Deploy to S3
-        working-directory: tools/${{ matrix.tool.name }}
         run: |
           echo "Deploying to S3 bucket: ${{ steps.bucket.outputs.bucket_name }}"
-          aws s3 sync .output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
+          aws s3 sync tools/${{ matrix.tool.name }}/.output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
           echo "Successfully deployed ${{ matrix.tool.name }} to ${{ env.ENVIRONMENT }} environment"
 
       - name: Get CloudFront distribution ID
