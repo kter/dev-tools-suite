@@ -128,26 +128,44 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install all workspace dependencies from root
+          # Install all workspace dependencies from root (skip postinstall scripts)
           echo "Installing workspace dependencies..."
-          npm ci
+          npm ci --ignore-scripts
+          
+          # Verify nuxt installation
+          echo "Verifying nuxt installation..."
+          if [ -f "node_modules/.bin/nuxt" ]; then
+            echo "✅ nuxt binary found at ./node_modules/.bin/nuxt"
+            ./node_modules/.bin/nuxt --version
+          else
+            echo "❌ nuxt binary not found"
+            exit 1
+          fi
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
         run: |
           # Set environment variables for build
           export NODE_ENV=production
           export CI=true
+          export NITRO_PRESET=static
           
           echo "Building ${{ matrix.tool.name }} application..."
           echo "Working directory: $(pwd)"
           
-          # Run nuxt prepare to set up types and configuration
-          echo "Running nuxt prepare..."
-          npx nuxt prepare
+          # Debug: Verify nuxt binary location
+          echo "Checking nuxt binary location..."
+          echo "Root nuxt binary:"
+          ls -la ../../node_modules/.bin/nuxt
+          echo "Nuxt version:"
+          ../../node_modules/.bin/nuxt --version
           
-          # Generate static site
+          # Run nuxt prepare using direct path to root binary
+          echo "Running nuxt prepare..."
+          ../../node_modules/.bin/nuxt prepare
+          
+          # Generate static site using direct path to root binary
           echo "Running nuxt generate..."
-          npx nuxt generate
+          ../../node_modules/.bin/nuxt generate
           
           # Verify build output
           echo "Build completed successfully!"
