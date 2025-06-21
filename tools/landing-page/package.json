@@ -4,12 +4,12 @@
   "version": "1.0.39",
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "build": "npx nuxt build",
+    "dev": "npx nuxt dev",
+    "generate": "npx nuxt generate",
+    "preview": "npx nuxt preview",
     "lint": "eslint .",
-    "type-check": "nuxt typecheck"
+    "type-check": "npx nuxt typecheck"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
