@@ -82,7 +82,7 @@ jobs:
           cd tools/${{ matrix.tool.name }}
           
           # Install dependencies
-          npm ci
+          npm install
           
           # Verify installation
           echo "Dependencies installed successfully"
