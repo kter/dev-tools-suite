@@ -67,14 +67,7 @@ jobs:
 
       - name: Install tool dependencies
         run: |
-          # Debug: Show current directory and tool info
-          echo "Current directory: $(pwd)"
-          echo "Building tool: ${{ matrix.tool.name }}"
-          echo "Node version: $(node --version)"
-          echo "NPM version: $(npm --version)"
-          
           # Set environment variables for CI compatibility
-          export NODE_ENV=production
           export CI=true
           
           # Navigate to tool directory and install dependencies
@@ -82,7 +75,7 @@ jobs:
           cd tools/${{ matrix.tool.name }}
           
           # Install dependencies
-          npm install
+          npm ci
           
           # Verify installation
           echo "Dependencies installed successfully"
