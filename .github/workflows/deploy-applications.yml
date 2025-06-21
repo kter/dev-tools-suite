@@ -29,7 +29,7 @@ env:
 
 jobs:
   detect-changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     outputs:
       hash-generator: ${{ steps.changes.outputs.hash-generator }}
       qr-generator: ${{ steps.changes.outputs.qr-generator }}
