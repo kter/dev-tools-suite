@@ -85,26 +85,17 @@ jobs:
           echo "Running workspace postinstall scripts..."
           npm run postinstall --if-present || echo "No root postinstall script found"
           
-          # Ensure nuxt is properly installed by rebuilding packages
-          echo "Ensuring nuxt is available..."
-          npm rebuild nuxt --if-present
+          # Install nuxt globally to ensure binary availability in workspace
+          echo "Installing nuxt globally for workspace..."
+          npm install -g nuxt@latest
           
-          # Verify nuxt/nuxi installation
-          echo "Verifying nuxt installation..."
-          if [ -f "node_modules/.bin/nuxi" ]; then
-            echo "✅ nuxi binary found at ./node_modules/.bin/nuxi"
-            ./node_modules/.bin/nuxi --version
-          elif [ -f "node_modules/.bin/nuxt" ]; then
-            echo "✅ nuxt binary found at ./node_modules/.bin/nuxt"
-            ./node_modules/.bin/nuxt --version
-          else
-            echo "❌ Neither nuxi nor nuxt binary found, listing available binaries..."
-            ls -la node_modules/.bin/ || echo "No .bin directory found"
-            echo "Checking for nuxt packages..."
-            find node_modules -name "nuxi.mjs" -type f || echo "No nuxi.mjs found"
-            find node_modules -name "nuxt.mjs" -type f || echo "No nuxt.mjs found"
-            exit 1
-          fi
+          # Alternative: Use npx with explicit workspace context
+          echo "Verifying global nuxt installation..."
+          which nuxt || which nuxi || echo "No global nuxt found"
+          
+          # Verify installation
+          echo "Nuxt version check:"
+          nuxt --version || nuxi --version || echo "Failed to get version"
       - name: Build application
         working-directory: tools/${{ matrix.tool.name }}
         run: |
@@ -116,30 +107,27 @@ jobs:
           echo "Building ${{ matrix.tool.name }} application..."
           echo "Working directory: $(pwd)"
           
-          # Debug: Verify nuxt/nuxi binary location
-          echo "Checking nuxt binary location..."
-          if [ -f "../../node_modules/.bin/nuxi" ]; then
-            echo "Root nuxi binary found:"
-            ls -la ../../node_modules/.bin/nuxi
-            echo "Nuxi version:"
-            ../../node_modules/.bin/nuxi --version
-            NUXT_COMMAND="../../node_modules/.bin/nuxi"
-          elif [ -f "../../node_modules/.bin/nuxt" ]; then
-            echo "Root nuxt binary found:"
-            ls -la ../../node_modules/.bin/nuxt
-            echo "Nuxt version:"
-            ../../node_modules/.bin/nuxt --version
-            NUXT_COMMAND="../../node_modules/.bin/nuxt"
+          # Use global nuxt command or fallback to npx with workspace context
+          echo "Checking available nuxt commands..."
+          if command -v nuxt &> /dev/null; then
+            NUXT_COMMAND="nuxt"
+            echo "Using global nuxt command"
+          elif command -v nuxi &> /dev/null; then
+            NUXT_COMMAND="nuxi"
+            echo "Using global nuxi command"
           else
-            echo "❌ Neither nuxi nor nuxt binary found!"
-            exit 1
+            NUXT_COMMAND="npx --yes nuxt"
+            echo "Using npx nuxt as fallback"
           fi
           
-          # Run nuxt prepare using detected binary
+          echo "Nuxt command: $NUXT_COMMAND"
+          $NUXT_COMMAND --version
+          
+          # Run nuxt prepare
           echo "Running nuxt prepare..."
           $NUXT_COMMAND prepare
           
-          # Generate static site using detected binary
+          # Generate static site
           echo "Running nuxt generate..."
           $NUXT_COMMAND generate
           
