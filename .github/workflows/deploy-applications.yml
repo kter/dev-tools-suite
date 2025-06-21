@@ -45,6 +45,8 @@ jobs:
       markdown-preview: ${{ steps.changes.outputs.markdown-preview }}
       placeholder-generator: ${{ steps.changes.outputs.placeholder-generator }}
       ip-info: ${{ steps.changes.outputs.ip-info }}
+      timezone-converter: ${{ steps.changes.outputs.timezone-converter }}
+      string-converter: ${{ steps.changes.outputs.string-converter }}
       landing-page: ${{ steps.changes.outputs.landing-page }}
     steps:
       - name: Checkout code
@@ -114,6 +116,8 @@ jobs:
           check_tool_changes "markdown-preview"
           check_tool_changes "placeholder-generator"
           check_tool_changes "ip-info"
+          check_tool_changes "timezone-converter"
+          check_tool_changes "string-converter"
           check_tool_changes "landing-page"
           
           # Output summary
@@ -134,6 +138,8 @@ jobs:
           - name: markdown-preview
           - name: placeholder-generator
           - name: ip-info
+          - name: timezone-converter
+          - name: string-converter
           - name: landing-page
     
     environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}

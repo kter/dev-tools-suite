@@ -147,6 +147,12 @@ const placeholderGeneratorUrl = isDevEnvironment
 const ipInfoUrl = isDevEnvironment 
   ? 'https://ip-info.dev.devtools.site'
   : 'https://ip-info.devtools.site'
+const timezoneConverterUrl = isDevEnvironment 
+  ? 'https://timezone-converter.dev.devtools.site'
+  : 'https://timezone-converter.devtools.site'
+const stringConverterUrl = isDevEnvironment 
+  ? 'https://string-converter.dev.devtools.site'
+  : 'https://string-converter.devtools.site'
 
 const availableTools = [
   {
@@ -196,6 +202,18 @@ const availableTools = [
     description: 'Display your IP address information including location and ISP details',
     icon: '🌍',
     url: ipInfoUrl
+  },
+  {
+    name: 'Timezone Converter',
+    description: 'Convert time between different timezones with world clock display',
+    icon: '🌐',
+    url: timezoneConverterUrl
+  },
+  {
+    name: 'String Converter',
+    description: 'Convert strings between formats: Base64, URL encoding, case conversion and more',
+    icon: '🔤',
+    url: stringConverterUrl
   }
 ]
 
