@@ -9,7 +9,8 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
-    "@nuxt/devtools": "latest"
+    "@nuxt/devtools": "latest",
+    "nuxt": "^3.14.159"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.8.4"

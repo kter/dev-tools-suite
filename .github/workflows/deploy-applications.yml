@@ -29,7 +29,7 @@ env:
 
 jobs:
   deploy:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         tool: 
@@ -85,28 +85,24 @@ jobs:
           echo "Running workspace postinstall scripts..."
           npm run postinstall --if-present || echo "No root postinstall script found"
           
-          # Ensure nuxt binary is available by rebuilding the nuxt package specifically
-          echo "Ensuring nuxt binary is available..."
+          # Ensure nuxt is properly installed by rebuilding packages
+          echo "Ensuring nuxt is available..."
           npm rebuild nuxt --if-present
           
-          # Alternative: Create symlinks manually if still not available
-          if [ ! -f "node_modules/.bin/nuxt" ] && [ -f "node_modules/@nuxt/cli/bin/nuxi.mjs" ]; then
-            echo "Creating nuxt binary symlink manually..."
-            mkdir -p node_modules/.bin
-            ln -sf ../@nuxt/cli/bin/nuxi.mjs node_modules/.bin/nuxt
-            chmod +x node_modules/.bin/nuxt
-          fi
-          
-          # Verify nuxt installation
+          # Verify nuxt/nuxi installation
           echo "Verifying nuxt installation..."
-          if [ -f "node_modules/.bin/nuxt" ]; then
+          if [ -f "node_modules/.bin/nuxi" ]; then
+            echo "✅ nuxi binary found at ./node_modules/.bin/nuxi"
+            ./node_modules/.bin/nuxi --version
+          elif [ -f "node_modules/.bin/nuxt" ]; then
             echo "✅ nuxt binary found at ./node_modules/.bin/nuxt"
             ./node_modules/.bin/nuxt --version
           else
-            echo "❌ nuxt binary still not found, listing available binaries..."
+            echo "❌ Neither nuxi nor nuxt binary found, listing available binaries..."
             ls -la node_modules/.bin/ || echo "No .bin directory found"
-            echo "Checking @nuxt/cli location..."
+            echo "Checking for nuxt packages..."
             find node_modules -name "nuxi.mjs" -type f || echo "No nuxi.mjs found"
+            find node_modules -name "nuxt.mjs" -type f || echo "No nuxt.mjs found"
             exit 1
           fi
       - name: Build application
@@ -120,20 +116,32 @@ jobs:
           echo "Building ${{ matrix.tool.name }} application..."
           echo "Working directory: $(pwd)"
           
-          # Debug: Verify nuxt binary location
+          # Debug: Verify nuxt/nuxi binary location
           echo "Checking nuxt binary location..."
-          echo "Root nuxt binary:"
-          ls -la ../../node_modules/.bin/nuxt
-          echo "Nuxt version:"
-          ../../node_modules/.bin/nuxt --version
+          if [ -f "../../node_modules/.bin/nuxi" ]; then
+            echo "Root nuxi binary found:"
+            ls -la ../../node_modules/.bin/nuxi
+            echo "Nuxi version:"
+            ../../node_modules/.bin/nuxi --version
+            NUXT_COMMAND="../../node_modules/.bin/nuxi"
+          elif [ -f "../../node_modules/.bin/nuxt" ]; then
+            echo "Root nuxt binary found:"
+            ls -la ../../node_modules/.bin/nuxt
+            echo "Nuxt version:"
+            ../../node_modules/.bin/nuxt --version
+            NUXT_COMMAND="../../node_modules/.bin/nuxt"
+          else
+            echo "❌ Neither nuxi nor nuxt binary found!"
+            exit 1
+          fi
           
-          # Run nuxt prepare using direct path to root binary
+          # Run nuxt prepare using detected binary
           echo "Running nuxt prepare..."
-          ../../node_modules/.bin/nuxt prepare
+          $NUXT_COMMAND prepare
           
-          # Generate static site using direct path to root binary
+          # Generate static site using detected binary
           echo "Running nuxt generate..."
-          ../../node_modules/.bin/nuxt generate
+          $NUXT_COMMAND generate
           
           # Verify build output
           echo "Build completed successfully!"
