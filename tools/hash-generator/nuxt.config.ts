@@ -1,5 +1,4 @@
 export default defineNuxtConfig({
-  workspaceDir: '../../',
   devtools: { enabled: true },
   ssr: false,
   app: {

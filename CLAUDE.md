@@ -27,36 +27,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a monorepo containing a collection of developer utility tools (Hash Generator, QR Code Generator, Unix Time Converter, Password Generator, and Landing Page) built with Nuxt 3 and deployed on AWS using Infrastructure as Code.
+This contains a collection of developer utility tools (Hash Generator, QR Code Generator, Unix Time Converter, Password Generator, and Landing Page) built with Nuxt 3 and deployed on AWS using Infrastructure as Code.
 
 ## Architecture
 
-### NPM Workspaces Structure
-- **Root**: Package manager and shared tooling (ESLint, TypeScript, Playwright, Nuxt)
-- **tools/***: Individual Nuxt 3 applications (SPA mode, TypeScript, Tailwind CSS)
+### Directory Structure
+- **tools/***: Individual Nuxt 3 applications (SPA mode, TypeScript, Tailwind CSS) with their own package.json and dependencies
 - **infrastructure/cdk**: AWS CDK infrastructure code (TypeScript)
+- **tests/**: Playwright E2E tests
 
 ### Key Architectural Decisions
-- **Monorepo**: NPM Workspaces for unified dependency management
+- **Independent Tools**: Each tool has its own npm package with individual dependency management
 - **Static Site Generation**: All tools use `nuxt generate` for deployment
-- **NPM Workspace Configuration**: Each tool's `nuxt.config.ts` includes `workspaceDir: '../../'` for proper dependency resolution
-- **CI/CD**: Matrix-based deployment with change detection per tool
+- **CI/CD**: Matrix-based deployment per tool
 - **Environment Branching**: `develop` → dev environment, `main` → production
 
 ## Development Commands
 
-### Workspace-Level Commands
+### Testing Commands
 ```bash
-# Install all dependencies (run from root)
-npm install
-
-# Run linting across all workspaces
-npm run lint
-
-# Run type checking across all workspaces
-npm run type-check
-
-# Run E2E tests
+# Run E2E tests (from root)
 npx playwright test
 
 # Run specific tool test
@@ -67,14 +57,20 @@ npx playwright test tests/password-generator.spec.js
 ```bash
 # Run individual tool in dev mode
 cd tools/hash-generator
+npm install  # Install dependencies first
 npm run dev
 
 # Build specific tool for production
 cd tools/hash-generator
 npm run generate
 
-# Build all tools
-npm run build
+# Build all tools (run from root)
+for dir in tools/*/; do
+  echo "Building $(basename "$dir")..."
+  cd "$dir"
+  npm install && npm run generate
+  cd ../..
+done
 ```
 
 ### Infrastructure Management
@@ -97,17 +93,17 @@ npm run destroy:dev  # or destroy:prd
 sh verup.sh
 ```
 
-## Critical NPM Workspaces Configuration
+## Tool Configuration
 
-### Root Dependencies
-- **nuxt**: Must be in root `devDependencies` for workspace compatibility
+### Dependencies
+- Each tool has its own `package.json` with independent dependency management
 - Tool-specific dependencies are managed in individual `tools/*/package.json`
 
 ### Nuxt Configuration Pattern
-All tools must include in their `nuxt.config.ts`:
+All tools use standard Nuxt configuration in their `nuxt.config.ts`:
 ```typescript
 export default defineNuxtConfig({
-  workspaceDir: '../../',  // Critical for workspace resolution
+  devtools: { enabled: true },
   ssr: false,              // SPA mode for static deployment
   nitro: {
     preset: 'static'       // Static site generation
@@ -122,9 +118,9 @@ export default defineNuxtConfig({
 ## Deployment Architecture
 
 ### GitHub Actions Workflow
-- **Change Detection**: Uses `dorny/paths-filter` to detect changes per tool
-- **Matrix Strategy**: Deploys each changed tool independently
+- **Matrix Strategy**: Deploys each tool independently
 - **Environment Detection**: Branch-based (`develop` = dev, `main` = prd)
+- **Independent Builds**: Each tool installs its own dependencies and builds independently
 - **S3 + CloudFront**: Static assets deployed to S3, served via CloudFront
 
 ### Environment URLs
@@ -138,12 +134,12 @@ export default defineNuxtConfig({
 
 ## Build Troubleshooting
 
-### Common NPM Workspaces Issues
-- **"Cannot find any nuxt version"**: Ensure `nuxt` is in root `devDependencies` and `workspaceDir: '../../'` in tool configs
-- **"nuxt: not found"**: Use `npx nuxt` commands instead of direct binary paths
+### Common Issues
+- **"nuxt: not found"**: Use `npm run` commands or `npx nuxt` instead of direct binary paths
+- **Dependencies not found**: Run `npm install` in the specific tool directory
 
 ### CI/CD Debugging
-- Workflow includes extensive debugging output for dependency resolution
+- Each tool installs and builds independently in CI/CD
 - Check S3 bucket and CloudFront distribution naming matches AWS CDK outputs
 - Verify AWS role permissions for deployment
 

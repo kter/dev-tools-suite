@@ -65,9 +65,9 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install workspace dependencies
+      - name: Install tool dependencies
         run: |
-          # Debug: Show current directory and workspace info
+          # Debug: Show current directory and tool info
           echo "Current directory: $(pwd)"
           echo "Building tool: ${{ matrix.tool.name }}"
           echo "Node version: $(node --version)"
@@ -77,25 +77,17 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install all workspace dependencies from root (skip postinstall scripts initially)
-          echo "Installing workspace dependencies..."
-          npm ci --ignore-scripts
+          # Navigate to tool directory and install dependencies
+          echo "Installing dependencies for ${{ matrix.tool.name }}..."
+          cd tools/${{ matrix.tool.name }}
           
-          # Manually run postinstall for workspace root only (avoiding individual tool postinstalls)
-          echo "Running workspace postinstall scripts..."
-          npm run postinstall --if-present || echo "No root postinstall script found"
-          
-          # Install nuxt globally to ensure binary availability in workspace
-          echo "Installing nuxt globally for workspace..."
-          npm install -g nuxt@latest
-          
-          # Alternative: Use npx with explicit workspace context
-          echo "Verifying global nuxt installation..."
-          which nuxt || which nuxi || echo "No global nuxt found"
+          # Install dependencies
+          npm ci
           
           # Verify installation
+          echo "Dependencies installed successfully"
           echo "Nuxt version check:"
-          nuxt --version || nuxi --version || echo "Failed to get version"
+          npx nuxt --version || echo "Failed to get nuxt version"
       - name: Build application
         run: |
           # Set environment variables for build
@@ -107,31 +99,22 @@ jobs:
           echo "Current directory: $(pwd)"
           echo "Tool directory: tools/${{ matrix.tool.name }}"
           
-          # Use workspace-aware npm commands to run nuxt from root
-          echo "Running nuxt prepare for ${{ matrix.tool.name }}..."
-          npm run --workspace=tools/${{ matrix.tool.name }} build:prepare || echo "No build:prepare script, trying direct nuxt prepare"
+          # Navigate to tool directory
+          cd tools/${{ matrix.tool.name }}
           
-          # If build:prepare script doesn't exist, add it to package.json
-          if ! npm run --workspace=tools/${{ matrix.tool.name }} build:prepare 2>/dev/null; then
-            echo "Adding build:prepare script to package.json..."
-            cd tools/${{ matrix.tool.name }}
-            npm pkg set scripts.build:prepare="nuxt prepare"
-            cd ../..
-            npm run --workspace=tools/${{ matrix.tool.name }} build:prepare
-          fi
-          
+          # Run nuxt generate
           echo "Running nuxt generate for ${{ matrix.tool.name }}..."
-          npm run --workspace=tools/${{ matrix.tool.name }} generate
+          npm run generate
           
           # Verify build output
           echo "Build completed successfully!"
-          if [ -d "tools/${{ matrix.tool.name }}/.output/public" ]; then
+          if [ -d ".output/public" ]; then
             echo "Build output directory exists"
             echo "Build output contents:"
-            ls -la tools/${{ matrix.tool.name }}/.output/public/
+            ls -la .output/public/
           else
             echo "❌ Build output directory not found"
-            ls -la tools/${{ matrix.tool.name }}/.output/ || echo ".output directory not found"
+            ls -la .output/ || echo ".output directory not found"
             exit 1
           fi
 
