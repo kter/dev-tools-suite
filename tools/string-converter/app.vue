@@ -54,7 +54,7 @@
               placeholder="Enter text to convert..."
               rows="12"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-            />
+            ></textarea>
             <div class="mt-2 flex justify-between items-center text-xs text-gray-500">
               <span>Characters: {{ inputText.length }}</span>
               <span>Bytes: {{ new TextEncoder().encode(inputText).length }}</span>
@@ -89,31 +89,11 @@
               rows="12"
               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 font-mono text-sm"
               :class="{ 'text-red-600': errorMessage }"
-            />
+            ></textarea>
             <div class="mt-2 flex justify-between items-center text-xs text-gray-500">
               <span v-if="errorMessage" class="text-red-600">{{ errorMessage }}</span>
               <span v-else>Characters: {{ outputText.length }}</span>
               <span v-if="!errorMessage">Bytes: {{ new TextEncoder().encode(outputText).length }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Additional Options -->
-        <div v-if="currentConverter?.options" class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Options</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div
-              v-for="option in currentConverter.options"
-              :key="option.key"
-              class="flex items-center gap-2"
-            >
-              <input
-                :id="option.key"
-                v-model="options[option.key]"
-                :type="option.type"
-                class="rounded"
-              />
-              <label :for="option.key" class="text-sm text-gray-700">{{ option.label }}</label>
             </div>
           </div>
         </div>
@@ -129,7 +109,7 @@
                 placeholder="Enter multiple strings, one per line..."
                 rows="8"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-              />
+              ></textarea>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Batch Results</label>
@@ -138,7 +118,7 @@
                 readonly
                 rows="8"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 font-mono text-sm"
-              />
+              ></textarea>
               <button
                 @click="copyBatchOutput"
                 :disabled="!batchOutput"
@@ -197,12 +177,6 @@ interface ConversionType {
   description: string
   convert: (input: string, options?: any) => string
   reversible?: boolean
-  options?: Array<{
-    key: string
-    label: string
-    type: 'checkbox' | 'radio' | 'select'
-    default?: any
-  }>
   examples?: Array<{
     input: string
     output: string
@@ -224,7 +198,6 @@ const selectedType = ref('base64-encode')
 const errorMessage = ref('')
 const copyMessage = ref('')
 const batchInput = ref('')
-const options = ref<Record<string, any>>({})
 
 const conversionTypes: ConversionType[] = [
   {
@@ -348,62 +321,6 @@ const conversionTypes: ConversionType[] = [
     ]
   },
   {
-    id: 'kebab-to-camel',
-    name: 'kebab-case → camelCase',
-    description: 'Convert to camelCase',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
-    },
-    reversible: true,
-    examples: [
-      { input: 'user-name', output: 'userName' },
-      { input: 'api-response-data', output: 'apiResponseData' }
-    ]
-  },
-  {
-    id: 'camel-to-kebab',
-    name: 'camelCase → kebab-case',
-    description: 'Convert to kebab-case',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '')
-    },
-    reversible: true,
-    examples: [
-      { input: 'userName', output: 'user-name' },
-      { input: 'apiResponseData', output: 'api-response-data' }
-    ]
-  },
-  {
-    id: 'pascal-to-snake',
-    name: 'PascalCase → snake_case',
-    description: 'Convert to snake_case',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')
-    },
-    reversible: true,
-    examples: [
-      { input: 'UserName', output: 'user_name' },
-      { input: 'ApiResponseData', output: 'api_response_data' }
-    ]
-  },
-  {
-    id: 'snake-to-pascal',
-    name: 'snake_case → PascalCase',
-    description: 'Convert to PascalCase',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.replace(/(^|_)([a-z])/g, (_, __, letter) => letter.toUpperCase())
-    },
-    reversible: true,
-    examples: [
-      { input: 'user_name', output: 'UserName' },
-      { input: 'api_response_data', output: 'ApiResponseData' }
-    ]
-  },
-  {
     id: 'uppercase',
     name: 'UPPERCASE',
     description: 'Convert to uppercase',
@@ -413,7 +330,7 @@ const conversionTypes: ConversionType[] = [
     },
     examples: [
       { input: 'Hello World', output: 'HELLO WORLD' },
-      { input: 'こんにちは', output: 'こんにちは' }
+      { input: 'test data', output: 'TEST DATA' }
     ]
   },
   {
@@ -428,34 +345,6 @@ const conversionTypes: ConversionType[] = [
       { input: 'Hello World', output: 'hello world' },
       { input: 'TEST DATA', output: 'test data' }
     ]
-  },
-  {
-    id: 'title-case',
-    name: 'Title Case',
-    description: 'Convert to Title Case',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.replace(/\w\S*/g, (txt) => 
-        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-      )
-    },
-    examples: [
-      { input: 'hello world', output: 'Hello World' },
-      { input: 'the quick brown fox', output: 'The Quick Brown Fox' }
-    ]
-  },
-  {
-    id: 'reverse',
-    name: 'Reverse Text',
-    description: 'Reverse character order',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.split('').reverse().join('')
-    },
-    examples: [
-      { input: 'Hello World', output: 'dlroW olleH' },
-      { input: '12345', output: '54321' }
-    ]
   }
 ]
 
@@ -469,7 +358,7 @@ const batchOutput = computed(() => {
   const lines = batchInput.value.split('\n').filter(line => line.trim())
   const results = lines.map(line => {
     try {
-      return currentConverter.value!.convert(line.trim(), options.value)
+      return currentConverter.value!.convert(line.trim())
     } catch (error) {
       return `Error: ${(error as Error).message}`
     }
@@ -485,7 +374,7 @@ const convertText = () => {
   if (!inputText.value || !currentConverter.value) return
   
   try {
-    outputText.value = currentConverter.value.convert(inputText.value, options.value)
+    outputText.value = currentConverter.value.convert(inputText.value)
   } catch (error) {
     errorMessage.value = (error as Error).message
     outputText.value = ''
@@ -547,11 +436,7 @@ const swapInputOutput = () => {
     'html-escape': 'html-unescape',
     'html-unescape': 'html-escape',
     'snake-to-camel': 'camel-to-snake',
-    'camel-to-snake': 'snake-to-camel',
-    'kebab-to-camel': 'camel-to-kebab',
-    'camel-to-kebab': 'kebab-to-camel',
-    'pascal-to-snake': 'snake-to-pascal',
-    'snake-to-pascal': 'pascal-to-snake'
+    'camel-to-snake': 'snake-to-camel'
   }
   
   if (reverseMapping[selectedType.value]) {
@@ -571,23 +456,9 @@ const showCopyMessage = (message: string) => {
 }
 
 // Watch for changes and auto-convert
-watch([inputText, selectedType, options], () => {
+watch([inputText, selectedType], () => {
   convertText()
-}, { deep: true })
-
-// Initialize options when converter changes
-watch(selectedType, (newType) => {
-  const converter = conversionTypes.find(type => type.id === newType)
-  if (converter?.options) {
-    const newOptions: Record<string, any> = {}
-    converter.options.forEach(option => {
-      newOptions[option.key] = option.default || false
-    })
-    options.value = newOptions
-  } else {
-    options.value = {}
-  }
-}, { immediate: true })
+})
 
 onMounted(() => {
   convertText()
