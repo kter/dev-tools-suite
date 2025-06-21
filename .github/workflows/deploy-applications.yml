@@ -28,74 +28,23 @@ env:
   AWS_REGION: ap-northeast-1
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-24.04-arm
-    outputs:
-      hash-generator: ${{ steps.changes.outputs.hash-generator }}
-      qr-generator: ${{ steps.changes.outputs.qr-generator }}
-      unix-time-converter: ${{ steps.changes.outputs.unix-time-converter }}
-      password-generator: ${{ steps.changes.outputs.password-generator }}
-      landing-page: ${{ steps.changes.outputs.landing-page }}
-      environment: ${{ steps.env.outputs.environment }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Detect environment
-        id: env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event.inputs.environment }}" == "prd" ]]; then
-            echo "environment=prd" >> $GITHUB_OUTPUT
-          else
-            echo "environment=dev" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Detect changes
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            hash-generator:
-              - 'tools/hash-generator/**'
-            qr-generator:
-              - 'tools/qr-generator/**'
-            unix-time-converter:
-              - 'tools/unix-time-converter/**'
-            password-generator:
-              - 'tools/password-generator/**'
-            landing-page:
-              - 'tools/landing-page/**'
-
   deploy:
-    needs: detect-changes
     runs-on: ubuntu-24.04-arm
-    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.password-generator == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
     strategy:
       matrix:
         tool: 
           - name: hash-generator
-            changed: '${{ needs.detect-changes.outputs.hash-generator }}'
           - name: qr-generator
-            changed: '${{ needs.detect-changes.outputs.qr-generator }}'
           - name: unix-time-converter
-            changed: '${{ needs.detect-changes.outputs.unix-time-converter }}'
           - name: password-generator
-            changed: '${{ needs.detect-changes.outputs.password-generator }}'
           - name: landing-page
-            changed: '${{ needs.detect-changes.outputs.landing-page }}'
     
-    environment: ${{ needs.detect-changes.outputs.environment == 'dev' && 'dev' || 'prd' }}
+    environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
     env:
-      ENVIRONMENT: ${{ needs.detect-changes.outputs.environment }}
+      ENVIRONMENT: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
       TOOL_NAME: ${{ matrix.tool.name }}
     
     steps:
-      - name: Skip if tool not changed
-        if: ${{ matrix.tool.changed != 'true' && github.event.inputs.tool == '' }}
-        run: |
-          echo "Skipping ${{ matrix.tool.name }} - no changes detected"
-          exit 0
-
       - name: Skip if specific tool requested and this is not it
         if: ${{ github.event.inputs.tool != '' && github.event.inputs.tool != matrix.tool.name }}
         run: |
