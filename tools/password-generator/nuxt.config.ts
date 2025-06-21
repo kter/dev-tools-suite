@@ -15,5 +15,19 @@ export default defineNuxtConfig({
         { name: 'keywords', content: 'password, generator, secure, random, strong' }
       ]
     }
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['oxc-parser']
+    },
+    ssr: {
+      noExternal: []
+    },
+    define: {
+      'process.env.NUXT_OXCPARSER_DISABLE': 'true'
+    }
+  },
+  experimental: {
+    payloadExtraction: false
   }
 })

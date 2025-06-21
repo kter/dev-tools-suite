@@ -18,5 +18,23 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
     typeCheck: false
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['oxc-parser']
+    },
+    ssr: {
+      noExternal: []
+    },
+    define: {
+      'process.env.NUXT_OXCPARSER_DISABLE': 'true'
+    }
+  },
+  experimental: {
+    payloadExtraction: false
+  },
+  nitro: {
+    preset: 'static',
+    minify: false
   }
 })

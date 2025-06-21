@@ -5,9 +5,6 @@ on:
     branches:
       - main
       - develop
-    paths:
-      - 'tools/**'
-      - '.github/workflows/deploy-applications.yml'
   workflow_dispatch:
     inputs:
       environment:
@@ -31,77 +28,24 @@ env:
   AWS_REGION: ap-northeast-1
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      hash-generator: ${{ steps.changes.outputs.hash-generator }}
-      qr-generator: ${{ steps.changes.outputs.qr-generator }}
-      unix-time-converter: ${{ steps.changes.outputs.unix-time-converter }}
-      password-generator: ${{ steps.changes.outputs.password-generator }}
-      landing-page: ${{ steps.changes.outputs.landing-page }}
-      environment: ${{ steps.env.outputs.environment }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Detect environment
-        id: env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event.inputs.environment }}" == "prd" ]]; then
-            echo "environment=prd" >> $GITHUB_OUTPUT
-          else
-            echo "environment=dev" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Detect changes
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            hash-generator:
-              - 'tools/hash-generator/**'
-            qr-generator:
-              - 'tools/qr-generator/**'
-            unix-time-converter:
-              - 'tools/unix-time-converter/**'
-            password-generator:
-              - 'tools/password-generator/**'
-            landing-page:
-              - 'tools/landing-page/**'
-
   deploy:
-    needs: detect-changes
     runs-on: ubuntu-latest
-    if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.password-generator == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
     strategy:
       matrix:
         tool: 
           - name: hash-generator
-            changed: ${{ needs.detect-changes.outputs.hash-generator }}
           - name: qr-generator
-            changed: ${{ needs.detect-changes.outputs.qr-generator }}
           - name: unix-time-converter
-            changed: ${{ needs.detect-changes.outputs.unix-time-converter }}
           - name: password-generator
-            changed: ${{ needs.detect-changes.outputs.password-generator }}
           - name: landing-page
-            changed: ${{ needs.detect-changes.outputs.landing-page }}
     
-    environment: ${{ needs.detect-changes.outputs.environment == 'dev' && 'develop' || 'main' }}
+    environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
     env:
-      ENVIRONMENT: ${{ needs.detect-changes.outputs.environment }}
+      ENVIRONMENT: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
       TOOL_NAME: ${{ matrix.tool.name }}
     
     steps:
-      - name: Skip if tool not changed
-        if: ${{ matrix.tool.changed != 'true' && github.event.inputs.tool == '' }}
-        run: |
-          echo "Skipping ${{ matrix.tool.name }} - no changes detected"
-          exit 0
-
-      - name: Deploy specific tool if specified
+      - name: Skip if specific tool requested and this is not it
         if: ${{ github.event.inputs.tool != '' && github.event.inputs.tool != matrix.tool.name }}
         run: |
           echo "Skipping ${{ matrix.tool.name }} - not the requested tool"
@@ -113,7 +57,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -122,12 +66,50 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install tool dependencies
-        working-directory: tools/${{ matrix.tool.name }}
-        run: npm install
-
+        run: |
+          # Set environment variables for CI compatibility
+          export CI=true
+          
+          # Navigate to tool directory and install dependencies
+          echo "Installing dependencies for ${{ matrix.tool.name }}..."
+          cd tools/${{ matrix.tool.name }}
+          
+          # Install dependencies
+          npm ci
+          
+          # Verify installation
+          echo "Dependencies installed successfully"
+          echo "Testing nuxi with npx:"
+          npx nuxi --version
       - name: Build application
-        working-directory: tools/${{ matrix.tool.name }}
-        run: npm run generate
+        run: |
+          # Set environment variables for build
+          export NODE_ENV=production
+          export CI=true
+          export NITRO_PRESET=static
+          
+          echo "Building ${{ matrix.tool.name }} application..."
+          echo "Current directory: $(pwd)"
+          echo "Tool directory: tools/${{ matrix.tool.name }}"
+          
+          # Navigate to tool directory
+          cd tools/${{ matrix.tool.name }}
+          
+          # Run nuxt generate using npm script
+          echo "Running nuxt generate for ${{ matrix.tool.name }}..."
+          npx nuxi generate
+          
+          # Verify build output
+          echo "Build completed successfully!"
+          if [ -d ".output/public" ]; then
+            echo "Build output directory exists"
+            echo "Build output contents:"
+            ls -la .output/public/
+          else
+            echo "❌ Build output directory not found"
+            ls -la .output/ || echo ".output directory not found"
+            exit 1
+          fi
 
       - name: Get S3 bucket name
         id: bucket
@@ -150,11 +132,11 @@ jobs:
           echo "Found S3 bucket: $BUCKET_NAME"
 
       - name: Deploy to S3
-        working-directory: tools/${{ matrix.tool.name }}
         run: |
           echo "Deploying to S3 bucket: ${{ steps.bucket.outputs.bucket_name }}"
+          cd tools/${{ matrix.tool.name }}
           aws s3 sync .output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
-          echo "✅ Successfully deployed ${{ matrix.tool.name }} to ${{ env.ENVIRONMENT }} environment"
+          echo "Successfully deployed ${{ matrix.tool.name }} to ${{ env.ENVIRONMENT }} environment"
 
       - name: Get CloudFront distribution ID
         id: cloudfront
@@ -182,7 +164,7 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id ${{ steps.cloudfront.outputs.distribution_id }} \
             --paths "/*"
-          echo "✅ CloudFront cache invalidation initiated"
+          echo "CloudFront cache invalidation initiated"
 
       - name: Output deployment info
         run: |
