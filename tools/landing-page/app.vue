@@ -153,6 +153,9 @@ const timezoneConverterUrl = isDevEnvironment
 const stringConverterUrl = isDevEnvironment 
   ? 'https://string-converter.dev.devtools.site'
   : 'https://string-converter.devtools.site'
+const codeDiffUrl = isDevEnvironment 
+  ? 'https://code-diff.dev.devtools.site'
+  : 'https://code-diff.devtools.site'
 
 const availableTools = [
   {
@@ -214,6 +217,12 @@ const availableTools = [
     description: 'Convert strings between formats: Base64, URL encoding, case conversion and more',
     icon: '🔤',
     url: stringConverterUrl
+  },
+  {
+    name: 'Code Diff',
+    description: 'Compare and visualize differences between text files or code snippets',
+    icon: '📊',
+    url: codeDiffUrl
   }
 ]
 
