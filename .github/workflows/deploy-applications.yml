@@ -84,8 +84,8 @@ jobs:
           # Install dependencies and ensure nuxt is available
           npm install
           
-          # Install nuxt specifically to ensure CLI is available
-          npm install nuxt@latest
+          # Install nuxt and CLI specifically to ensure nuxi binary is available
+          npm install nuxt@latest @nuxt/cli@latest
           
           # Verify installation
           echo "Dependencies installed successfully"
