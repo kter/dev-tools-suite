@@ -144,6 +144,9 @@ const markdownPreviewUrl = isDevEnvironment
 const placeholderGeneratorUrl = isDevEnvironment 
   ? 'https://placeholder-generator.dev.devtools.site'
   : 'https://placeholder-generator.devtools.site'
+const ipInfoUrl = isDevEnvironment 
+  ? 'https://ip-info.dev.devtools.site'
+  : 'https://ip-info.devtools.site'
 
 const availableTools = [
   {
@@ -187,6 +190,12 @@ const availableTools = [
     description: 'Generate custom placeholder images with various sizes and colors',
     icon: '🖼️',
     url: placeholderGeneratorUrl
+  },
+  {
+    name: 'IP Info',
+    description: 'Display your IP address information including location and ISP details',
+    icon: '🌍',
+    url: ipInfoUrl
   }
 ]
 

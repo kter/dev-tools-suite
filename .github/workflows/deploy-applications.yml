@@ -40,6 +40,7 @@ jobs:
           - name: ip-calculator
           - name: markdown-preview
           - name: placeholder-generator
+          - name: ip-info
           - name: landing-page
     
     environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}

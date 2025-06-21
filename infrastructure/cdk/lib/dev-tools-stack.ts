@@ -36,6 +36,7 @@ export class DevToolsStack extends cdk.Stack {
     this.createToolInfrastructure('ip-calculator', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('markdown-preview', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('placeholder-generator', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('ip-info', props.domain, certificate, hostedZone);
     
     // Create landing page for root domain
     this.createLandingPageInfrastructure(props.domain, certificate, hostedZone);
