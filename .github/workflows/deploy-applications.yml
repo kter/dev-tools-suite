@@ -77,9 +77,25 @@ jobs:
           export NODE_ENV=production
           export CI=true
           
-          # Install all workspace dependencies from root (skip postinstall scripts)
+          # Install all workspace dependencies from root (skip postinstall scripts initially)
           echo "Installing workspace dependencies..."
           npm ci --ignore-scripts
+          
+          # Manually run postinstall for workspace root only (avoiding individual tool postinstalls)
+          echo "Running workspace postinstall scripts..."
+          npm run postinstall --if-present || echo "No root postinstall script found"
+          
+          # Ensure nuxt binary is available by rebuilding the nuxt package specifically
+          echo "Ensuring nuxt binary is available..."
+          npm rebuild nuxt --if-present
+          
+          # Alternative: Create symlinks manually if still not available
+          if [ ! -f "node_modules/.bin/nuxt" ] && [ -f "node_modules/@nuxt/cli/bin/nuxi.mjs" ]; then
+            echo "Creating nuxt binary symlink manually..."
+            mkdir -p node_modules/.bin
+            ln -sf ../@nuxt/cli/bin/nuxi.mjs node_modules/.bin/nuxt
+            chmod +x node_modules/.bin/nuxt
+          fi
           
           # Verify nuxt installation
           echo "Verifying nuxt installation..."
@@ -87,7 +103,10 @@ jobs:
             echo "✅ nuxt binary found at ./node_modules/.bin/nuxt"
             ./node_modules/.bin/nuxt --version
           else
-            echo "❌ nuxt binary not found"
+            echo "❌ nuxt binary still not found, listing available binaries..."
+            ls -la node_modules/.bin/ || echo "No .bin directory found"
+            echo "Checking @nuxt/cli location..."
+            find node_modules -name "nuxi.mjs" -type f || echo "No nuxi.mjs found"
             exit 1
           fi
       - name: Build application
