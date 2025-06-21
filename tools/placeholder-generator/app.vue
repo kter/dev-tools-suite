@@ -391,7 +391,12 @@ const displayText = computed(() => {
 })
 
 const generatedUrl = computed(() => {
-  const baseUrl = 'https://placehold.jp'
+  // Determine base URL based on environment
+  const isDevEnvironment = process.client && window.location.hostname.includes('dev.devtools.site')
+  const baseUrl = isDevEnvironment 
+    ? 'https://placeholder-generator.dev.devtools.site'
+    : 'https://placeholder-generator.devtools.site'
+  
   const bg = settings.value.backgroundColor.replace('#', '')
   const text = settings.value.textColor.replace('#', '')
   const size = `${settings.value.width}x${settings.value.height}`
