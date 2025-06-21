@@ -38,6 +38,8 @@ jobs:
           - name: unix-time-converter
           - name: password-generator
           - name: ip-calculator
+          - name: markdown-preview
+          - name: placeholder-generator
           - name: landing-page
     
     environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}

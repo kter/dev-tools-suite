@@ -138,6 +138,12 @@ const passwordGeneratorUrl = isDevEnvironment
 const ipCalculatorUrl = isDevEnvironment 
   ? 'https://ip-calculator.dev.devtools.site'
   : 'https://ip-calculator.devtools.site'
+const markdownPreviewUrl = isDevEnvironment 
+  ? 'https://markdown-preview.dev.devtools.site'
+  : 'https://markdown-preview.devtools.site'
+const placeholderGeneratorUrl = isDevEnvironment 
+  ? 'https://placeholder-generator.dev.devtools.site'
+  : 'https://placeholder-generator.devtools.site'
 
 const availableTools = [
   {
@@ -169,6 +175,18 @@ const availableTools = [
     description: 'Calculate subnet masks, network addresses, and IP ranges',
     icon: '🌐',
     url: ipCalculatorUrl
+  },
+  {
+    name: 'Markdown Preview',
+    description: 'Preview Markdown files with live rendering and syntax highlighting',
+    icon: '📋',
+    url: markdownPreviewUrl
+  },
+  {
+    name: 'Placeholder Generator',
+    description: 'Generate custom placeholder images with various sizes and colors',
+    icon: '🖼️',
+    url: placeholderGeneratorUrl
   }
 ]
 
@@ -192,11 +210,6 @@ const comingSoonTools = [
     name: 'Lorem Ipsum Generator',
     description: 'Generate placeholder text for your projects',
     icon: '📄'
-  },
-  {
-    name: 'Markdown Preview',
-    description: 'Preview Markdown files with live rendering',
-    icon: '📋'
   }
 ]
 </script>
