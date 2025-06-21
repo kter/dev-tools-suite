@@ -68,7 +68,7 @@ jobs:
 
   deploy:
     needs: detect-changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     if: ${{ needs.detect-changes.outputs.hash-generator == 'true' || needs.detect-changes.outputs.qr-generator == 'true' || needs.detect-changes.outputs.unix-time-converter == 'true' || needs.detect-changes.outputs.password-generator == 'true' || needs.detect-changes.outputs.landing-page == 'true' || github.event.inputs.tool != '' }}
     strategy:
       matrix:
@@ -152,11 +152,11 @@ jobs:
           # Verify build output
           echo "Build completed successfully!"
           if [ -d ".output/public" ]; then
-            echo "‚úÖ Build output directory exists"
+            echo "‚úBuild output directory exists"
             echo "Build output contents:"
             ls -la .output/public/
           else
-            echo "‚ùå Build output directory not found"
+            echo "‚ùBuild output directory not found"
             ls -la .output/ || echo ".output directory not found"
             exit 1
           fi
@@ -186,7 +186,7 @@ jobs:
         run: |
           echo "Deploying to S3 bucket: ${{ steps.bucket.outputs.bucket_name }}"
           aws s3 sync .output/public/ s3://${{ steps.bucket.outputs.bucket_name }}/ --delete
-          echo "‚úÖ Successfully deployed ${{ matrix.tool.name }} to ${{ env.ENVIRONMENT }} environment"
+          echo "‚úSuccessfully deployed ${{ matrix.tool.name }} to ${{ env.ENVIRONMENT }} environment"
 
       - name: Get CloudFront distribution ID
         id: cloudfront
@@ -214,7 +214,7 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id ${{ steps.cloudfront.outputs.distribution_id }} \
             --paths "/*"
-          echo "‚úÖ CloudFront cache invalidation initiated"
+          echo "‚úCloudFront cache invalidation initiated"
 
       - name: Output deployment info
         run: |
