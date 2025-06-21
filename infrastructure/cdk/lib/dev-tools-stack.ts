@@ -40,6 +40,7 @@ export class DevToolsStack extends cdk.Stack {
     this.createToolInfrastructure('timezone-converter', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('string-converter', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('code-diff', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('mic-test', props.domain, certificate, hostedZone);
     
     // Create landing page for root domain
     this.createLandingPageInfrastructure(props.domain, certificate, hostedZone);

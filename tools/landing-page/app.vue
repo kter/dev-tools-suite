@@ -156,6 +156,9 @@ const stringConverterUrl = isDevEnvironment
 const codeDiffUrl = isDevEnvironment 
   ? 'https://code-diff.dev.devtools.site'
   : 'https://code-diff.devtools.site'
+const micTestUrl = isDevEnvironment 
+  ? 'https://mic-test.dev.devtools.site'
+  : 'https://mic-test.devtools.site'
 
 const availableTools = [
   {
@@ -223,6 +226,12 @@ const availableTools = [
     description: 'Compare and visualize differences between text files or code snippets',
     icon: '📊',
     url: codeDiffUrl
+  },
+  {
+    name: 'Mic Test',
+    description: 'Test your microphone by recording and playing back audio to verify it works correctly',
+    icon: '🎤',
+    url: micTestUrl
   }
 ]
 

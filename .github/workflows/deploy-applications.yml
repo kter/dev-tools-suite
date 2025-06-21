@@ -48,6 +48,7 @@ jobs:
       timezone-converter: ${{ steps.changes.outputs.timezone-converter }}
       string-converter: ${{ steps.changes.outputs.string-converter }}
       code-diff: ${{ steps.changes.outputs.code-diff }}
+      mic-test: ${{ steps.changes.outputs.mic-test }}
       landing-page: ${{ steps.changes.outputs.landing-page }}
     steps:
       - name: Checkout code
@@ -120,6 +121,7 @@ jobs:
           check_tool_changes "timezone-converter"
           check_tool_changes "string-converter"
           check_tool_changes "code-diff"
+          check_tool_changes "mic-test"
           check_tool_changes "landing-page"
           
           # Output summary
@@ -143,6 +145,7 @@ jobs:
           - name: timezone-converter
           - name: string-converter
           - name: code-diff
+          - name: mic-test
           - name: landing-page
     
     environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
