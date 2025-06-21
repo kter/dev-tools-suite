@@ -49,6 +49,10 @@ jobs:
       string-converter: ${{ steps.changes.outputs.string-converter }}
       code-diff: ${{ steps.changes.outputs.code-diff }}
       mic-test: ${{ steps.changes.outputs.mic-test }}
+      json-yaml-converter: ${{ steps.changes.outputs.json-yaml-converter }}
+      jwt-decoder: ${{ steps.changes.outputs.jwt-decoder }}
+      regex-tester: ${{ steps.changes.outputs.regex-tester }}
+      lorem-ipsum-generator: ${{ steps.changes.outputs.lorem-ipsum-generator }}
       landing-page: ${{ steps.changes.outputs.landing-page }}
     steps:
       - name: Checkout code
@@ -122,6 +126,10 @@ jobs:
           check_tool_changes "string-converter"
           check_tool_changes "code-diff"
           check_tool_changes "mic-test"
+          check_tool_changes "json-yaml-converter"
+          check_tool_changes "jwt-decoder"
+          check_tool_changes "regex-tester"
+          check_tool_changes "lorem-ipsum-generator"
           check_tool_changes "landing-page"
           
           # Output summary
@@ -146,6 +154,10 @@ jobs:
           - name: string-converter
           - name: code-diff
           - name: mic-test
+          - name: json-yaml-converter
+          - name: jwt-decoder
+          - name: regex-tester
+          - name: lorem-ipsum-generator
           - name: landing-page
     
     environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}

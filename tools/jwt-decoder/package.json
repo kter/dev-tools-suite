@@ -1,0 +1,20 @@
+{
+  "name": "jwt-decoder",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/devtools": "latest",
+    "nuxt": "^3.10.0",
+    "jose": "^5.2.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.11.1"
+  },
+  "workspaceDir": "../../"
+}

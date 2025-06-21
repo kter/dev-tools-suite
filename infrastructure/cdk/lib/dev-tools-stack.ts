@@ -41,6 +41,10 @@ export class DevToolsStack extends cdk.Stack {
     this.createToolInfrastructure('string-converter', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('code-diff', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('mic-test', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('json-yaml-converter', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('jwt-decoder', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('regex-tester', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('lorem-ipsum-generator', props.domain, certificate, hostedZone);
     
     // Create landing page for root domain
     this.createLandingPageInfrastructure(props.domain, certificate, hostedZone);

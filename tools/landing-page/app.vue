@@ -159,6 +159,18 @@ const codeDiffUrl = isDevEnvironment
 const micTestUrl = isDevEnvironment 
   ? 'https://mic-test.dev.devtools.site'
   : 'https://mic-test.devtools.site'
+const jsonYamlConverterUrl = isDevEnvironment 
+  ? 'https://json-yaml-converter.dev.devtools.site'
+  : 'https://json-yaml-converter.devtools.site'
+const jwtDecoderUrl = isDevEnvironment 
+  ? 'https://jwt-decoder.dev.devtools.site'
+  : 'https://jwt-decoder.devtools.site'
+const regexTesterUrl = isDevEnvironment 
+  ? 'https://regex-tester.dev.devtools.site'
+  : 'https://regex-tester.devtools.site'
+const loremIpsumGeneratorUrl = isDevEnvironment 
+  ? 'https://lorem-ipsum-generator.dev.devtools.site'
+  : 'https://lorem-ipsum-generator.devtools.site'
 
 const availableTools = [
   {
@@ -232,29 +244,35 @@ const availableTools = [
     description: 'Test your microphone by recording and playing back audio to verify it works correctly',
     icon: '🎤',
     url: micTestUrl
+  },
+  {
+    name: 'JSON/YAML Converter',
+    description: 'Convert between JSON, YAML, and TOML formats with validation and formatting',
+    icon: '📝',
+    url: jsonYamlConverterUrl
+  },
+  {
+    name: 'JWT Decoder',
+    description: 'Decode and validate JSON Web Tokens with detailed information display',
+    icon: '🔍',
+    url: jwtDecoderUrl
+  },
+  {
+    name: 'Regex Tester',
+    description: 'Test and validate regular expressions with live matching and detailed explanations',
+    icon: '✅',
+    url: regexTesterUrl
+  },
+  {
+    name: 'Lorem Ipsum Generator',
+    description: 'Generate placeholder text for your projects with customizable options',
+    icon: '📄',
+    url: loremIpsumGeneratorUrl
   }
 ]
 
 const comingSoonTools = [
-  {
-    name: 'JSON/YAML Converter',
-    description: 'Convert between JSON, YAML, and TOML formats',
-    icon: '📝'
-  },
-  {
-    name: 'JWT Decoder',
-    description: 'Decode and validate JSON Web Tokens',
-    icon: '🔍'
-  },
-  {
-    name: 'Regex Tester',
-    description: 'Test and validate regular expressions with live matching',
-    icon: '✅'
-  },
-  {
-    name: 'Lorem Ipsum Generator',
-    description: 'Generate placeholder text for your projects',
-    icon: '📄'
-  }
+  // All tools have been implemented!
+  // Future tools can be added here
 ]
 </script>
