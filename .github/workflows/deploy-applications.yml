@@ -102,9 +102,9 @@ jobs:
           # Navigate to tool directory
           cd tools/${{ matrix.tool.name }}
           
-          # Run nuxt generate
+          # Run nuxt generate using direct binary path to avoid npx issues in CI
           echo "Running nuxt generate for ${{ matrix.tool.name }}..."
-          npm run generate
+          ./node_modules/.bin/nuxt generate
           
           # Verify build output
           echo "Build completed successfully!"
