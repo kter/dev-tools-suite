@@ -4,12 +4,12 @@
   "version": "1.0.39",
   "type": "module",
   "scripts": {
-    "build": "nuxi build",
-    "dev": "nuxi dev",
-    "generate": "nuxi generate",
-    "preview": "nuxi preview",
+    "build": "npx nuxi build",
+    "dev": "npx nuxi dev",
+    "generate": "npx nuxi generate",
+    "preview": "npx nuxi preview",
     "lint": "eslint .",
-    "type-check": "nuxi typecheck"
+    "type-check": "npx nuxi typecheck"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",

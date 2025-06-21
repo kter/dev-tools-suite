@@ -81,24 +81,13 @@ jobs:
           echo "Installing dependencies for ${{ matrix.tool.name }}..."
           cd tools/${{ matrix.tool.name }}
           
-          # Install dependencies and ensure nuxt is available
+          # Install dependencies
           npm install
-          
-          # Install nuxt and CLI specifically to ensure nuxi binary is available
-          npm install nuxt@latest @nuxt/cli@latest
           
           # Verify installation
           echo "Dependencies installed successfully"
-          echo "Node modules bin directory:"
-          ls -la node_modules/.bin/ | head -10
-          echo "Nuxi check:"
-          if [ -f "node_modules/.bin/nuxi" ]; then
-            echo "nuxi binary found"
-            node_modules/.bin/nuxi --version
-          else
-            echo "nuxi binary not found, using npx"
-            npx nuxi --version
-          fi
+          echo "Testing nuxi with npx:"
+          npx nuxi --version
       - name: Build application
         run: |
           # Set environment variables for build
@@ -113,15 +102,9 @@ jobs:
           # Navigate to tool directory
           cd tools/${{ matrix.tool.name }}
           
-          # Run nuxt generate using local binary if available, otherwise npm script
+          # Run nuxt generate using npm script
           echo "Running nuxt generate for ${{ matrix.tool.name }}..."
-          if [ -f "node_modules/.bin/nuxi" ]; then
-            echo "Using local nuxi binary"
-            node_modules/.bin/nuxi generate
-          else
-            echo "Using npm script"
-            npm run generate
-          fi
+          npm run generate
           
           # Verify build output
           echo "Build completed successfully!"
