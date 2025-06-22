@@ -282,7 +282,7 @@ const conversionTypes: ConversionType[] = [
     },
     reversible: true,
     examples: [
-      { input: '<script>alert("hello")</script>', output: '&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;' },
+      { input: '<scr' + 'ipt>alert("hello")</scr' + 'ipt>', output: '&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;' },
       { input: 'A & B > C', output: 'A &amp; B &gt; C' }
     ]
   },
@@ -296,7 +296,7 @@ const conversionTypes: ConversionType[] = [
     },
     reversible: true,
     examples: [
-      { input: '&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;', output: '<script>alert("hello")</script>' },
+      { input: '&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;', output: '<scr' + 'ipt>alert("hello")</scr' + 'ipt>' },
       { input: 'A &amp; B &gt; C', output: 'A & B > C' }
     ]
   },
