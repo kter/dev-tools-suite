@@ -1,0 +1,280 @@
+name: Deploy DevTools Suite
+
+on:
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed-tools: ${{ steps.changes.outputs.changes }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            hash-generator:
+              - 'tools/hash-generator/**'
+            qr-generator:
+              - 'tools/qr-generator/**'
+            unix-time-converter:
+              - 'tools/unix-time-converter/**'
+            password-generator:
+              - 'tools/password-generator/**'
+            ip-calculator:
+              - 'tools/ip-calculator/**'
+            markdown-preview:
+              - 'tools/markdown-preview/**'
+            placeholder-generator:
+              - 'tools/placeholder-generator/**'
+            ip-info:
+              - 'tools/ip-info/**'
+            timezone-converter:
+              - 'tools/timezone-converter/**'
+            string-converter:
+              - 'tools/string-converter/**'
+            code-diff:
+              - 'tools/code-diff/**'
+            mic-test:
+              - 'tools/mic-test/**'
+            json-yaml-converter:
+              - 'tools/json-yaml-converter/**'
+            jwt-decoder:
+              - 'tools/jwt-decoder/**'
+            regex-tester:
+              - 'tools/regex-tester/**'
+            lorem-ipsum-generator:
+              - 'tools/lorem-ipsum-generator/**'
+            landing-page:
+              - 'tools/landing-page/**'
+
+      - name: Set matrix for deployment
+        id: set-matrix
+        run: |
+          changed_tools='${{ steps.changes.outputs.changes }}'
+          if [ "$changed_tools" = "[]" ]; then
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+          else
+            # Convert the JSON array to matrix format
+            matrix=$(echo "$changed_tools" | jq -r '. | map({tool: .}) | {include: .}')
+            echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          fi
+
+  deploy:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed-tools != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'tools/${{ matrix.tool }}/package-lock.json'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ github.ref == 'refs/heads/main' && vars.AWS_ROLE_ARN_PRD || vars.AWS_ROLE_ARN_DEV }}
+          aws-region: us-east-1
+
+      - name: Install dependencies and build
+        run: |
+          cd tools/${{ matrix.tool }}
+          npm ci
+          npm run generate
+
+      - name: Get stack outputs
+        id: stack-outputs
+        run: |
+          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          STACK_NAME="DevToolsStack-${ENV}"
+          
+          # Get bucket name (remove hyphens from tool name for output key)
+          TOOL_KEY=$(echo "${{ matrix.tool }}" | tr -d '-')
+          BUCKET_OUTPUT_KEY="${TOOL_KEY}bucketname"
+          DISTRIBUTION_OUTPUT_KEY="${TOOL_KEY}distributionid"
+          
+          echo "Getting outputs for stack: $STACK_NAME"
+          echo "Looking for bucket output: $BUCKET_OUTPUT_KEY"
+          echo "Looking for distribution output: $DISTRIBUTION_OUTPUT_KEY"
+          
+          BUCKET_NAME=$(aws cloudformation describe-stacks \
+            --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='$BUCKET_OUTPUT_KEY'].OutputValue" \
+            --output text)
+          
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+            --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='$DISTRIBUTION_OUTPUT_KEY'].OutputValue" \
+            --output text)
+          
+          echo "bucket-name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+          echo "distribution-id=$DISTRIBUTION_ID" >> $GITHUB_OUTPUT
+          
+          echo "Found bucket: $BUCKET_NAME"
+          echo "Found distribution: $DISTRIBUTION_ID"
+
+      - name: Deploy to S3
+        run: |
+          cd tools/${{ matrix.tool }}
+          aws s3 sync .output/public/ s3://${{ steps.stack-outputs.outputs.bucket-name }}/ --delete
+
+      - name: Invalidate CloudFront cache with retry
+        id: invalidate-cache
+        run: |
+          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          DISTRIBUTION_ID="${{ steps.stack-outputs.outputs.distribution-id }}"
+          TOOL_NAME="${{ matrix.tool }}"
+          
+          echo "Starting CloudFront cache invalidation for $TOOL_NAME ($ENV environment)"
+          echo "Distribution ID: $DISTRIBUTION_ID"
+          
+          # CloudFront invalidation function with retry logic
+          invalidate_cloudfront() {
+            local max_attempts=3
+            local wait_time=30
+            local attempt=1
+            
+            while [ $attempt -le $max_attempts ]; do
+              echo "Attempt $attempt/$max_attempts: Creating CloudFront invalidation..."
+              
+              if INVALIDATION_ID=$(aws cloudfront create-invalidation \
+                --distribution-id "$DISTRIBUTION_ID" \
+                --paths "/*" \
+                --query 'Invalidation.Id' \
+                --output text 2>/dev/null); then
+                
+                echo "✅ CloudFront invalidation created successfully"
+                echo "Invalidation ID: $INVALIDATION_ID"
+                echo "invalidation-id=$INVALIDATION_ID" >> $GITHUB_OUTPUT
+                echo "invalidation-success=true" >> $GITHUB_OUTPUT
+                return 0
+              else
+                echo "❌ Attempt $attempt failed"
+                if [ $attempt -eq $max_attempts ]; then
+                  echo "⚠️  All attempts failed. CloudFront cache invalidation was not successful."
+                  echo "⚠️  This does not affect the deployment - files have been uploaded to S3 successfully."
+                  echo "⚠️  Cache will be updated automatically within 24 hours, or you can manually invalidate later."
+                  echo "invalidation-success=false" >> $GITHUB_OUTPUT
+                  return 1
+                else
+                  echo "Waiting ${wait_time} seconds before retry..."
+                  sleep $wait_time
+                fi
+              fi
+              
+              attempt=$((attempt + 1))
+            done
+          }
+          
+          # Execute invalidation with retry
+          if invalidate_cloudfront; then
+            echo "CloudFront invalidation completed successfully"
+          else
+            echo "CloudFront invalidation failed but deployment continues"
+          fi
+
+      - name: Wait for invalidation completion (optional)
+        if: steps.invalidate-cache.outputs.invalidation-success == 'true'
+        run: |
+          DISTRIBUTION_ID="${{ steps.stack-outputs.outputs.distribution-id }}"
+          INVALIDATION_ID="${{ steps.invalidate-cache.outputs.invalidation-id }}"
+          TOOL_NAME="${{ matrix.tool }}"
+          
+          echo "Waiting for CloudFront invalidation to complete for $TOOL_NAME..."
+          echo "Distribution ID: $DISTRIBUTION_ID"
+          echo "Invalidation ID: $INVALIDATION_ID"
+          
+          # Wait with timeout (max 10 minutes)
+          timeout 600 aws cloudfront wait invalidation-completed \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --id "$INVALIDATION_ID" || {
+            echo "⚠️  Invalidation wait timed out, but this is normal for large distributions"
+            echo "⚠️  Invalidation will continue in background and complete within 15 minutes"
+          }
+          
+          echo "✅ CloudFront invalidation process initiated successfully"
+
+      - name: Deployment summary
+        run: |
+          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          TOOL_NAME="${{ matrix.tool }}"
+          INVALIDATION_SUCCESS="${{ steps.invalidate-cache.outputs.invalidation-success }}"
+          
+          echo "========================================="
+          echo "🚀 Deployment Summary for $TOOL_NAME"
+          echo "========================================="
+          echo "Environment: $ENV"
+          echo "S3 Bucket: ${{ steps.stack-outputs.outputs.bucket-name }}"
+          echo "CloudFront Distribution: ${{ steps.stack-outputs.outputs.distribution-id }}"
+          
+          if [ "$INVALIDATION_SUCCESS" = "true" ]; then
+            echo "✅ Files uploaded to S3: SUCCESS"
+            echo "✅ CloudFront cache invalidation: SUCCESS"
+            echo "🌐 Your site will be updated within a few minutes"
+          else
+            echo "✅ Files uploaded to S3: SUCCESS"
+            echo "⚠️  CloudFront cache invalidation: FAILED (but deployment successful)"
+            echo "📝 Note: Cache will refresh automatically within 24 hours"
+            echo "🔧 You can manually invalidate the cache in AWS Console if needed"
+          fi
+          
+          if [ "$ENV" = "dev" ]; then
+            echo "🔗 Dev URL: https://$TOOL_NAME.dev.devtools.site"
+          else
+            echo "🔗 Production URL: https://$TOOL_NAME.devtools.site"
+          fi
+          echo "========================================="
+
+  deployment-status:
+    needs: [detect-changes, deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Overall deployment status
+        run: |
+          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          CHANGED_TOOLS='${{ needs.detect-changes.outputs.changed-tools }}'
+          DEPLOY_RESULT="${{ needs.deploy.result }}"
+          
+          echo "========================================="
+          echo "📊 Overall Deployment Status"
+          echo "========================================="
+          echo "Environment: $ENV"
+          echo "Changed tools: $CHANGED_TOOLS"
+          echo "Deploy job result: $DEPLOY_RESULT"
+          
+          if [ "$CHANGED_TOOLS" = "[]" ]; then
+            echo "ℹ️  No tools were changed - no deployment needed"
+          elif [ "$DEPLOY_RESULT" = "success" ]; then
+            echo "✅ All deployments completed successfully"
+          elif [ "$DEPLOY_RESULT" = "failure" ]; then
+            echo "❌ Some deployments failed"
+            exit 1
+          else
+            echo "⚠️  Deployment completed with warnings"
+          fi
+          echo "========================================="
