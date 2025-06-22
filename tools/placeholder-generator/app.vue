@@ -1,51 +1,59 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <div class="container mx-auto px-4 py-8">
       <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Placeholder Generator</h1>
-        <p class="text-gray-600">Generate custom placeholder images with various sizes, colors, and text options</p>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex-1"></div>
+          <div class="flex-1 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Placeholder Generator</h1>
+          </div>
+          <div class="flex-1 flex justify-end">
+            <ThemeToggle />
+          </div>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400">Generate custom placeholder images with various sizes, colors, and text options</p>
       </header>
 
       <div class="max-w-6xl mx-auto">
         <!-- Settings Panel -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Image Settings</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Image Settings</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Size Settings -->
             <div class="space-y-4">
-              <h3 class="text-sm font-medium text-gray-700">Size</h3>
+              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Size</h3>
               
               <div>
-                <label for="width" class="block text-xs font-medium text-gray-600 mb-1">Width</label>
+                <label for="width" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Width</label>
                 <input
                   id="width"
                   v-model.number="settings.width"
                   type="number"
                   min="1"
                   max="2000"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </div>
               
               <div>
-                <label for="height" class="block text-xs font-medium text-gray-600 mb-1">Height</label>
+                <label for="height" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Height</label>
                 <input
                   id="height"
                   v-model.number="settings.height"
                   type="number"
                   min="1"
                   max="2000"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </div>
               
               <div>
-                <label class="flex items-center gap-2 text-xs text-gray-600">
+                <label class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                   <input
                     v-model="settings.maintainAspectRatio"
                     type="checkbox"
-                    class="rounded"
+                    class="rounded text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500"
                   />
                   Lock aspect ratio
                 </label>
@@ -54,38 +62,38 @@
 
             <!-- Colors -->
             <div class="space-y-4">
-              <h3 class="text-sm font-medium text-gray-700">Colors</h3>
+              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Colors</h3>
               
               <div>
-                <label for="background-color" class="block text-xs font-medium text-gray-600 mb-1">Background</label>
+                <label for="background-color" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Background</label>
                 <div class="flex gap-2">
                   <input
                     id="background-color"
                     v-model="settings.backgroundColor"
                     type="color"
-                    class="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                    class="w-12 h-8 border border-gray-300 dark:border-gray-600 rounded cursor-pointer"
                   />
                   <input
                     v-model="settings.backgroundColor"
                     type="text"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   />
                 </div>
               </div>
               
               <div>
-                <label for="text-color" class="block text-xs font-medium text-gray-600 mb-1">Text</label>
+                <label for="text-color" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Text</label>
                 <div class="flex gap-2">
                   <input
                     id="text-color"
                     v-model="settings.textColor"
                     type="color"
-                    class="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                    class="w-12 h-8 border border-gray-300 dark:border-gray-600 rounded cursor-pointer"
                   />
                   <input
                     v-model="settings.textColor"
                     type="text"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   />
                 </div>
               </div>
@@ -93,37 +101,37 @@
 
             <!-- Text Settings -->
             <div class="space-y-4">
-              <h3 class="text-sm font-medium text-gray-700">Text</h3>
+              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Text</h3>
               
               <div>
-                <label for="custom-text" class="block text-xs font-medium text-gray-600 mb-1">Custom Text</label>
+                <label for="custom-text" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Custom Text</label>
                 <input
                   id="custom-text"
                   v-model="settings.customText"
                   type="text"
                   placeholder="Enter custom text..."
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </div>
               
               <div>
-                <label for="font-size" class="block text-xs font-medium text-gray-600 mb-1">Font Size</label>
+                <label for="font-size" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Font Size</label>
                 <input
                   id="font-size"
                   v-model.number="settings.fontSize"
                   type="number"
                   min="8"
                   max="100"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </div>
               
               <div>
-                <label for="font-family" class="block text-xs font-medium text-gray-600 mb-1">Font</label>
+                <label for="font-family" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Font</label>
                 <select
                   id="font-family"
                   v-model="settings.fontFamily"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
                   <option value="Arial">Arial</option>
                   <option value="Helvetica">Helvetica</option>
@@ -136,14 +144,14 @@
 
             <!-- Format Settings -->
             <div class="space-y-4">
-              <h3 class="text-sm font-medium text-gray-700">Format</h3>
+              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Format</h3>
               
               <div>
-                <label for="format" class="block text-xs font-medium text-gray-600 mb-1">File Format</label>
+                <label for="format" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">File Format</label>
                 <select
                   id="format"
                   v-model="settings.format"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
                   <option value="png">PNG</option>
                   <option value="jpg">JPG</option>
@@ -153,7 +161,7 @@
               </div>
               
               <div v-if="settings.format === 'jpg'">
-                <label for="quality" class="block text-xs font-medium text-gray-600 mb-1">Quality ({{ settings.quality }}%)</label>
+                <label for="quality" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Quality ({{ settings.quality }}%)</label>
                 <input
                   id="quality"
                   v-model.number="settings.quality"
@@ -169,13 +177,13 @@
 
           <!-- Preset Sizes -->
           <div class="mt-6">
-            <h3 class="text-sm font-medium text-gray-700 mb-3">Preset Sizes</h3>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Preset Sizes</h3>
             <div class="flex flex-wrap gap-2">
               <button
                 v-for="preset in presetSizes"
                 :key="preset.name"
                 @click="applyPreset(preset)"
-                class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 {{ preset.name }} ({{ preset.width }}×{{ preset.height }})
               </button>
@@ -186,13 +194,13 @@
         <!-- Preview and Generation -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Preview -->
-          <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">Preview</h3>
-              <span class="text-sm text-gray-500">{{ settings.width }}×{{ settings.height }}</span>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Preview</h3>
+              <span class="text-sm text-gray-500 dark:text-gray-400">{{ settings.width }}×{{ settings.height }}</span>
             </div>
             
-            <div class="flex items-center justify-center p-4 bg-gray-50 rounded-lg min-h-[300px]">
+            <div class="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[300px] transition-colors">
               <div class="relative">
                 <canvas
                   ref="previewCanvas"
@@ -200,27 +208,27 @@
                   :height="previewHeight"
                   class="border border-gray-200 rounded shadow-sm"
                 />
-                <div v-if="isGenerating" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded">
-                  <div class="text-sm text-gray-600">Generating...</div>
+                <div v-if="isGenerating" class="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800 bg-opacity-75 dark:bg-opacity-75 rounded">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">Generating...</div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Actions -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions</h3>
             
             <div class="space-y-4">
               <!-- URL Generation -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Generated URL</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Generated URL</label>
                 <div class="flex gap-2">
                   <input
                     v-model="generatedUrl"
                     type="text"
                     readonly
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm bg-gray-50 focus:outline-none"
+                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none transition-colors"
                   />
                   <button
                     @click="copyUrl"
@@ -229,14 +237,14 @@
                     Copy
                   </button>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Use this URL directly in your HTML or CSS
                 </p>
               </div>
 
               <!-- Download Options -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Download</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Download</label>
                 <div class="space-y-2">
                   <button
                     @click="downloadImage"
@@ -255,12 +263,12 @@
 
               <!-- HTML/CSS Code -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">HTML Code</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">HTML Code</label>
                 <textarea
                   v-model="htmlCode"
                   readonly
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-xs bg-gray-50 font-mono"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-xs bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono transition-colors"
                 />
                 <button
                   @click="copyCode('html')"
@@ -271,12 +279,12 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">CSS Background</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CSS Background</label>
                 <textarea
                   v-model="cssCode"
                   readonly
                   rows="2"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-xs bg-gray-50 font-mono"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-xs bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono transition-colors"
                 />
                 <button
                   @click="copyCode('css')"
@@ -290,27 +298,27 @@
         </div>
 
         <!-- Usage Examples -->
-        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Common Use Cases</h3>
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Common Use Cases</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h4 class="font-medium text-gray-800 mb-2">Website Design</h4>
-              <p class="text-sm text-gray-600">Use placeholders during development to visualize layout before final images are ready.</p>
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Website Design</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Use placeholders during development to visualize layout before final images are ready.</p>
             </div>
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h4 class="font-medium text-gray-800 mb-2">Prototyping</h4>
-              <p class="text-sm text-gray-600">Quickly create mockups with consistent placeholder images for presentations.</p>
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Prototyping</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Quickly create mockups with consistent placeholder images for presentations.</p>
             </div>
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h4 class="font-medium text-gray-800 mb-2">Testing</h4>
-              <p class="text-sm text-gray-600">Generate images of specific sizes to test responsive design and loading behavior.</p>
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Testing</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Generate images of specific sizes to test responsive design and loading behavior.</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Copy notification -->
-      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded shadow-lg transition-colors">
         {{ copyMessage }}
       </div>
     </div>
@@ -573,5 +581,9 @@ const showCopyMessage = (message: string) => {
 
 onMounted(() => {
   generatePreview()
+  
+  // Initialize dark mode
+  const { initializeTheme } = useDarkMode()
+  initializeTheme()
 })
 </script>

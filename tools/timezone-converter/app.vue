@@ -1,49 +1,57 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <div class="container mx-auto px-4 py-8">
       <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Timezone Converter</h1>
-        <p class="text-gray-600">Convert time between different timezones with ease</p>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex-1"></div>
+          <div class="flex-1 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Timezone Converter</h1>
+          </div>
+          <div class="flex-1 flex justify-end">
+            <ThemeToggle />
+          </div>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400">Convert time between different timezones with ease</p>
       </header>
 
       <div class="max-w-4xl mx-auto">
         <!-- Current Time -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Current Time</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Current Time</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="text-center p-4 bg-blue-50 rounded-lg">
-              <h3 class="text-sm font-medium text-gray-600 mb-2">Local Time</h3>
-              <div class="text-2xl font-bold text-blue-600">{{ currentLocalTime }}</div>
-              <div class="text-sm text-gray-500">{{ userTimezone }}</div>
+            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+              <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Local Time</h3>
+              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ currentLocalTime }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">{{ userTimezone }}</div>
             </div>
-            <div class="text-center p-4 bg-green-50 rounded-lg">
-              <h3 class="text-sm font-medium text-gray-600 mb-2">UTC</h3>
-              <div class="text-2xl font-bold text-green-600">{{ currentUtcTime }}</div>
-              <div class="text-sm text-gray-500">Coordinated Universal Time</div>
+            <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg transition-colors">
+              <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">UTC</h3>
+              <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ currentUtcTime }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">Coordinated Universal Time</div>
             </div>
-            <div class="text-center p-4 bg-purple-50 rounded-lg">
-              <h3 class="text-sm font-medium text-gray-600 mb-2">Unix Timestamp</h3>
-              <div class="text-xl font-bold text-purple-600">{{ currentUnixTime }}</div>
-              <div class="text-sm text-gray-500">Seconds since epoch</div>
+            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg transition-colors">
+              <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Unix Timestamp</h3>
+              <div class="text-xl font-bold text-purple-600 dark:text-purple-400">{{ currentUnixTime }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">Seconds since epoch</div>
             </div>
           </div>
         </div>
 
         <!-- Time Converter -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Convert Time</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Convert Time</h2>
           
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- From Section -->
             <div class="space-y-4">
-              <h3 class="text-lg font-medium text-gray-800">From</h3>
+              <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">From</h3>
               
               <div>
-                <label for="from-timezone" class="block text-sm font-medium text-gray-700 mb-2">Source Timezone</label>
+                <label for="from-timezone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Source Timezone</label>
                 <select
                   id="from-timezone"
                   v-model="fromTimezone"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
                   <option v-for="tz in commonTimezones" :key="tz.value" :value="tz.value">
                     {{ tz.label }}
@@ -52,42 +60,42 @@
               </div>
 
               <div>
-                <label for="from-date" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <label for="from-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date</label>
                 <input
                   id="from-date"
                   v-model="fromDate"
                   type="date"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label for="from-time" class="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                <label for="from-time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
                 <input
                   id="from-time"
                   v-model="fromTime"
                   type="time"
                   step="1"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 />
               </div>
 
-              <div class="p-3 bg-blue-50 rounded-lg">
-                <div class="text-sm text-gray-600 mb-1">Full DateTime</div>
-                <div class="font-medium text-blue-800">{{ formatFromDateTime }}</div>
+              <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Full DateTime</div>
+                <div class="font-medium text-blue-800 dark:text-blue-200">{{ formatFromDateTime }}</div>
               </div>
             </div>
 
             <!-- To Section -->
             <div class="space-y-4">
-              <h3 class="text-lg font-medium text-gray-800">To</h3>
+              <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">To</h3>
               
               <div>
-                <label for="to-timezone" class="block text-sm font-medium text-gray-700 mb-2">Target Timezone</label>
+                <label for="to-timezone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Timezone</label>
                 <select
                   id="to-timezone"
                   v-model="toTimezone"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
                   <option v-for="tz in commonTimezones" :key="tz.value" :value="tz.value">
                     {{ tz.label }}
@@ -96,29 +104,29 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Converted Date</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Converted Date</label>
                 <input
                   :value="convertedDate"
                   type="date"
                   readonly
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Converted Time</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Converted Time</label>
                 <input
                   :value="convertedTime"
                   type="time"
                   step="1"
                   readonly
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                 />
               </div>
 
-              <div class="p-3 bg-green-50 rounded-lg">
-                <div class="text-sm text-gray-600 mb-1">Full DateTime</div>
-                <div class="font-medium text-green-800">{{ formatToDateTime }}</div>
+              <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg transition-colors">
+                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Full DateTime</div>
+                <div class="font-medium text-green-800 dark:text-green-200">{{ formatToDateTime }}</div>
               </div>
             </div>
           </div>
@@ -146,68 +154,68 @@
           </div>
 
           <!-- Time Difference -->
-          <div v-if="timeDifference" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <div class="text-sm text-yellow-800">
+          <div v-if="timeDifference" class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg transition-colors">
+            <div class="text-sm text-yellow-800 dark:text-yellow-200">
               <strong>Time Difference:</strong> {{ timeDifference }}
             </div>
           </div>
         </div>
 
         <!-- Multiple Timezone Display -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">World Clock</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">World Clock</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div
               v-for="worldTime in worldTimes"
               :key="worldTime.timezone"
-              class="p-4 border border-gray-200 rounded-lg"
+              class="p-4 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg transition-colors"
             >
-              <h3 class="font-medium text-gray-800 mb-1">{{ worldTime.city }}</h3>
-              <div class="text-lg font-bold text-blue-600">{{ worldTime.time }}</div>
-              <div class="text-sm text-gray-500">{{ worldTime.date }}</div>
-              <div class="text-xs text-gray-400">{{ worldTime.timezone }}</div>
+              <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-1">{{ worldTime.city }}</h3>
+              <div class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ worldTime.time }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">{{ worldTime.date }}</div>
+              <div class="text-xs text-gray-400 dark:text-gray-500">{{ worldTime.timezone }}</div>
             </div>
           </div>
         </div>
 
         <!-- Timezone Information -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Timezone Information</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Timezone Information</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 class="font-medium text-gray-800 mb-3">{{ getTimezoneInfo(fromTimezone).name }}</h3>
+              <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-3">{{ getTimezoneInfo(fromTimezone).name }}</h3>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
-                  <span class="text-gray-600">UTC Offset:</span>
-                  <span class="font-medium">{{ getTimezoneInfo(fromTimezone).offset }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">UTC Offset:</span>
+                  <span class="font-medium text-gray-900 dark:text-white">{{ getTimezoneInfo(fromTimezone).offset }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">DST:</span>
-                  <span class="font-medium">{{ getTimezoneInfo(fromTimezone).dst ? 'Yes' : 'No' }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">DST:</span>
+                  <span class="font-medium text-gray-900 dark:text-white">{{ getTimezoneInfo(fromTimezone).dst ? 'Yes' : 'No' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Abbreviation:</span>
-                  <span class="font-medium">{{ getTimezoneInfo(fromTimezone).abbreviation }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">Abbreviation:</span>
+                  <span class="font-medium text-gray-900 dark:text-white">{{ getTimezoneInfo(fromTimezone).abbreviation }}</span>
                 </div>
               </div>
             </div>
             
             <div>
-              <h3 class="font-medium text-gray-800 mb-3">{{ getTimezoneInfo(toTimezone).name }}</h3>
+              <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-3">{{ getTimezoneInfo(toTimezone).name }}</h3>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
-                  <span class="text-gray-600">UTC Offset:</span>
-                  <span class="font-medium">{{ getTimezoneInfo(toTimezone).offset }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">UTC Offset:</span>
+                  <span class="font-medium text-gray-900 dark:text-white">{{ getTimezoneInfo(toTimezone).offset }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">DST:</span>
-                  <span class="font-medium">{{ getTimezoneInfo(toTimezone).dst ? 'Yes' : 'No' }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">DST:</span>
+                  <span class="font-medium text-gray-900 dark:text-white">{{ getTimezoneInfo(toTimezone).dst ? 'Yes' : 'No' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Abbreviation:</span>
-                  <span class="font-medium">{{ getTimezoneInfo(toTimezone).abbreviation }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">Abbreviation:</span>
+                  <span class="font-medium text-gray-900 dark:text-white">{{ getTimezoneInfo(toTimezone).abbreviation }}</span>
                 </div>
               </div>
             </div>
@@ -216,7 +224,7 @@
       </div>
 
       <!-- Copy notification -->
-      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded shadow-lg transition-colors">
         {{ copyMessage }}
       </div>
     </div>
@@ -470,5 +478,9 @@ onMounted(() => {
     const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone
     fromTimezone.value = userTz
   }
+  
+  // Initialize dark mode
+  const { initializeTheme } = useDarkMode()
+  initializeTheme()
 })
 </script>

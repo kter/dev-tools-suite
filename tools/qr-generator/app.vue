@@ -1,22 +1,27 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-200">
     <div class="container mx-auto max-w-4xl px-4">
       <!-- Header -->
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">QR Code Generator</h1>
-        <p class="text-lg text-gray-600">Generate QR codes from text, URLs, or any content instantly</p>
+      <div class="text-center mb-8 relative">
+        <!-- Theme Toggle -->
+        <div class="absolute top-0 right-0">
+          <ThemeToggle />
+        </div>
+        
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">QR Code Generator</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300">Generate QR codes from text, URLs, or any content instantly</p>
       </div>
 
       <!-- Input Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors duration-200">
         <div class="mb-4">
-          <label for="text-input" class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="text-input" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Enter text or URL
           </label>
           <textarea
             id="text-input"
             v-model="inputText"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200"
             rows="4"
             placeholder="Enter text, URL, or any content to generate QR code..."
             @input="generateQRCode"
@@ -25,13 +30,13 @@
 
         <!-- Error Correction Level -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Error Correction Level
           </label>
           <select 
             v-model="errorCorrectionLevel"
             @change="generateQRCode"
-            class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200"
           >
             <option value="L">Low (7%)</option>
             <option value="M">Medium (15%)</option>
@@ -42,13 +47,13 @@
 
         <!-- Size Selection -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             QR Code Size
           </label>
           <select 
             v-model="qrSize"
             @change="generateQRCode"
-            class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200"
           >
             <option value="200">Small (200x200)</option>
             <option value="300">Medium (300x300)</option>
@@ -59,12 +64,12 @@
       </div>
 
       <!-- QR Code Display -->
-      <div v-if="inputText.trim()" class="bg-white rounded-lg shadow-md p-6">
+      <div v-if="inputText.trim()" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-200">
         <div class="text-center">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Generated QR Code</h2>
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Generated QR Code</h2>
           
           <div class="flex justify-center mb-6">
-            <div class="p-4 bg-white rounded-lg shadow-lg">
+            <div class="p-4 bg-white dark:bg-gray-100 rounded-lg shadow-lg">
               <canvas 
                 ref="qrCanvas" 
                 class="mx-auto"
@@ -78,21 +83,21 @@
           <div class="flex justify-center gap-4">
             <button
               @click="downloadQRCode"
-              class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
+              class="px-6 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-md transition-colors font-medium"
             >
               📄 Download PNG
             </button>
             <button
               @click="downloadQRCodeSVG"
-              class="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors font-medium"
+              class="px-6 py-2 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white rounded-md transition-colors font-medium"
             >
               📊 Download SVG
             </button>
           </div>
 
           <!-- QR Code Info -->
-          <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+          <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-300">
               <div>
                 <span class="font-medium">Size:</span> {{ qrSize }}x{{ qrSize }}px
               </div>
@@ -108,33 +113,33 @@
       </div>
 
       <!-- Instructions -->
-      <div v-else class="bg-white rounded-lg shadow-md p-6 text-center">
-        <div class="text-gray-500">
-          <h2 class="text-xl font-semibold mb-2">How to use</h2>
+      <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center transition-colors duration-200">
+        <div class="text-gray-500 dark:text-gray-400">
+          <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">How to use</h2>
           <p class="mb-4">Enter any text, URL, or content in the text area above to instantly generate a QR code.</p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">📱 Website URLs</h3>
-              <p class="text-sm">https://example.com</p>
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+              <h3 class="font-medium mb-2 text-gray-900 dark:text-white">📱 Website URLs</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300">https://example.com</p>
             </div>
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">📧 Email Address</h3>
-              <p class="text-sm">mailto:user@example.com</p>
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+              <h3 class="font-medium mb-2 text-gray-900 dark:text-white">📧 Email Address</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300">mailto:user@example.com</p>
             </div>
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">📞 Phone Number</h3>
-              <p class="text-sm">tel:+1234567890</p>
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+              <h3 class="font-medium mb-2 text-gray-900 dark:text-white">📞 Phone Number</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300">tel:+1234567890</p>
             </div>
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <h3 class="font-medium mb-2">💬 Plain Text</h3>
-              <p class="text-sm">Any text content</p>
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+              <h3 class="font-medium mb-2 text-gray-900 dark:text-white">💬 Plain Text</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Any text content</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Copy Message -->
-      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg">
+      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded-md shadow-lg transition-colors duration-200">
         {{ copyMessage }}
       </div>
     </div>
@@ -144,6 +149,9 @@
 <script setup lang="ts">
 import QRCode from 'qrcode'
 
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   useHead({
@@ -152,6 +160,15 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
     ]
   })
 }
+
+// Initialize dark mode on mount
+onMounted(() => {
+  initializeTheme()
+  // Generate initial QR code if there's default text
+  if (inputText.value.trim()) {
+    generateQRCode()
+  }
+})
 
 const inputText = ref('')
 const errorCorrectionLevel = ref('M')
@@ -163,6 +180,7 @@ const generateQRCode = async () => {
   if (!inputText.value.trim() || !qrCanvas.value) return
 
   try {
+    // QR codes should always use black on white for maximum readability and compatibility
     await QRCode.toCanvas(qrCanvas.value, inputText.value, {
       errorCorrectionLevel: errorCorrectionLevel.value as any,
       width: parseInt(qrSize.value),
@@ -223,11 +241,4 @@ const showCopyMessage = (message: string) => {
 
 // Generate QR code when input text changes
 watch(inputText, generateQRCode)
-
-onMounted(() => {
-  // Generate initial QR code if there's default text
-  if (inputText.value.trim()) {
-    generateQRCode()
-  }
-})
 </script>

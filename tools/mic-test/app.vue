@@ -1,24 +1,32 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <div class="container mx-auto px-4 py-8">
       <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Mic Test</h1>
-        <p class="text-gray-600">Test your microphone by recording and playing back audio to verify it works correctly</p>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex-1"></div>
+          <div class="flex-1 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Mic Test</h1>
+          </div>
+          <div class="flex-1 flex justify-end">
+            <ThemeToggle />
+          </div>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400">Test your microphone by recording and playing back audio to verify it works correctly</p>
       </header>
 
       <div class="max-w-4xl mx-auto">
         <!-- Permission and Status -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Microphone Status</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Microphone Status</h2>
           
           <div v-if="!hasPermission && !permissionDenied" class="text-center py-8">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors">
+              <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
               </svg>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Microphone Access Required</h3>
-            <p class="text-gray-600 mb-4">Click the button below to grant microphone permission and start testing.</p>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Microphone Access Required</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">Click the button below to grant microphone permission and start testing.</p>
             <button
               @click="requestMicrophoneAccess"
               :disabled="requestingPermission"
@@ -29,13 +37,13 @@
           </div>
 
           <div v-else-if="permissionDenied" class="text-center py-8">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors">
+              <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
               </svg>
             </div>
-            <h3 class="text-lg font-semibold text-red-900 mb-2">Microphone Access Denied</h3>
-            <p class="text-red-600 mb-4">Please allow microphone access in your browser settings and refresh the page.</p>
+            <h3 class="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">Microphone Access Denied</h3>
+            <p class="text-red-600 dark:text-red-400 mb-4">Please allow microphone access in your browser settings and refresh the page.</p>
             <button
               @click="refreshPage"
               class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -45,49 +53,49 @@
           </div>
 
           <div v-else-if="hasPermission" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="text-center p-4 bg-green-50 rounded-lg">
-              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg transition-colors">
+              <div class="w-12 h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-2 transition-colors">
+                <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
-              <div class="text-sm text-green-800 font-medium">Microphone</div>
-              <div class="text-xs text-green-600">Connected</div>
+              <div class="text-sm text-green-800 dark:text-green-200 font-medium">Microphone</div>
+              <div class="text-xs text-green-600 dark:text-green-400">Connected</div>
             </div>
-            <div class="text-center p-4 bg-blue-50 rounded-lg">
-              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+              <div class="w-12 h-12 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mx-auto mb-2 transition-colors">
+                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12 6.5z"></path>
                 </svg>
               </div>
-              <div class="text-sm text-blue-800 font-medium">Audio Level</div>
-              <div class="text-xs text-blue-600">{{ audioLevel }}%</div>
+              <div class="text-sm text-blue-800 dark:text-blue-200 font-medium">Audio Level</div>
+              <div class="text-xs text-blue-600 dark:text-blue-400">{{ audioLevel }}%</div>
             </div>
-            <div class="text-center p-4 bg-purple-50 rounded-lg">
-              <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg transition-colors">
+              <div class="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center mx-auto mb-2 transition-colors">
+                <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2M7 4h10M7 4l-2 16h14L17 4M9 8v8m2-8v8m2-8v8"></path>
                 </svg>
               </div>
-              <div class="text-sm text-purple-800 font-medium">Device</div>
-              <div class="text-xs text-purple-600">{{ selectedDevice || 'Default' }}</div>
+              <div class="text-sm text-purple-800 dark:text-purple-200 font-medium">Device</div>
+              <div class="text-xs text-purple-600 dark:text-purple-400">{{ selectedDevice || 'Default' }}</div>
             </div>
           </div>
         </div>
 
         <!-- Audio Level Meter -->
-        <div v-if="hasPermission" class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Audio Level Monitor</h3>
+        <div v-if="hasPermission" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Audio Level Monitor</h3>
           <div class="space-y-4">
             <!-- Visual Level Meter -->
             <div class="relative">
-              <div class="w-full h-8 bg-gray-200 rounded-lg overflow-hidden">
+              <div class="w-full h-8 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden transition-colors">
                 <div 
                   class="h-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 transition-all duration-75"
                   :style="{ width: audioLevel + '%' }"
                 ></div>
               </div>
-              <div class="flex justify-between text-xs text-gray-500 mt-1">
+              <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
                 <span>Silent</span>
                 <span>Moderate</span>
                 <span>Loud</span>
@@ -97,20 +105,20 @@
             <!-- Numeric Display -->
             <div class="text-center">
               <span class="text-2xl font-bold" :class="getLevelColor()">{{ audioLevel }}%</span>
-              <span class="text-sm text-gray-500 ml-2">{{ getLevelDescription() }}</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">{{ getLevelDescription() }}</span>
             </div>
           </div>
         </div>
 
         <!-- Device Selection -->
-        <div v-if="hasPermission && availableDevices.length > 1" class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Microphone Selection</h3>
+        <div v-if="hasPermission && availableDevices.length > 1" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Microphone Selection</h3>
           <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Select Microphone Device:</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Microphone Device:</label>
             <select 
               v-model="selectedDeviceId"
               @change="changeDevice"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             >
               <option value="">Default Device</option>
               <option 
@@ -125,19 +133,19 @@
         </div>
 
         <!-- Recording Controls -->
-        <div v-if="hasPermission" class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Recording Test</h3>
+        <div v-if="hasPermission" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recording Test</h3>
           
           <div class="text-center space-y-4">
             <!-- Recording Status -->
-            <div v-if="isRecording" class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
-              <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <span class="text-red-800 font-medium">Recording... {{ recordingDuration }}s</span>
+            <div v-if="isRecording" class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg transition-colors">
+              <div class="w-3 h-3 bg-red-500 dark:bg-red-400 rounded-full animate-pulse"></div>
+              <span class="text-red-800 dark:text-red-200 font-medium">Recording... {{ recordingDuration }}s</span>
             </div>
             
-            <div v-else-if="recordedBlob" class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-lg">
-              <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span class="text-green-800 font-medium">Recording completed ({{ lastRecordingDuration }}s)</span>
+            <div v-else-if="recordedBlob" class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg transition-colors">
+              <div class="w-3 h-3 bg-green-500 dark:bg-green-400 rounded-full"></div>
+              <span class="text-green-800 dark:text-green-200 font-medium">Recording completed ({{ lastRecordingDuration }}s)</span>
             </div>
 
             <!-- Control Buttons -->
@@ -169,7 +177,7 @@
 
             <!-- Playback Controls -->
             <div v-if="recordedBlob" class="mt-6 space-y-4">
-              <h4 class="text-md font-medium text-gray-800">Playback Test</h4>
+              <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">Playback Test</h4>
               
               <audio 
                 ref="audioPlayer"
@@ -215,34 +223,34 @@
         </div>
 
         <!-- Privacy Information -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-blue-900 mb-3 flex items-center gap-2">
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 transition-colors">
+          <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
             </svg>
             Privacy & Security
           </h3>
-          <div class="space-y-2 text-blue-800">
+          <div class="space-y-2 text-blue-800 dark:text-blue-200">
             <p class="flex items-start gap-2">
-              <svg class="w-4 h-4 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
               All audio processing happens locally in your browser
             </p>
             <p class="flex items-start gap-2">
-              <svg class="w-4 h-4 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
               No audio data is sent to any server
             </p>
             <p class="flex items-start gap-2">
-              <svg class="w-4 h-4 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
               Recordings are temporary and deleted when you close the page
             </p>
             <p class="flex items-start gap-2">
-              <svg class="w-4 h-4 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
               You can revoke microphone permission at any time in browser settings
@@ -404,10 +412,10 @@ const startAudioLevelMonitoring = () => {
 }
 
 const getLevelColor = () => {
-  if (audioLevel.value < 10) return 'text-gray-500'
-  if (audioLevel.value < 30) return 'text-green-600'
-  if (audioLevel.value < 70) return 'text-yellow-600'
-  return 'text-red-600'
+  if (audioLevel.value < 10) return 'text-gray-500 dark:text-gray-400'
+  if (audioLevel.value < 30) return 'text-green-600 dark:text-green-400'
+  if (audioLevel.value < 70) return 'text-yellow-600 dark:text-yellow-400'
+  return 'text-red-600 dark:text-red-400'
 }
 
 const getLevelDescription = () => {
@@ -514,6 +522,10 @@ onMounted(() => {
   } else {
     console.error('getUserMedia not supported')
   }
+  
+  // Initialize dark mode
+  const { initializeTheme } = useDarkMode()
+  initializeTheme()
 })
 
 onUnmounted(() => {

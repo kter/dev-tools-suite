@@ -1,19 +1,27 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <div class="container mx-auto px-4 py-8">
       <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">IP Info</h1>
-        <p class="text-gray-600">Display your IP address information including location, ISP, and network details</p>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex-1"></div>
+          <div class="flex-1 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">IP Info</h1>
+          </div>
+          <div class="flex-1 flex justify-end">
+            <ThemeToggle />
+          </div>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400">Display your IP address information including location, ISP, and network details</p>
       </header>
 
       <div class="max-w-4xl mx-auto">
         <!-- Your IP Address -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Your IP Address</h2>
-          <div class="text-4xl font-bold text-blue-600 mb-2">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 text-center transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Your IP Address</h2>
+          <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
             {{ ipInfo?.ip || 'Loading...' }}
           </div>
-          <div v-if="ipInfo?.type" class="text-sm text-gray-500">
+          <div v-if="ipInfo?.type" class="text-sm text-gray-500 dark:text-gray-400">
             {{ ipInfo.type }} Address
           </div>
           <div class="mt-4 flex justify-center gap-4">
@@ -35,20 +43,20 @@
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading && !ipInfo" class="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p class="text-gray-600">Loading IP information...</p>
+        <div v-if="loading && !ipInfo" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 text-center transition-colors">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
+          <p class="text-gray-600 dark:text-gray-400">Loading IP information...</p>
         </div>
 
         <!-- Error State -->
-        <div v-if="error" class="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
-          <div class="text-red-600 mb-4">
+        <div v-if="error" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 text-center transition-colors">
+          <div class="text-red-600 dark:text-red-400 mb-4">
             <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.996-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Failed to load IP information</h3>
-          <p class="text-gray-600 mb-4">{{ error }}</p>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Failed to load IP information</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">{{ error }}</p>
           <button
             @click="refreshInfo"
             class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -60,9 +68,9 @@
         <!-- IP Information Details -->
         <div v-if="ipInfo && !loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Location Information -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
@@ -70,83 +78,83 @@
             </h3>
             <div class="space-y-3">
               <div v-if="ipInfo.country" class="flex justify-between items-center">
-                <span class="text-gray-600">Country:</span>
-                <span class="font-medium">{{ ipInfo.country }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Country:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.country }}</span>
               </div>
               <div v-if="ipInfo.country_code" class="flex justify-between items-center">
-                <span class="text-gray-600">Country Code:</span>
-                <span class="font-medium">{{ ipInfo.country_code }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Country Code:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.country_code }}</span>
               </div>
               <div v-if="ipInfo.region" class="flex justify-between items-center">
-                <span class="text-gray-600">Region:</span>
-                <span class="font-medium">{{ ipInfo.region }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Region:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.region }}</span>
               </div>
               <div v-if="ipInfo.city" class="flex justify-between items-center">
-                <span class="text-gray-600">City:</span>
-                <span class="font-medium">{{ ipInfo.city }}</span>
+                <span class="text-gray-600 dark:text-gray-400">City:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.city }}</span>
               </div>
               <div v-if="ipInfo.postal" class="flex justify-between items-center">
-                <span class="text-gray-600">Postal Code:</span>
-                <span class="font-medium">{{ ipInfo.postal }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Postal Code:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.postal }}</span>
               </div>
               <div v-if="ipInfo.latitude && ipInfo.longitude" class="flex justify-between items-center">
-                <span class="text-gray-600">Coordinates:</span>
-                <span class="font-medium text-sm">{{ ipInfo.latitude }}, {{ ipInfo.longitude }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Coordinates:</span>
+                <span class="font-medium text-sm text-gray-900 dark:text-white">{{ ipInfo.latitude }}, {{ ipInfo.longitude }}</span>
               </div>
               <div v-if="ipInfo.timezone" class="flex justify-between items-center">
-                <span class="text-gray-600">Timezone:</span>
-                <span class="font-medium">{{ ipInfo.timezone }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Timezone:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.timezone }}</span>
               </div>
             </div>
           </div>
 
           <!-- Network Information -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
               </svg>
               Network Information
             </h3>
             <div class="space-y-3">
               <div v-if="ipInfo.org" class="flex justify-between items-start">
-                <span class="text-gray-600">ISP/Organization:</span>
-                <span class="font-medium text-right ml-2">{{ ipInfo.org }}</span>
+                <span class="text-gray-600 dark:text-gray-400">ISP/Organization:</span>
+                <span class="font-medium text-right ml-2 text-gray-900 dark:text-white">{{ ipInfo.org }}</span>
               </div>
               <div v-if="ipInfo.asn" class="flex justify-between items-center">
-                <span class="text-gray-600">ASN:</span>
-                <span class="font-medium">{{ ipInfo.asn }}</span>
+                <span class="text-gray-600 dark:text-gray-400">ASN:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.asn }}</span>
               </div>
               <div v-if="ipInfo.type" class="flex justify-between items-center">
-                <span class="text-gray-600">Address Type:</span>
-                <span class="font-medium">{{ ipInfo.type }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Address Type:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.type }}</span>
               </div>
               <div v-if="ipInfo.version" class="flex justify-between items-center">
-                <span class="text-gray-600">IP Version:</span>
-                <span class="font-medium">IPv{{ ipInfo.version }}</span>
+                <span class="text-gray-600 dark:text-gray-400">IP Version:</span>
+                <span class="font-medium text-gray-900 dark:text-white">IPv{{ ipInfo.version }}</span>
               </div>
             </div>
           </div>
 
           <!-- Security & Privacy -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
               </svg>
               Security & Privacy
             </h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Connection:</span>
-                <span class="font-medium text-green-600">{{ isSecure ? 'Secure (HTTPS)' : 'Insecure (HTTP)' }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Connection:</span>
+                <span class="font-medium text-green-600 dark:text-green-400">{{ isSecure ? 'Secure (HTTPS)' : 'Insecure (HTTP)' }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">IPv6 Support:</span>
-                <span class="font-medium">{{ ipInfo.version === 6 ? 'Yes' : 'Unknown' }}</span>
+                <span class="text-gray-600 dark:text-gray-400">IPv6 Support:</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.version === 6 ? 'Yes' : 'Unknown' }}</span>
               </div>
-              <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p class="text-sm text-yellow-800">
+              <div class="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg transition-colors">
+                <p class="text-sm text-yellow-800 dark:text-yellow-200">
                   <strong>Privacy Note:</strong> This information is publicly visible to websites you visit. Consider using a VPN for enhanced privacy.
                 </p>
               </div>
@@ -154,9 +162,9 @@
           </div>
 
           <!-- Additional Tools -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
@@ -189,14 +197,14 @@
         </div>
 
         <!-- Custom IP Lookup -->
-        <div v-if="showCustomLookup" class="mt-6 bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Lookup Custom IP Address</h3>
+        <div v-if="showCustomLookup" class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Lookup Custom IP Address</h3>
           <div class="flex gap-2">
             <input
               v-model="customIP"
               type="text"
               placeholder="Enter IP address (e.g., 8.8.8.8)"
-              class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               @keyup.enter="lookupCustomIP"
             />
             <button
@@ -208,7 +216,7 @@
             </button>
             <button
               @click="showCustomLookup = false"
-              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+              class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
             >
               Cancel
             </button>
@@ -216,14 +224,14 @@
         </div>
 
         <!-- Information Source -->
-        <div class="mt-8 text-center text-sm text-gray-500">
+        <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>IP information provided by multiple geolocation services</p>
           <p>Last updated: {{ lastUpdated }}</p>
         </div>
       </div>
 
       <!-- Copy notification -->
-      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded shadow-lg transition-colors">
         {{ copyMessage }}
       </div>
     </div>
@@ -413,5 +421,9 @@ const showCopyMessage = (message: string) => {
 
 onMounted(() => {
   fetchIPInfo()
+  
+  // Initialize dark mode
+  const { initializeTheme } = useDarkMode()
+  initializeTheme()
 })
 </script>

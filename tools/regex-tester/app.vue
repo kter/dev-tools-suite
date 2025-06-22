@@ -1,26 +1,29 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Regex Tester</h1>
-        <p class="text-gray-600">Test and validate regular expressions with live matching and detailed explanations</p>
+      <header class="text-center mb-8 relative">
+        <div class="absolute top-0 right-0">
+          <ThemeToggle />
+        </div>
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Regex Tester</h1>
+        <p class="text-gray-600 dark:text-gray-300">Test and validate regular expressions with live matching and detailed explanations</p>
       </header>
 
       <div class="max-w-6xl mx-auto">
         <!-- Regex Pattern Input -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
           <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-900">Regular Expression</h2>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Regular Expression</h2>
             <div class="flex gap-2">
               <button
                 @click="loadSample"
-                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 Load Sample
               </button>
               <button
                 @click="clearAll"
-                class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                class="px-3 py-1 text-sm bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
               >
                 Clear All
               </button>
@@ -30,17 +33,17 @@
           <div class="space-y-4">
             <!-- Pattern Input -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Pattern</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pattern</label>
               <div class="flex items-center gap-2">
-                <span class="text-gray-500 font-mono">/</span>
+                <span class="text-gray-500 dark:text-gray-400 font-mono">/</span>
                 <input
                   v-model="pattern"
                   @input="testRegex"
                   type="text"
                   placeholder="Enter your regex pattern here..."
-                  class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                  class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 />
-                <span class="text-gray-500 font-mono">/</span>
+                <span class="text-gray-500 dark:text-gray-400 font-mono">/</span>
                 <div class="flex gap-1">
                   <label class="flex items-center gap-1">
                     <input
@@ -49,40 +52,40 @@
                       type="checkbox"
                       class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-600">g</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">g</span>
                   </label>
                   <label class="flex items-center gap-1">
                     <input
                       v-model="flags.ignoreCase"
                       @change="testRegex"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-600">i</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">i</span>
                   </label>
                   <label class="flex items-center gap-1">
                     <input
                       v-model="flags.multiline"
                       @change="testRegex"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-600">m</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">m</span>
                   </label>
                   <label class="flex items-center gap-1">
                     <input
                       v-model="flags.dotAll"
                       @change="testRegex"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                     />
-                    <span class="text-sm text-gray-600">s</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">s</span>
                   </label>
                 </div>
               </div>
               
               <!-- Flag explanations -->
-              <div class="mt-2 text-xs text-gray-500 flex gap-4">
+              <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex gap-4">
                 <span>g: global</span>
                 <span>i: ignore case</span>
                 <span>m: multiline</span>
@@ -91,7 +94,7 @@
             </div>
 
             <!-- Regex Error -->
-            <div v-if="regexError" class="text-red-600 text-sm">
+            <div v-if="regexError" class="text-red-600 dark:text-red-400 text-sm">
               <div class="flex items-start gap-2">
                 <svg class="w-4 h-4 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -101,25 +104,25 @@
             </div>
 
             <!-- Pattern Info -->
-            <div v-else-if="pattern && compiledRegex" class="text-green-600 text-sm">
+            <div v-else-if="pattern && compiledRegex" class="text-green-600 dark:text-green-400 text-sm">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <span>Valid regex pattern: <code class="font-mono bg-gray-100 px-1 rounded">{{ fullPattern }}</code></span>
+                <span>Valid regex pattern: <code class="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded text-gray-900 dark:text-white">{{ fullPattern }}</code></span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Test String Input -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Test String</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Test String</h3>
             <div class="flex gap-2">
               <button
                 @click="loadSampleText"
-                class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 Load Sample Text
               </button>
@@ -130,17 +133,17 @@
             v-model="testString"
             @input="testRegex"
             placeholder="Enter text to test against your regex pattern..."
-            class="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+            class="w-full h-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           ></textarea>
         </div>
 
         <div v-if="pattern && testString" class="space-y-6">
           <!-- Match Results -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Match Results</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Match Results</h3>
             
-            <div v-if="matches.length === 0" class="text-center py-8 text-gray-500">
-              <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-if="matches.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+              <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
               <p>No matches found</p>
@@ -148,8 +151,8 @@
 
             <div v-else>
               <!-- Match summary -->
-              <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <div class="flex items-center gap-2 text-green-800">
+              <div class="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+                <div class="flex items-center gap-2 text-green-800 dark:text-green-300">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                   </svg>
@@ -159,40 +162,40 @@
 
               <!-- Highlighted text -->
               <div class="mb-6">
-                <h4 class="text-md font-medium text-gray-800 mb-3">Text with Highlights</h4>
-                <div class="bg-gray-50 p-4 rounded border font-mono text-sm whitespace-pre-wrap" v-html="highlightedText"></div>
+                <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">Text with Highlights</h4>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded border border-gray-200 dark:border-gray-600 font-mono text-sm whitespace-pre-wrap text-gray-900 dark:text-white" v-html="highlightedText"></div>
               </div>
 
               <!-- Match details -->
               <div>
-                <h4 class="text-md font-medium text-gray-800 mb-3">Match Details</h4>
+                <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">Match Details</h4>
                 <div class="space-y-3">
                   <div
                     v-for="(match, index) in matches"
                     :key="index"
-                    class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                    class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-600 transition-colors bg-white dark:bg-gray-700"
                   >
                     <div class="flex justify-between items-start mb-3">
-                      <div class="font-medium text-gray-900">Match {{ index + 1 }}</div>
-                      <div class="text-sm text-gray-500">Position: {{ match.index }} - {{ match.index + match.value.length - 1 }}</div>
+                      <div class="font-medium text-gray-900 dark:text-white">Match {{ index + 1 }}</div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400">Position: {{ match.index }} - {{ match.index + match.value.length - 1 }}</div>
                     </div>
                     
                     <div class="space-y-2">
                       <div>
-                        <span class="text-sm font-medium text-gray-700">Full Match:</span>
-                        <code class="ml-2 bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">{{ match.value }}</code>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Full Match:</span>
+                        <code class="ml-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded text-sm">{{ match.value }}</code>
                       </div>
                       
                       <div v-if="match.groups && match.groups.length > 0">
-                        <span class="text-sm font-medium text-gray-700">Capture Groups:</span>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Capture Groups:</span>
                         <div class="mt-1 space-y-1">
                           <div
                             v-for="(group, groupIndex) in match.groups"
                             :key="groupIndex"
                             class="ml-4 text-sm"
                           >
-                            <span class="text-gray-600">Group {{ groupIndex + 1 }}:</span>
-                            <code class="ml-2 bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ group || '(empty)' }}</code>
+                            <span class="text-gray-600 dark:text-gray-400">Group {{ groupIndex + 1 }}:</span>
+                            <code class="ml-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">{{ group || '(empty)' }}</code>
                           </div>
                         </div>
                       </div>
@@ -204,31 +207,31 @@
           </div>
 
           <!-- Replace Tool -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Replace Tool</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Replace Tool</h3>
             
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Replace with</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Replace with</label>
                 <input
                   v-model="replacement"
                   @input="performReplace"
                   type="text"
                   placeholder="Enter replacement text (use $1, $2, etc. for groups)..."
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 />
               </div>
               
               <div v-if="replacement" class="space-y-3">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Result</label>
-                  <div class="bg-gray-50 p-4 rounded border font-mono text-sm whitespace-pre-wrap min-h-[100px]">{{ replacedText }}</div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Result</label>
+                  <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded border border-gray-200 dark:border-gray-600 font-mono text-sm whitespace-pre-wrap min-h-[100px] text-gray-900 dark:text-white">{{ replacedText }}</div>
                 </div>
                 
                 <div class="flex gap-2">
                   <button
                     @click="copyReplaced"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white rounded-lg transition-colors flex items-center gap-2"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
@@ -242,8 +245,8 @@
         </div>
 
         <!-- Common Patterns -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-4 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
             </svg>
@@ -253,12 +256,12 @@
             <div
               v-for="(sample, index) in commonPatterns"
               :key="index"
-              class="p-3 bg-white rounded border cursor-pointer hover:border-blue-300 transition-colors"
+              class="p-3 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
               @click="loadPattern(sample)"
             >
-              <div class="font-medium text-blue-800 mb-1">{{ sample.name }}</div>
-              <code class="text-sm text-blue-600 font-mono">{{ sample.pattern }}</code>
-              <div class="text-xs text-blue-700 mt-1">{{ sample.description }}</div>
+              <div class="font-medium text-blue-800 dark:text-blue-300 mb-1">{{ sample.name }}</div>
+              <code class="text-sm text-blue-600 dark:text-blue-400 font-mono">{{ sample.pattern }}</code>
+              <div class="text-xs text-blue-700 dark:text-blue-400 mt-1">{{ sample.description }}</div>
             </div>
           </div>
         </div>
@@ -268,6 +271,9 @@
 </template>
 
 <script setup lang="ts">
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   useHead({
@@ -276,6 +282,11 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
     ]
   })
 }
+
+// Initialize theme on client-side
+onMounted(() => {
+  initializeTheme()
+})
 
 interface RegexMatch {
   value: string
@@ -428,7 +439,7 @@ const generateHighlightedText = () => {
     result += escapeHtml(testString.value.slice(lastIndex, match.index))
     
     // Add highlighted match
-    result += `<mark class="bg-yellow-300 font-bold">${escapeHtml(match.value)}</mark>`
+    result += `<mark class="bg-yellow-300 dark:bg-yellow-600 font-bold text-yellow-900 dark:text-yellow-100">${escapeHtml(match.value)}</mark>`
     
     lastIndex = match.index + match.value.length
   }

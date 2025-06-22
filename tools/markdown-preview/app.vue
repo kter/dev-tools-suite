@@ -1,21 +1,30 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Markdown Preview</h1>
-        <p class="text-gray-600">Preview Markdown files with live rendering and syntax highlighting</p>
+      <header class="text-center mb-8 relative">
+        <!-- Theme Toggle -->
+        <div class="absolute right-0 top-0">
+          <ThemeToggle />
+        </div>
+        
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+            Markdown Preview
+          </span>
+        </h1>
+        <p class="text-gray-600 dark:text-gray-300">Preview Markdown files with live rendering and syntax highlighting</p>
       </header>
 
       <div class="max-w-7xl mx-auto">
         <!-- Toolbar -->
-        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6 transition-colors duration-300">
           <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <label for="view-mode" class="text-sm font-medium text-gray-700">View Mode:</label>
+              <label for="view-mode" class="text-sm font-medium text-gray-700 dark:text-gray-300">View Mode:</label>
               <select
                 id="view-mode"
                 v-model="viewMode"
-                class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="split">Split View</option>
                 <option value="edit">Editor Only</option>
@@ -26,27 +35,27 @@
             <div class="flex items-center gap-2">
               <button
                 @click="loadSampleMarkdown"
-                class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
               >
                 Load Sample
               </button>
               <button
                 @click="clearMarkdown"
-                class="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                class="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
               >
                 Clear
               </button>
               <button
                 @click="downloadMarkdown"
                 :disabled="!markdownText.trim()"
-                class="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-3 py-1 text-sm bg-green-600 hover:bg-green-700 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Download
               </button>
             </div>
             
             <div class="flex items-center gap-2 ml-auto">
-              <span class="text-sm text-gray-600">
+              <span class="text-sm text-gray-600 dark:text-gray-300">
                 {{ wordCount }} words, {{ characterCount }} characters
               </span>
             </div>
@@ -54,22 +63,22 @@
         </div>
 
         <!-- Main Content -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
           <div class="grid" :class="gridClass">
             <!-- Editor Panel -->
-            <div v-if="showEditor" class="border-r border-gray-200">
-              <div class="bg-gray-100 px-4 py-2 border-b border-gray-200">
-                <h3 class="text-sm font-medium text-gray-700">Markdown Editor</h3>
+            <div v-if="showEditor" class="border-r border-gray-200 dark:border-gray-700">
+              <div class="bg-gray-100 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600">
+                <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Markdown Editor</h3>
               </div>
               <div class="relative">
                 <textarea
                   v-model="markdownText"
-                  class="w-full h-96 p-4 font-mono text-sm border-none focus:outline-none resize-none"
+                  class="w-full h-96 p-4 font-mono text-sm border-none focus:outline-none resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   placeholder="Type your markdown here..."
                   @scroll="syncScroll"
                   ref="editorRef"
                 />
-                <div class="absolute bottom-2 right-2 text-xs text-gray-400">
+                <div class="absolute bottom-2 right-2 text-xs text-gray-400 dark:text-gray-500">
                   Line {{ currentLine }}
                 </div>
               </div>
@@ -77,21 +86,21 @@
 
             <!-- Preview Panel -->
             <div v-if="showPreview" class="relative">
-              <div class="bg-gray-100 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="text-sm font-medium text-gray-700">Preview</h3>
+              <div class="bg-gray-100 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
+                <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Preview</h3>
                 <div class="flex items-center gap-2">
-                  <label class="flex items-center gap-1 text-xs text-gray-600">
+                  <label class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300">
                     <input
                       v-model="enableSyntaxHighlighting"
                       type="checkbox"
-                      class="rounded"
+                      class="rounded bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-500"
                     />
                     Syntax Highlighting
                   </label>
                 </div>
               </div>
               <div
-                class="h-96 p-4 overflow-auto prose prose-sm max-w-none"
+                class="h-96 p-4 overflow-auto prose prose-sm max-w-none dark:prose-invert"
                 v-html="renderedMarkdown"
                 ref="previewRef"
               />
@@ -100,32 +109,32 @@
         </div>
 
         <!-- Quick Reference -->
-        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Markdown Quick Reference</h3>
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Markdown Quick Reference</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
             <div>
-              <h4 class="font-medium text-gray-800 mb-2">Headers</h4>
-              <code class="block text-gray-600"># H1<br>## H2<br>### H3</code>
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Headers</h4>
+              <code class="block text-gray-600 dark:text-gray-300"># H1<br>## H2<br>### H3</code>
             </div>
             <div>
-              <h4 class="font-medium text-gray-800 mb-2">Emphasis</h4>
-              <code class="block text-gray-600">*italic*<br>**bold**<br>~~strikethrough~~</code>
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Emphasis</h4>
+              <code class="block text-gray-600 dark:text-gray-300">*italic*<br>**bold**<br>~~strikethrough~~</code>
             </div>
             <div>
-              <h4 class="font-medium text-gray-800 mb-2">Lists</h4>
-              <code class="block text-gray-600">- Item 1<br>- Item 2<br>1. Numbered</code>
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Lists</h4>
+              <code class="block text-gray-600 dark:text-gray-300">- Item 1<br>- Item 2<br>1. Numbered</code>
             </div>
             <div>
-              <h4 class="font-medium text-gray-800 mb-2">Links</h4>
-              <code class="block text-gray-600">[Link](url)<br>![Image](url)</code>
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Links</h4>
+              <code class="block text-gray-600 dark:text-gray-300">[Link](url)<br>![Image](url)</code>
             </div>
             <div>
-              <h4 class="font-medium text-gray-800 mb-2">Code</h4>
-              <code class="block text-gray-600">`inline code`<br>```<br>code block<br>```</code>
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Code</h4>
+              <code class="block text-gray-600 dark:text-gray-300">`inline code`<br>```<br>code block<br>```</code>
             </div>
             <div>
-              <h4 class="font-medium text-gray-800 mb-2">Tables</h4>
-              <code class="block text-gray-600">| Col 1 | Col 2 |<br>|-------|-------|<br>| A | B |</code>
+              <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Tables</h4>
+              <code class="block text-gray-600 dark:text-gray-300">| Col 1 | Col 2 |<br>|-------|-------|<br>| A | B |</code>
             </div>
           </div>
         </div>
@@ -147,6 +156,9 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
     ]
   })
 }
+
+// Dark mode
+const { initializeTheme, isDarkMode } = useDarkMode()
 
 const markdownText = ref(`# Welcome to Markdown Preview
 
@@ -209,13 +221,13 @@ const configureMarked = () => {
 
 // Initialize marked configuration
 onMounted(() => {
+  // Initialize theme
+  initializeTheme()
+  
   configureMarked()
+  loadHighlightCSS()
 })
 
-// Watch for syntax highlighting changes
-watch(enableSyntaxHighlighting, () => {
-  configureMarked()
-})
 
 const renderedMarkdown = computed(() => {
   if (!process.client) return ''
@@ -368,14 +380,37 @@ const downloadMarkdown = () => {
   URL.revokeObjectURL(url)
 }
 
-// Load highlight.js CSS
-onMounted(() => {
-  if (process.client && enableSyntaxHighlighting.value) {
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
+// Load highlight.js CSS with dark mode support
+const loadHighlightCSS = () => {
+  if (!process.client || !enableSyntaxHighlighting.value) return
+  
+  // Remove existing highlight.js stylesheets
+  const existingLinks = document.querySelectorAll('link[href*="highlight.js"]')
+  existingLinks.forEach(link => link.remove())
+  
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.id = 'highlight-css'
+  
+  // Use different themes for light and dark mode
+  if (isDarkMode.value) {
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css'
+  } else {
     link.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github.min.css'
-    document.head.appendChild(link)
   }
+  
+  document.head.appendChild(link)
+}
+
+// Watch for dark mode changes to update highlight.js theme
+watch(isDarkMode, () => {
+  loadHighlightCSS()
+})
+
+// Watch for syntax highlighting changes
+watch(enableSyntaxHighlighting, () => {
+  configureMarked()
+  loadHighlightCSS()
 })
 </script>
 
@@ -446,5 +481,44 @@ onMounted(() => {
   max-width: 100%;
   height: auto;
   border-radius: 0.5rem;
+}
+
+/* Dark mode styles */
+.dark .prose {
+  color: #d1d5db;
+}
+
+.dark .prose h1 {
+  color: #f9fafb;
+  border-bottom: 1px solid #374151;
+}
+
+.dark .prose h2 {
+  color: #e5e7eb;
+  border-bottom: 1px solid #4b5563;
+}
+
+.dark .prose code {
+  color: #fca5a5;
+  background-color: #374151;
+}
+
+.dark .prose pre {
+  background-color: #1f2937;
+  border: 1px solid #4b5563;
+}
+
+.dark .prose blockquote {
+  border-left: 4px solid #60a5fa;
+  background-color: #1f2937;
+}
+
+.dark .prose table th,
+.dark .prose table td {
+  border: 1px solid #4b5563;
+}
+
+.dark .prose table th {
+  background-color: #374151;
 }
 </style>

@@ -1,24 +1,27 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Lorem Ipsum Generator</h1>
-        <p class="text-gray-600">Generate placeholder text for your projects with customizable options</p>
+      <header class="text-center mb-8 relative">
+        <div class="absolute top-0 right-0">
+          <ThemeToggle />
+        </div>
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Lorem Ipsum Generator</h1>
+        <p class="text-gray-600 dark:text-gray-300">Generate placeholder text for your projects with customizable options</p>
       </header>
 
       <div class="max-w-6xl mx-auto">
         <!-- Generation Options -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">Generation Options</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Generation Options</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Text Type -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Text Type</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Text Type</label>
               <select 
                 v-model="textType"
                 @change="generateText"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="lorem">Lorem Ipsum (Latin)</option>
                 <option value="english">English Words</option>
@@ -29,11 +32,11 @@
 
             <!-- Generation Unit -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Generate by</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Generate by</label>
               <select 
                 v-model="generationType"
                 @change="generateText"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="words">Words</option>
                 <option value="sentences">Sentences</option>
@@ -43,7 +46,7 @@
 
             <!-- Amount -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Amount ({{ generationType }})
               </label>
               <input
@@ -52,7 +55,7 @@
                 type="number"
                 min="1"
                 max="1000"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
           </div>
@@ -68,7 +71,7 @@
                   id="startWithLorem"
                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="startWithLorem" class="ml-2 text-sm text-gray-700">Start with "Lorem ipsum"</label>
+                <label for="startWithLorem" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Start with "Lorem ipsum"</label>
               </div>
               
               <div class="flex items-center">
@@ -77,9 +80,9 @@
                   @change="generateText"
                   type="checkbox"
                   id="includeHtml"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="includeHtml" class="ml-2 text-sm text-gray-700">Wrap in HTML paragraphs</label>
+                <label for="includeHtml" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Wrap in HTML paragraphs</label>
               </div>
               
               <div class="flex items-center">
@@ -88,9 +91,9 @@
                   @change="generateText"
                   type="checkbox"
                   id="capitalizeFirst"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="capitalizeFirst" class="ml-2 text-sm text-gray-700">Capitalize first letter</label>
+                <label for="capitalizeFirst" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Capitalize first letter</label>
               </div>
               
               <div class="flex items-center">
@@ -99,9 +102,9 @@
                   @change="generateText"
                   type="checkbox"
                   id="addPunctuation"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="addPunctuation" class="ml-2 text-sm text-gray-700">Add punctuation</label>
+                <label for="addPunctuation" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Add punctuation</label>
               </div>
             </div>
           </div>
@@ -110,31 +113,31 @@
           <div class="mt-6 flex gap-3 flex-wrap">
             <button
               @click="quickGenerate('words', 50)"
-              class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+              class="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors text-sm"
             >
               50 Words
             </button>
             <button
               @click="quickGenerate('words', 100)"
-              class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+              class="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors text-sm"
             >
               100 Words
             </button>
             <button
               @click="quickGenerate('sentences', 5)"
-              class="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm"
+              class="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-800 transition-colors text-sm"
             >
               5 Sentences
             </button>
             <button
               @click="quickGenerate('paragraphs', 3)"
-              class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm"
+              class="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors text-sm"
             >
               3 Paragraphs
             </button>
             <button
               @click="quickGenerate('paragraphs', 5)"
-              class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm"
+              class="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors text-sm"
             >
               5 Paragraphs
             </button>
@@ -142,14 +145,14 @@
         </div>
 
         <!-- Generated Text -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Generated Text</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Generated Text</h3>
             <div class="flex gap-2">
               <button
                 v-if="generatedText"
                 @click="copyText"
-                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white rounded-lg transition-colors flex items-center gap-2"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
@@ -159,7 +162,7 @@
               <button
                 v-if="generatedText"
                 @click="downloadText"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-lg transition-colors flex items-center gap-2"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -171,36 +174,36 @@
           
           <div class="space-y-4">
             <!-- Text Stats -->
-            <div v-if="generatedText" class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
+            <div v-if="generatedText" class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div class="text-center">
-                <div class="text-2xl font-bold text-blue-600">{{ wordCount }}</div>
-                <div class="text-sm text-gray-600">Words</div>
+                <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ wordCount }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Words</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-green-600">{{ characterCount }}</div>
-                <div class="text-sm text-gray-600">Characters</div>
+                <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ characterCount }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Characters</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-purple-600">{{ sentenceCount }}</div>
-                <div class="text-sm text-gray-600">Sentences</div>
+                <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ sentenceCount }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Sentences</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-orange-600">{{ paragraphCount }}</div>
-                <div class="text-sm text-gray-600">Paragraphs</div>
+                <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ paragraphCount }}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Paragraphs</div>
               </div>
             </div>
             
             <!-- Generated Text Display -->
             <div 
               v-if="generatedText"
-              class="bg-gray-50 p-6 rounded-lg border min-h-[200px] max-h-[500px] overflow-y-auto"
+              class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg border border-gray-200 dark:border-gray-600 min-h-[200px] max-h-[500px] overflow-y-auto"
             >
-              <div v-if="includeHtml" v-html="generatedText" class="prose max-w-none"></div>
-              <div v-else class="whitespace-pre-wrap font-mono text-sm">{{ generatedText }}</div>
+              <div v-if="includeHtml" v-html="generatedText" class="prose max-w-none text-gray-900 dark:text-white"></div>
+              <div v-else class="whitespace-pre-wrap font-mono text-sm text-gray-900 dark:text-white">{{ generatedText }}</div>
             </div>
             
-            <div v-else class="text-center py-12 text-gray-500">
-              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-else class="text-center py-12 text-gray-500 dark:text-gray-400">
+              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
               <p class="text-lg">Configure your options and text will be generated here</p>
@@ -209,14 +212,14 @@
         </div>
 
         <!-- Information -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-blue-900 mb-3 flex items-center gap-2">
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             About Lorem Ipsum
           </h3>
-          <div class="space-y-2 text-blue-800 text-sm">
+          <div class="space-y-2 text-blue-800 dark:text-blue-300 text-sm">
             <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has been the industry's standard dummy text since the 1500s.</p>
             <p>It is derived from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC.</p>
             <p>Use this tool to generate placeholder text for your design mockups, websites, and documents.</p>
@@ -228,6 +231,9 @@
 </template>
 
 <script setup lang="ts">
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   useHead({
@@ -457,8 +463,9 @@ const downloadText = () => {
   URL.revokeObjectURL(url)
 }
 
-// Generate initial text
+// Initialize theme and generate initial text
 onMounted(() => {
+  initializeTheme()
   generateText()
 })
 </script>

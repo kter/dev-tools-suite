@@ -1,92 +1,101 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <div class="container mx-auto px-4 py-8">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">IP Calculator</h1>
-        <p class="text-gray-600">Calculate subnet masks, network addresses, and IP ranges</p>
+      <header class="text-center mb-8 relative">
+        <!-- Theme Toggle -->
+        <div class="absolute right-0 top-0">
+          <ThemeToggle />
+        </div>
+        
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            IP Calculator
+          </span>
+        </h1>
+        <p class="text-gray-600 dark:text-gray-300">Calculate subnet masks, network addresses, and IP ranges</p>
       </header>
 
       <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <label for="ip-input" class="block text-sm font-medium text-gray-700 mb-2">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors duration-300">
+          <label for="ip-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             IP Address with CIDR (e.g., 192.168.1.1/24)
           </label>
           <input
             id="ip-input"
             v-model="ipInput"
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="192.168.1.1/24"
           />
-          <div v-if="inputError" class="mt-2 text-red-600 text-sm">
+          <div v-if="inputError" class="mt-2 text-red-600 dark:text-red-400 text-sm">
             {{ inputError }}
           </div>
         </div>
 
         <div v-if="calculation" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Network Information</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Network Information</h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">IP Address:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.ipAddress }}</code>
+                <span class="text-gray-600 dark:text-gray-300">IP Address:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.ipAddress }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Subnet Mask:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.subnetMask }}</code>
+                <span class="text-gray-600 dark:text-gray-300">Subnet Mask:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.subnetMask }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">CIDR Notation:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">/{{ calculation.cidr }}</code>
+                <span class="text-gray-600 dark:text-gray-300">CIDR Notation:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">/{{ calculation.cidr }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Network Address:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.networkAddress }}</code>
+                <span class="text-gray-600 dark:text-gray-300">Network Address:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.networkAddress }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Broadcast Address:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.broadcastAddress }}</code>
+                <span class="text-gray-600 dark:text-gray-300">Broadcast Address:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.broadcastAddress }}</code>
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Host Information</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Host Information</h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">First Host:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.firstHost }}</code>
+                <span class="text-gray-600 dark:text-gray-300">First Host:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.firstHost }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Last Host:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.lastHost }}</code>
+                <span class="text-gray-600 dark:text-gray-300">Last Host:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.lastHost }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Total Hosts:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.totalHosts.toLocaleString() }}</code>
+                <span class="text-gray-600 dark:text-gray-300">Total Hosts:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.totalHosts.toLocaleString() }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Usable Hosts:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.usableHosts.toLocaleString() }}</code>
+                <span class="text-gray-600 dark:text-gray-300">Usable Hosts:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.usableHosts.toLocaleString() }}</code>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Network Class:</span>
-                <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ calculation.networkClass }}</code>
+                <span class="text-gray-600 dark:text-gray-300">Network Class:</span>
+                <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded">{{ calculation.networkClass }}</code>
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-md p-6 md:col-span-2">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Binary Representation</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 md:col-span-2 transition-colors duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Binary Representation</h3>
             <div class="space-y-2">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <span class="text-gray-600 text-sm">IP Address (Binary):</span>
-                  <code class="block text-xs bg-gray-100 p-2 rounded mt-1 font-mono">{{ calculation.ipBinary }}</code>
+                  <span class="text-gray-600 dark:text-gray-300 text-sm">IP Address (Binary):</span>
+                  <code class="block text-xs bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded mt-1 font-mono">{{ calculation.ipBinary }}</code>
                 </div>
                 <div>
-                  <span class="text-gray-600 text-sm">Subnet Mask (Binary):</span>
-                  <code class="block text-xs bg-gray-100 p-2 rounded mt-1 font-mono">{{ calculation.subnetMaskBinary }}</code>
+                  <span class="text-gray-600 dark:text-gray-300 text-sm">Subnet Mask (Binary):</span>
+                  <code class="block text-xs bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded mt-1 font-mono">{{ calculation.subnetMaskBinary }}</code>
                 </div>
               </div>
             </div>
@@ -121,6 +130,9 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
     ]
   })
 }
+
+// Dark mode
+const { initializeTheme } = useDarkMode()
 
 const ipInput = ref('192.168.1.1/24')
 const inputError = ref('')
@@ -211,4 +223,9 @@ function ipToBinary(ip: string): string {
     .map(octet => parseInt(octet).toString(2).padStart(8, '0'))
     .join('.')
 }
+
+// Initialize dark mode
+onMounted(() => {
+  initializeTheme()
+})
 </script>

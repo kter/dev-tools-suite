@@ -1,21 +1,29 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <div class="container mx-auto px-4 py-8">
       <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Code Diff</h1>
-        <p class="text-gray-600">Compare and visualize differences between two text files or code snippets</p>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex-1"></div>
+          <div class="flex-1 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Code Diff</h1>
+          </div>
+          <div class="flex-1 flex justify-end">
+            <ThemeToggle />
+          </div>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400">Compare and visualize differences between two text files or code snippets</p>
       </header>
 
       <div class="max-w-7xl mx-auto">
         <!-- Options Panel -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
           <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <label for="language" class="text-sm font-medium text-gray-700">Language:</label>
+              <label for="language" class="text-sm font-medium text-gray-700 dark:text-gray-300">Language:</label>
               <select
                 id="language"
                 v-model="selectedLanguage"
-                class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="px-3 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="plain">Plain Text</option>
                 <option value="javascript">JavaScript</option>
@@ -39,11 +47,11 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <label for="view-mode" class="text-sm font-medium text-gray-700">View:</label>
+              <label for="view-mode" class="text-sm font-medium text-gray-700 dark:text-gray-300">View:</label>
               <select
                 id="view-mode"
                 v-model="viewMode"
-                class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="px-3 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="side-by-side">Side by Side</option>
                 <option value="unified">Unified</option>
@@ -55,9 +63,9 @@
                 id="ignore-whitespace"
                 v-model="ignoreWhitespace"
                 type="checkbox"
-                class="rounded"
+                class="rounded text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500"
               />
-              <label for="ignore-whitespace" class="text-sm text-gray-700">Ignore Whitespace</label>
+              <label for="ignore-whitespace" class="text-sm text-gray-700 dark:text-gray-300">Ignore Whitespace</label>
             </div>
 
             <div class="flex items-center gap-2">
@@ -65,9 +73,9 @@
                 id="ignore-case"
                 v-model="ignoreCase"
                 type="checkbox"
-                class="rounded"
+                class="rounded text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500"
               />
-              <label for="ignore-case" class="text-sm text-gray-700">Ignore Case</label>
+              <label for="ignore-case" class="text-sm text-gray-700 dark:text-gray-300">Ignore Case</label>
             </div>
 
             <div class="flex items-center gap-2">
@@ -75,9 +83,9 @@
                 id="word-diff"
                 v-model="wordDiff"
                 type="checkbox"
-                class="rounded"
+                class="rounded text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500"
               />
-              <label for="word-diff" class="text-sm text-gray-700">Word-level Diff</label>
+              <label for="word-diff" class="text-sm text-gray-700 dark:text-gray-300">Word-level Diff</label>
             </div>
           </div>
         </div>
@@ -85,9 +93,9 @@
         <!-- Input Areas -->
         <div v-if="viewMode === 'side-by-side'" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <!-- Original Text -->
-          <div class="bg-white rounded-lg shadow-md">
-            <div class="flex justify-between items-center p-4 border-b border-gray-200">
-              <h3 class="text-lg font-semibold text-gray-900">Original</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Original</h3>
               <div class="flex gap-2">
                 <button
                   @click="loadFile('original')"
@@ -108,18 +116,18 @@
                 v-model="originalText"
                 placeholder="Enter original text or code..."
                 rows="20"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-colors"
               />
-              <div class="mt-2 text-xs text-gray-500">
+              <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 Lines: {{ originalText.split('\n').length }} | Characters: {{ originalText.length }}
               </div>
             </div>
           </div>
 
           <!-- Modified Text -->
-          <div class="bg-white rounded-lg shadow-md">
-            <div class="flex justify-between items-center p-4 border-b border-gray-200">
-              <h3 class="text-lg font-semibold text-gray-900">Modified</h3>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Modified</h3>
               <div class="flex gap-2">
                 <button
                   @click="loadFile('modified')"
@@ -140,9 +148,9 @@
                 v-model="modifiedText"
                 placeholder="Enter modified text or code..."
                 rows="20"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-colors"
               />
-              <div class="mt-2 text-xs text-gray-500">
+              <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 Lines: {{ modifiedText.split('\n').length }} | Characters: {{ modifiedText.length }}
               </div>
             </div>
@@ -150,9 +158,9 @@
         </div>
 
         <!-- Unified Input -->
-        <div v-else class="bg-white rounded-lg shadow-md mb-6">
-          <div class="flex justify-between items-center p-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Input Files</h3>
+        <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6 transition-colors">
+          <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Input Files</h3>
             <div class="flex gap-2">
               <button
                 @click="swapTexts"
@@ -165,53 +173,53 @@
           </div>
           <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Original</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Original</label>
               <textarea
                 v-model="originalText"
                 placeholder="Enter original text..."
                 rows="10"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-colors"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Modified</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Modified</label>
               <textarea
                 v-model="modifiedText"
                 placeholder="Enter modified text..."
                 rows="10"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-colors"
               />
             </div>
           </div>
         </div>
 
         <!-- Diff Statistics -->
-        <div v-if="diffStats" class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Diff Statistics</h3>
+        <div v-if="diffStats" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Diff Statistics</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="text-center p-3 bg-green-50 rounded-lg">
-              <div class="text-2xl font-bold text-green-600">{{ diffStats.additions }}</div>
-              <div class="text-sm text-green-700">Additions</div>
+            <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg transition-colors">
+              <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ diffStats.additions }}</div>
+              <div class="text-sm text-green-700 dark:text-green-300">Additions</div>
             </div>
-            <div class="text-center p-3 bg-red-50 rounded-lg">
-              <div class="text-2xl font-bold text-red-600">{{ diffStats.deletions }}</div>
-              <div class="text-sm text-red-700">Deletions</div>
+            <div class="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg transition-colors">
+              <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ diffStats.deletions }}</div>
+              <div class="text-sm text-red-700 dark:text-red-300">Deletions</div>
             </div>
-            <div class="text-center p-3 bg-blue-50 rounded-lg">
-              <div class="text-2xl font-bold text-blue-600">{{ diffStats.changes }}</div>
-              <div class="text-sm text-blue-700">Changes</div>
+            <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+              <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ diffStats.changes }}</div>
+              <div class="text-sm text-blue-700 dark:text-blue-300">Changes</div>
             </div>
-            <div class="text-center p-3 bg-gray-50 rounded-lg">
-              <div class="text-2xl font-bold text-gray-600">{{ diffStats.unchanged }}</div>
-              <div class="text-sm text-gray-700">Unchanged</div>
+            <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+              <div class="text-2xl font-bold text-gray-600 dark:text-gray-400">{{ diffStats.unchanged }}</div>
+              <div class="text-sm text-gray-700 dark:text-gray-300">Unchanged</div>
             </div>
           </div>
         </div>
 
         <!-- Diff Output -->
-        <div class="bg-white rounded-lg shadow-md">
-          <div class="flex justify-between items-center p-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Diff Result</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors">
+          <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Diff Result</h3>
             <div class="flex gap-2">
               <button
                 @click="copyDiff"
@@ -230,14 +238,14 @@
             </div>
           </div>
           <div class="p-4">
-            <div v-if="!diffOutput" class="text-center text-gray-500 py-8">
+            <div v-if="!diffOutput" class="text-center text-gray-500 dark:text-gray-400 py-8">
               Enter text in both fields to see the diff
             </div>
             <div v-else>
               <div v-if="viewMode === 'side-by-side'" class="grid grid-cols-1 lg:grid-cols-2 gap-1">
                 <!-- Side by Side Diff -->
-                <div class="border border-gray-200 rounded-l">
-                  <div class="bg-red-50 px-3 py-1 border-b border-gray-200 text-sm font-medium text-red-800">
+                <div class="border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-l transition-colors">
+                  <div class="bg-red-50 dark:bg-red-900/20 px-3 py-1 border-b border-gray-200 dark:border-gray-600 text-sm font-medium text-red-800 dark:text-red-200">
                     Original
                   </div>
                   <div class="max-h-96 overflow-auto">
@@ -248,17 +256,17 @@
                           :key="`orig-${index}`"
                           :class="getLineClass(line.type, 'original')"
                         >
-                          <td class="px-2 py-1 text-gray-400 text-right border-r border-gray-200 w-12">
+                          <td class="px-2 py-1 text-gray-400 dark:text-gray-500 text-right border-r border-gray-200 dark:border-gray-600 w-12">
                             {{ line.lineNumber || '' }}
                           </td>
-                          <td class="px-2 py-1 whitespace-pre-wrap break-all">{{ line.content }}</td>
+                          <td class="px-2 py-1 whitespace-pre-wrap break-all text-gray-900 dark:text-gray-100">{{ line.content }}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-                <div class="border border-gray-200 rounded-r">
-                  <div class="bg-green-50 px-3 py-1 border-b border-gray-200 text-sm font-medium text-green-800">
+                <div class="border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-r transition-colors">
+                  <div class="bg-green-50 dark:bg-green-900/20 px-3 py-1 border-b border-gray-200 dark:border-gray-600 text-sm font-medium text-green-800 dark:text-green-200">
                     Modified
                   </div>
                   <div class="max-h-96 overflow-auto">
@@ -269,17 +277,17 @@
                           :key="`mod-${index}`"
                           :class="getLineClass(line.type, 'modified')"
                         >
-                          <td class="px-2 py-1 text-gray-400 text-right border-r border-gray-200 w-12">
+                          <td class="px-2 py-1 text-gray-400 dark:text-gray-500 text-right border-r border-gray-200 dark:border-gray-600 w-12">
                             {{ line.lineNumber || '' }}
                           </td>
-                          <td class="px-2 py-1 whitespace-pre-wrap break-all">{{ line.content }}</td>
+                          <td class="px-2 py-1 whitespace-pre-wrap break-all text-gray-900 dark:text-gray-100">{{ line.content }}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
               </div>
-              <div v-else class="border border-gray-200 rounded">
+              <div v-else class="border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded transition-colors">
                 <!-- Unified Diff -->
                 <div class="max-h-96 overflow-auto">
                   <table class="w-full font-mono text-xs">
@@ -289,16 +297,16 @@
                         :key="`unified-${index}`"
                         :class="getUnifiedLineClass(line.type)"
                       >
-                        <td class="px-2 py-1 text-gray-400 text-right border-r border-gray-200 w-12">
+                        <td class="px-2 py-1 text-gray-400 dark:text-gray-500 text-right border-r border-gray-200 dark:border-gray-600 w-12">
                           {{ line.oldLineNumber || '' }}
                         </td>
-                        <td class="px-2 py-1 text-gray-400 text-right border-r border-gray-200 w-12">
+                        <td class="px-2 py-1 text-gray-400 dark:text-gray-500 text-right border-r border-gray-200 dark:border-gray-600 w-12">
                           {{ line.newLineNumber || '' }}
                         </td>
-                        <td class="px-1 py-1 text-center border-r border-gray-200 w-6">
+                        <td class="px-1 py-1 text-center border-r border-gray-200 dark:border-gray-600 w-6 text-gray-700 dark:text-gray-300">
                           {{ line.prefix }}
                         </td>
-                        <td class="px-2 py-1 whitespace-pre-wrap break-all">{{ line.content }}</td>
+                        <td class="px-2 py-1 whitespace-pre-wrap break-all text-gray-900 dark:text-gray-100">{{ line.content }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -309,17 +317,17 @@
         </div>
 
         <!-- Quick Examples -->
-        <div class="mt-6 bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Examples</h3>
+        <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Examples</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <button
               v-for="example in examples"
               :key="example.name"
               @click="loadExample(example)"
-              class="p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              class="p-3 text-left border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
             >
-              <div class="font-medium text-gray-800">{{ example.name }}</div>
-              <div class="text-sm text-gray-600 mt-1">{{ example.description }}</div>
+              <div class="font-medium text-gray-800 dark:text-gray-200">{{ example.name }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ example.description }}</div>
             </button>
           </div>
         </div>
@@ -335,7 +343,7 @@
       />
 
       <!-- Copy notification -->
-      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded shadow-lg transition-colors">
         {{ copyMessage }}
       </div>
     </div>
@@ -609,28 +617,28 @@ const diffOutput = computed(() => {
 })
 
 const getLineClass = (type: string, side: 'original' | 'modified') => {
-  const baseClass = 'border-b border-gray-100'
+  const baseClass = 'border-b border-gray-100 dark:border-gray-600'
   
   switch (type) {
     case 'insert':
-      return `${baseClass} bg-green-50`
+      return `${baseClass} bg-green-50 dark:bg-green-900/20`
     case 'delete':
-      return `${baseClass} bg-red-50`
+      return `${baseClass} bg-red-50 dark:bg-red-900/20`
     case 'empty':
-      return `${baseClass} bg-gray-50`
+      return `${baseClass} bg-gray-50 dark:bg-gray-700`
     default:
       return baseClass
   }
 }
 
 const getUnifiedLineClass = (type: string) => {
-  const baseClass = 'border-b border-gray-100'
+  const baseClass = 'border-b border-gray-100 dark:border-gray-600'
   
   switch (type) {
     case 'insert':
-      return `${baseClass} bg-green-50`
+      return `${baseClass} bg-green-50 dark:bg-green-900/20`
     case 'delete':
-      return `${baseClass} bg-red-50`
+      return `${baseClass} bg-red-50 dark:bg-red-900/20`
     default:
       return baseClass
   }
@@ -743,5 +751,9 @@ onMounted(() => {
   if (!originalText.value && !modifiedText.value) {
     loadExample(examples[0])
   }
+  
+  // Initialize dark mode
+  const { initializeTheme } = useDarkMode()
+  initializeTheme()
 })
 </script>

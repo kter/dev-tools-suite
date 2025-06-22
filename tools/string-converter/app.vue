@@ -1,29 +1,37 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <div class="container mx-auto px-4 py-8">
       <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">String Converter</h1>
-        <p class="text-gray-600">Convert strings between various formats: Base64, URL encoding, HTML escaping, case conversion and more</p>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex-1"></div>
+          <div class="flex-1 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">String Converter</h1>
+          </div>
+          <div class="flex-1 flex justify-end">
+            <ThemeToggle />
+          </div>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400">Convert strings between various formats: Base64, URL encoding, HTML escaping, case conversion and more</p>
       </header>
 
       <div class="max-w-6xl mx-auto">
         <!-- Conversion Type Selector -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Conversion Type</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Conversion Type</h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             <button
               v-for="type in conversionTypes"
               :key="type.id"
               @click="selectedType = type.id"
               :class="[
-                'p-3 text-left border border-gray-200 rounded-lg transition-colors',
+                'p-3 text-left border rounded-lg transition-colors',
                 selectedType === type.id 
-                  ? 'bg-blue-50 border-blue-300 text-blue-900' 
-                  : 'bg-white hover:bg-gray-50'
-              ]"
+                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 text-blue-900 dark:text-blue-100' 
+                  : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-white'
+              ]"  
             >
               <div class="font-medium text-sm">{{ type.name }}</div>
-              <div class="text-xs text-gray-500 mt-1">{{ type.description }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ type.description }}</div>
             </button>
           </div>
         </div>
@@ -31,9 +39,9 @@
         <!-- Conversion Area -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <!-- Input -->
-          <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">Input</h3>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Input</h3>
               <div class="flex gap-2">
                 <button
                   @click="clearInput"
@@ -53,18 +61,18 @@
               v-model="inputText"
               placeholder="Enter text to convert..."
               rows="12"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-colors"
             ></textarea>
-            <div class="mt-2 flex justify-between items-center text-xs text-gray-500">
+            <div class="mt-2 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
               <span>Characters: {{ inputText.length }}</span>
               <span>Bytes: {{ new TextEncoder().encode(inputText).length }}</span>
             </div>
           </div>
 
           <!-- Output -->
-          <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold text-gray-900">Output</h3>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Output</h3>
               <div class="flex gap-2">
                 <button
                   @click="copyOutput"
@@ -87,11 +95,11 @@
               :value="outputText"
               readonly
               rows="12"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 font-mono text-sm"
-              :class="{ 'text-red-600': errorMessage }"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm transition-colors"
+              :class="{ 'text-red-600 dark:text-red-400': errorMessage }"
             ></textarea>
-            <div class="mt-2 flex justify-between items-center text-xs text-gray-500">
-              <span v-if="errorMessage" class="text-red-600">{{ errorMessage }}</span>
+            <div class="mt-2 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+              <span v-if="errorMessage" class="text-red-600 dark:text-red-400">{{ errorMessage }}</span>
               <span v-else>Characters: {{ outputText.length }}</span>
               <span v-if="!errorMessage">Bytes: {{ new TextEncoder().encode(outputText).length }}</span>
             </div>
@@ -99,25 +107,25 @@
         </div>
 
         <!-- Batch Conversion -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Batch Conversion</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Batch Conversion</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Multiple Inputs (one per line)</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Multiple Inputs (one per line)</label>
               <textarea
                 v-model="batchInput"
                 placeholder="Enter multiple strings, one per line..."
                 rows="8"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm transition-colors"
               ></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Batch Results</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Batch Results</label>
               <textarea
                 :value="batchOutput"
                 readonly
                 rows="8"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 font-mono text-sm"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm transition-colors"
               ></textarea>
               <button
                 @click="copyBatchOutput"
@@ -131,22 +139,22 @@
         </div>
 
         <!-- Quick Examples -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Examples</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Examples</h3>
           <div v-if="currentConverter?.examples" class="space-y-3">
             <div
               v-for="example in currentConverter.examples"
               :key="example.input"
-              class="p-3 bg-gray-50 rounded-lg"
+              class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors"
             >
               <div class="flex justify-between items-start gap-4">
                 <div class="flex-1">
-                  <div class="text-xs text-gray-600 mb-1">Input:</div>
-                  <div class="font-mono text-sm text-gray-800 break-all">{{ example.input }}</div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Input:</div>
+                  <div class="font-mono text-sm text-gray-800 dark:text-gray-200 break-all">{{ example.input }}</div>
                 </div>
                 <div class="flex-1">
-                  <div class="text-xs text-gray-600 mb-1">Output:</div>
-                  <div class="font-mono text-sm text-gray-800 break-all">{{ example.output }}</div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Output:</div>
+                  <div class="font-mono text-sm text-gray-800 dark:text-gray-200 break-all">{{ example.output }}</div>
                 </div>
                 <button
                   @click="useExample(example)"
@@ -161,7 +169,7 @@
       </div>
 
       <!-- Copy notification -->
-      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+      <div v-if="copyMessage" class="fixed bottom-4 right-4 bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded shadow-lg transition-colors">
         {{ copyMessage }}
       </div>
     </div>
@@ -462,5 +470,9 @@ watch([inputText, selectedType], () => {
 
 onMounted(() => {
   convertText()
+  
+  // Initialize dark mode
+  const { initializeTheme } = useDarkMode()
+  initializeTheme()
 })
 </script>
