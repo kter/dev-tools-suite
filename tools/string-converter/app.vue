@@ -65,7 +65,7 @@
             ></textarea>
             <div class="mt-2 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
               <span>Characters: {{ inputText.length }}</span>
-              <span>Bytes: {{ new TextEncoder().encode(inputText).length }}</span>
+              <span>Bytes: {{ getByteLength(inputText) }}</span>
             </div>
           </div>
 
@@ -101,7 +101,7 @@
             <div class="mt-2 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
               <span v-if="errorMessage" class="text-red-600 dark:text-red-400">{{ errorMessage }}</span>
               <span v-else>Characters: {{ outputText.length }}</span>
-              <span v-if="!errorMessage">Bytes: {{ new TextEncoder().encode(outputText).length }}</span>
+              <span v-if="!errorMessage">Bytes: {{ getByteLength(outputText) }}</span>
             </div>
           </div>
         </div>
@@ -214,7 +214,12 @@ const conversionTypes: ConversionType[] = [
     description: 'Encode to Base64',
     convert: (input: string) => {
       if (!input) return ''
-      return btoa(unescape(encodeURIComponent(input)))
+      try {
+        // Use modern approach with proper UTF-8 handling
+        return btoa(unescape(encodeURIComponent(input)))
+      } catch (error) {
+        throw new Error('Failed to encode to Base64')
+      }
     },
     reversible: true,
     examples: [
@@ -229,7 +234,9 @@ const conversionTypes: ConversionType[] = [
     convert: (input: string) => {
       if (!input) return ''
       try {
-        return decodeURIComponent(escape(atob(input)))
+        // Use modern approach with proper UTF-8 handling
+        const decoded = atob(input.replace(/[^A-Za-z0-9+/]/g, ''))
+        return decodeURIComponent(escape(decoded))
       } catch (error) {
         throw new Error('Invalid Base64 input')
       }
@@ -461,6 +468,34 @@ const showCopyMessage = (message: string) => {
   setTimeout(() => {
     copyMessage.value = ''
   }, 2000)
+}
+
+// Safe byte length calculation without TextEncoder
+const getByteLength = (text: string): number => {
+  if (!text) return 0
+  
+  // Use Blob API for accurate byte counting with UTF-8 encoding
+  if (typeof Blob !== 'undefined') {
+    return new Blob([text], { type: 'text/plain' }).size
+  }
+  
+  // Fallback: manual UTF-8 byte counting
+  let bytes = 0
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i)
+    if (code < 0x80) {
+      bytes += 1
+    } else if (code < 0x800) {
+      bytes += 2
+    } else if (code < 0xd800 || code >= 0xe000) {
+      bytes += 3
+    } else {
+      // Surrogate pair
+      i++
+      bytes += 4
+    }
+  }
+  return bytes
 }
 
 // Watch for changes and auto-convert
