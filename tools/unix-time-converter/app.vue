@@ -1,116 +1,121 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
     <div class="container mx-auto px-4 py-12">
-      <header class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+      <header class="text-center mb-12 relative">
+        <!-- Theme Toggle -->
+        <div class="absolute right-0 top-0">
+          <ThemeToggle />
+        </div>
+        
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
             Unix Time Converter
           </span>
         </h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Convert between Unix timestamps and human-readable dates
         </p>
       </header>
 
       <div class="max-w-4xl mx-auto space-y-8">
         <!-- Current Time Display -->
-        <div class="bg-white rounded-xl shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Current Time</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Current Time</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp</label>
-              <div class="p-3 bg-gray-50 rounded-lg font-mono text-lg">{{ currentUnixTime }}</div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unix Timestamp</label>
+              <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg font-mono text-lg text-gray-900 dark:text-white">{{ currentUnixTime }}</div>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Human Readable</label>
-              <div class="p-3 bg-gray-50 rounded-lg">{{ currentHumanTime }}</div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Human Readable</label>
+              <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-white">{{ currentHumanTime }}</div>
             </div>
           </div>
         </div>
 
         <!-- Unix to Human Converter -->
-        <div class="bg-white rounded-xl shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Unix Timestamp to Date</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Unix Timestamp to Date</h2>
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unix Timestamp</label>
               <input
                 v-model="unixInput"
                 type="number"
                 placeholder="1640995200"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 @input="convertUnixToHuman"
               />
             </div>
             <div v-if="unixResult.local" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Local Time</label>
-                <div class="p-3 bg-gray-50 rounded-lg">{{ unixResult.local }}</div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Local Time</label>
+                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-white">{{ unixResult.local }}</div>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">UTC Time</label>
-                <div class="p-3 bg-gray-50 rounded-lg">{{ unixResult.utc }}</div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">UTC Time</label>
+                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-white">{{ unixResult.utc }}</div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Human to Unix Converter -->
-        <div class="bg-white rounded-xl shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Date to Unix Timestamp</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Date to Unix Timestamp</h2>
           <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date</label>
                 <input
                   v-model="dateInput"
                   type="date"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   @input="convertHumanToUnix"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
                 <input
                   v-model="timeInput"
                   type="time"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   @input="convertHumanToUnix"
                 />
               </div>
             </div>
             <div v-if="humanResult.local" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp (Local)</label>
-                <div class="p-3 bg-gray-50 rounded-lg font-mono">{{ humanResult.local }}</div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unix Timestamp (Local)</label>
+                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg font-mono text-gray-900 dark:text-white">{{ humanResult.local }}</div>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Unix Timestamp (UTC)</label>
-                <div class="p-3 bg-gray-50 rounded-lg font-mono">{{ humanResult.utc }}</div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unix Timestamp (UTC)</label>
+                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg font-mono text-gray-900 dark:text-white">{{ humanResult.utc }}</div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Common Timestamps -->
-        <div class="bg-white rounded-xl shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Common Timestamps</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Common Timestamps</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <button
               v-for="preset in commonTimestamps"
               :key="preset.name"
               @click="usePreset(preset.timestamp)"
-              class="p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-colors"
+              class="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
             >
-              <div class="font-semibold text-gray-900">{{ preset.name }}</div>
-              <div class="text-sm text-gray-600 font-mono">{{ preset.timestamp }}</div>
-              <div class="text-xs text-gray-500">{{ preset.description }}</div>
+              <div class="font-semibold text-gray-900 dark:text-white">{{ preset.name }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 font-mono">{{ preset.timestamp }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{{ preset.description }}</div>
             </button>
           </div>
         </div>
       </div>
 
-      <footer class="mt-16 text-center text-gray-500">
+      <footer class="mt-16 text-center text-gray-500 dark:text-gray-400">
         <p>All conversions are performed locally in your browser</p>
       </footer>
     </div>
@@ -236,8 +241,14 @@ const usePreset = (timestamp: number) => {
   convertUnixToHuman()
 }
 
+// Dark mode
+const { initializeTheme } = useDarkMode()
+
 // Initialize
 onMounted(() => {
+  // Initialize theme
+  initializeTheme()
+  
   updateCurrentTime()
   // Update current time every second
   setInterval(updateCurrentTime, 1000)

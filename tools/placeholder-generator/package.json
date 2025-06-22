@@ -1,0 +1,24 @@
+{
+  "name": "placeholder-generator",
+  "private": true,
+  "version": "1.0.2",
+  "type": "module",
+  "scripts": {
+    "build": "npx nuxi build",
+    "dev": "npx nuxi dev",
+    "generate": "npx nuxi generate",
+    "preview": "npx nuxi preview",
+    "lint": "eslint .",
+    "type-check": "npx nuxi typecheck"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxt/eslint-config": "^0.2.0",
+    "@nuxtjs/tailwindcss": "^6.8.4",
+    "eslint": "^8.57.0",
+    "nuxt": "^3.17.5",
+    "typescript": "^5.2.2",
+    "vue-tsc": "^1.8.0"
+  },
+  "dependencies": {}
+}
