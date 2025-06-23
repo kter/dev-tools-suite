@@ -179,6 +179,9 @@ const regexTesterUrl = isDevEnvironment
 const loremIpsumGeneratorUrl = isDevEnvironment 
   ? 'https://lorem-ipsum-generator.dev.devtools.site'
   : 'https://lorem-ipsum-generator.devtools.site'
+const imageConverterUrl = isDevEnvironment 
+  ? 'https://image-converter.dev.devtools.site'
+  : 'https://image-converter.devtools.site'
 
 const availableTools = [
   {
@@ -276,6 +279,12 @@ const availableTools = [
     description: 'Generate placeholder text for your projects with customizable options',
     icon: '📄',
     url: loremIpsumGeneratorUrl
+  },
+  {
+    name: 'Image Converter',
+    description: 'Convert image formats and resize images with quality controls',
+    icon: '🖼️',
+    url: imageConverterUrl
   }
 ]
 
