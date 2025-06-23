@@ -61,6 +61,8 @@ jobs:
               - 'tools/regex-tester/**'
             lorem-ipsum-generator:
               - 'tools/lorem-ipsum-generator/**'
+            image-converter:
+              - 'tools/image-converter/**'
             landing-page:
               - 'tools/landing-page/**'
 

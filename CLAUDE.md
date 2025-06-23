@@ -77,14 +77,15 @@ done
 ```bash
 # Deploy infrastructure to dev environment
 cd infrastructure/cdk
-npm run deploy:dev
+npx cdk deploy DevToolsStack-dev -c environment=dev --profile dev
 
 # Deploy infrastructure to production
 cd infrastructure/cdk  
-npm run deploy:prd
+npx cdk deploy DevToolsStack-prd -c environment=prd --profile prd
 
 # Destroy infrastructure (careful!)
-npm run destroy:dev  # or destroy:prd
+npx cdk destroy DevToolsStack-dev -c environment=dev --profile dev
+npx cdk destroy DevToolsStack-prd -c environment=prd --profile prd
 ```
 
 ### Version Management
@@ -116,6 +117,15 @@ export default defineNuxtConfig({
 - Build output is always in `.output/public/` directory
 
 ## Deployment Architecture
+
+### Infrastructure as Code (AWS CDK)
+- **ALL AWS infrastructure is managed by CDK in TypeScript** (`infrastructure/cdk/`)
+- **NEVER use AWS CLI or console for infrastructure changes** - always update CDK code
+- **Each tool gets**: S3 bucket, CloudFront distribution, Route53 A record, and SSL certificate
+- **Stack naming**: `DevToolsStack-{environment}` (dev/prd)
+- **New tools MUST be added to both**:
+  - `infrastructure/cdk/lib/dev-tools-stack.ts` (add `createToolInfrastructure` call)
+  - `.github/workflows/deploy.yml` (add to paths-filter)
 
 ### GitHub Actions Workflow
 - **Matrix Strategy**: Deploys each tool independently
