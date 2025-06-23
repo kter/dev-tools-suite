@@ -74,7 +74,7 @@ jobs:
             echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
           else
             # Convert the JSON array to matrix format
-            matrix=$(echo "$changed_tools" | jq '. | map({tool: .}) | {include: .}')
+            matrix=$(echo "$changed_tools" | jq -c '. | map({tool: .}) | {include: .}')
             echo "matrix=$matrix" >> $GITHUB_OUTPUT
           fi
 
