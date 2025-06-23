@@ -4,6 +4,24 @@ on:
   push:
     branches: [develop, main]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prd
+      tool:
+        description: 'Specific tool to deploy (leave empty for all changed tools)'
+        required: false
+        type: string
+      force_deploy:
+        description: 'Force deploy all tools (ignore change detection)'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   id-token: write
@@ -69,7 +87,25 @@ jobs:
       - name: Set matrix for deployment
         id: set-matrix
         run: |
-          changed_tools='${{ steps.changes.outputs.changes }}'
+          # Handle manual workflow dispatch
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event.inputs.force_deploy }}" == "true" ]]; then
+              # Force deploy all tools
+              changed_tools='["hash-generator","qr-generator","unix-time-converter","password-generator","ip-calculator","markdown-preview","placeholder-generator","ip-info","timezone-converter","string-converter","code-diff","mic-test","json-yaml-converter","jwt-decoder","regex-tester","lorem-ipsum-generator","image-converter","landing-page"]'
+            elif [[ "${{ github.event.inputs.tool }}" != "" ]]; then
+              # Deploy specific tool
+              changed_tools='["${{ github.event.inputs.tool }}"]'
+            else
+              # Use change detection for workflow_dispatch without specific inputs
+              changed_tools='${{ steps.changes.outputs.changes }}'
+            fi
+          else
+            # Use change detection for push events
+            changed_tools='${{ steps.changes.outputs.changes }}'
+          fi
+          
+          echo "Detected tools: $changed_tools"
+          
           if [ "$changed_tools" = "[]" ]; then
             echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
           else
@@ -85,6 +121,9 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
       fail-fast: false
+    
+    environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -99,7 +138,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ github.ref == 'refs/heads/main' && vars.AWS_ROLE_ARN_PRD || vars.AWS_ROLE_ARN_DEV }}
+          role-to-assume: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && vars.AWS_ROLE_ARN_PRD || vars.AWS_ROLE_ARN_DEV }}
           aws-region: us-east-1
 
       - name: Install dependencies and build
@@ -111,7 +150,7 @@ jobs:
       - name: Get stack outputs
         id: stack-outputs
         run: |
-          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
           STACK_NAME="DevToolsStack-${ENV}"
           
           # Get bucket name (remove hyphens from tool name for output key)
@@ -147,7 +186,7 @@ jobs:
       - name: Invalidate CloudFront cache with retry
         id: invalidate-cache
         run: |
-          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
           DISTRIBUTION_ID="${{ steps.stack-outputs.outputs.distribution-id }}"
           TOOL_NAME="${{ matrix.tool }}"
           
@@ -222,7 +261,7 @@ jobs:
 
       - name: Deployment summary
         run: |
-          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
           TOOL_NAME="${{ matrix.tool }}"
           INVALIDATION_SUCCESS="${{ steps.invalidate-cache.outputs.invalidation-success }}"
           
@@ -250,6 +289,30 @@ jobs:
             echo "🔗 Production URL: https://$TOOL_NAME.devtools.site"
           fi
           echo "========================================="
+          
+          # Add to GitHub step summary
+          if [[ "$INVALIDATION_SUCCESS" == "true" ]]; then
+            echo "## ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ⚠️ Deployment Completed with Warnings" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "- **Tool**: $TOOL_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: $ENV" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Bucket**: ${{ steps.stack-outputs.outputs.bucket-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **CloudFront**: ${{ steps.stack-outputs.outputs.distribution-id }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$ENV" = "dev" ]; then
+            if [ "$TOOL_NAME" = "landing-page" ]; then
+              echo "- **URL**: https://dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- **URL**: https://$TOOL_NAME.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            if [ "$TOOL_NAME" = "landing-page" ]; then
+              echo "- **URL**: https://devtools.site" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- **URL**: https://$TOOL_NAME.devtools.site" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
 
   deployment-status:
     needs: [detect-changes, deploy]
@@ -258,7 +321,7 @@ jobs:
     steps:
       - name: Overall deployment status
         run: |
-          ENV=${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
           CHANGED_TOOLS='${{ needs.detect-changes.outputs.changed-tools }}'
           DEPLOY_RESULT="${{ needs.deploy.result }}"
           
