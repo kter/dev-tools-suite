@@ -182,6 +182,9 @@ const loremIpsumGeneratorUrl = isDevEnvironment
 const imageConverterUrl = isDevEnvironment 
   ? 'https://image-converter.dev.devtools.site'
   : 'https://image-converter.devtools.site'
+const timerUrl = isDevEnvironment 
+  ? 'https://timer.dev.devtools.site'
+  : 'https://timer.devtools.site'
 
 const availableTools = [
   {
@@ -285,6 +288,12 @@ const availableTools = [
     description: 'Convert image formats and resize images with quality controls',
     icon: '🖼️',
     url: imageConverterUrl
+  },
+  {
+    name: 'Timer',
+    description: 'Countdown timer, stopwatch, and Pomodoro technique timer for productivity',
+    icon: '⏱️',
+    url: timerUrl
   }
 ]
 
