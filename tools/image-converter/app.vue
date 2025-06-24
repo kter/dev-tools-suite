@@ -128,44 +128,103 @@
                 </label>
               </div>
 
-              <div v-if="enableResize" class="grid grid-cols-2 gap-4">
+              <div v-if="enableResize" class="space-y-4">
+                <!-- Resolution Presets -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Width (px)
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Resolution Presets
                   </label>
-                  <input
-                    v-model.number="newWidth"
-                    type="number"
-                    min="1"
-                    max="4000"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    :placeholder="originalDimensions.width.toString()"
-                  />
+                  <div class="grid grid-cols-2 gap-2 mb-3">
+                    <button
+                      v-for="preset in resolutionPresets"
+                      :key="`${preset.width}x${preset.height}`"
+                      @click="applyResolutionPreset(preset)"
+                      class="px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 rounded transition-colors"
+                      :class="{ 'ring-2 ring-blue-500': newWidth === preset.width && newHeight === preset.height }"
+                    >
+                      {{ preset.name }}<br>
+                      <span class="text-gray-500 dark:text-gray-400">{{ preset.width }}×{{ preset.height }}</span>
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Height (px)
-                  </label>
-                  <input
-                    v-model.number="newHeight"
-                    type="number"
-                    min="1"
-                    max="4000"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    :placeholder="originalDimensions.height.toString()"
-                  />
-                </div>
-              </div>
 
-              <div v-if="enableResize">
-                <label class="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                  <input
-                    v-model="maintainAspectRatio"
-                    type="checkbox"
-                    class="mr-2 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600"
-                  />
-                  Maintain aspect ratio
-                </label>
+                <!-- Scale by Percentage -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Scale by Percentage
+                  </label>
+                  <div class="flex items-center space-x-2">
+                    <input
+                      v-model.number="scalePercentage"
+                      type="number"
+                      min="1"
+                      max="500"
+                      step="1"
+                      class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                    />
+                    <span class="text-sm text-gray-600 dark:text-gray-300">%</span>
+                    <button
+                      @click="applyScalePercentage"
+                      class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Custom Dimensions -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Custom Dimensions
+                  </label>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        Width (px)
+                      </label>
+                      <input
+                        v-model.number="newWidth"
+                        type="number"
+                        min="1"
+                        max="4000"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        :placeholder="originalDimensions.width.toString()"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        Height (px)
+                      </label>
+                      <input
+                        v-model.number="newHeight"
+                        type="number"
+                        min="1"
+                        max="4000"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        :placeholder="originalDimensions.height.toString()"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Aspect Ratio Options -->
+                <div class="space-y-2">
+                  <label class="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                    <input
+                      v-model="maintainAspectRatio"
+                      type="checkbox"
+                      class="mr-2 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600"
+                    />
+                    Maintain aspect ratio
+                  </label>
+                  
+                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                    Current ratio: {{ currentAspectRatio }}
+                    <span v-if="newWidth && newHeight">
+                      → New ratio: {{ newAspectRatio }}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <!-- Convert Button -->
@@ -263,6 +322,19 @@ const enableResize = ref(false)
 const newWidth = ref<number | null>(null)
 const newHeight = ref<number | null>(null)
 const maintainAspectRatio = ref(true)
+const scalePercentage = ref(100)
+
+// Resolution presets
+const resolutionPresets = ref([
+  { name: 'HD', width: 1280, height: 720 },
+  { name: 'Full HD', width: 1920, height: 1080 },
+  { name: '4K UHD', width: 3840, height: 2160 },
+  { name: 'Instagram', width: 1080, height: 1080 },
+  { name: 'Facebook', width: 1200, height: 630 },
+  { name: 'Twitter', width: 1024, height: 512 },
+  { name: 'YouTube', width: 1280, height: 720 },
+  { name: 'Web Small', width: 800, height: 600 }
+])
 
 // Converted image
 const convertedImage = ref<string>('')
@@ -325,6 +397,36 @@ const clearImage = () => {
   convertedImage.value = ''
   originalDimensions.value = { width: 0, height: 0 }
   convertedDimensions.value = { width: 0, height: 0 }
+}
+
+// Computed properties for aspect ratios
+const currentAspectRatio = computed(() => {
+  if (originalDimensions.value.width === 0 || originalDimensions.value.height === 0) return '0:0'
+  const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b)
+  const divisor = gcd(originalDimensions.value.width, originalDimensions.value.height)
+  return `${originalDimensions.value.width / divisor}:${originalDimensions.value.height / divisor}`
+})
+
+const newAspectRatio = computed(() => {
+  if (!newWidth.value || !newHeight.value) return '0:0'
+  const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b)
+  const divisor = gcd(newWidth.value, newHeight.value)
+  return `${newWidth.value / divisor}:${newHeight.value / divisor}`
+})
+
+// Resolution preset functions
+const applyResolutionPreset = (preset: { width: number; height: number }) => {
+  newWidth.value = preset.width
+  newHeight.value = preset.height
+  maintainAspectRatio.value = false
+}
+
+const applyScalePercentage = () => {
+  if (originalDimensions.value.width > 0 && originalDimensions.value.height > 0) {
+    const scale = scalePercentage.value / 100
+    newWidth.value = Math.round(originalDimensions.value.width * scale)
+    newHeight.value = Math.round(originalDimensions.value.height * scale)
+  }
 }
 
 // Watch for aspect ratio maintenance
