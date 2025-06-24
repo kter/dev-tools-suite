@@ -1,7 +1,7 @@
 {
   "name": "image-converter",
   "private": true,
-  "version": "1.0.11",
+  "version": "1.0.12",
   "type": "module",
   "scripts": {
     "build": "npx nuxi build",
