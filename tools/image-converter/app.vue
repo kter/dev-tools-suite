@@ -64,178 +64,217 @@
           </div>
         </div>
 
-        <!-- Image Preview and Settings -->
-        <div v-if="imagePreview" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Preview -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Preview</h3>
-            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
-              <img
-                :src="imagePreview"
-                alt="Preview"
-                class="max-w-full max-h-64 mx-auto rounded"
-              />
-              <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                Original: {{ originalDimensions.width }}×{{ originalDimensions.height }}px
-              </p>
+        <!-- Conversion Settings -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Conversion Settings</h3>
+          
+          <div class="space-y-4">
+            <!-- Output Format -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Output Format
+              </label>
+              <select
+                v-model="outputFormat"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="jpeg">JPEG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WebP</option>
+              </select>
             </div>
-          </div>
 
-          <!-- Conversion Settings -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Conversion Settings</h3>
-            
-            <div class="space-y-4">
-              <!-- Output Format -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Output Format
-                </label>
-                <select
-                  v-model="outputFormat"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                >
-                  <option value="jpeg">JPEG</option>
-                  <option value="png">PNG</option>
-                  <option value="webp">WebP</option>
-                </select>
-              </div>
+            <!-- Quality (for JPEG and WebP) -->
+            <div v-if="outputFormat === 'jpeg' || outputFormat === 'webp'">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Quality: {{ quality }}%
+              </label>
+              <input
+                v-model="quality"
+                type="range"
+                min="10"
+                max="100"
+                step="5"
+                class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer"
+              />
+            </div>
 
-              <!-- Quality (for JPEG and WebP) -->
-              <div v-if="outputFormat === 'jpeg' || outputFormat === 'webp'">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Quality: {{ quality }}%
-                </label>
+            <!-- Resize Options -->
+            <div>
+              <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <input
-                  v-model="quality"
-                  type="range"
-                  min="10"
-                  max="100"
-                  step="5"
-                  class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                  v-model="enableResize"
+                  type="checkbox"
+                  class="mr-2 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600"
                 />
-              </div>
+                Resize Image
+              </label>
+            </div>
 
-              <!-- Resize Options -->
+            <div v-if="enableResize" class="space-y-4">
+              <!-- Resolution Presets -->
               <div>
-                <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  <input
-                    v-model="enableResize"
-                    type="checkbox"
-                    class="mr-2 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600"
-                  />
-                  Resize Image
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Resolution Presets
                 </label>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    v-for="preset in resolutionPresets"
+                    :key="`${preset.width}x${preset.height}`"
+                    @click="applyResolutionPreset(preset)"
+                    class="px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 rounded transition-colors"
+                    :class="{ 'ring-2 ring-blue-500': newWidth === preset.width && newHeight === preset.height }"
+                    :disabled="!selectedImage"
+                  >
+                    {{ preset.name }}<br>
+                    <span class="text-gray-500 dark:text-gray-400">{{ preset.width }}×{{ preset.height }}</span>
+                  </button>
+                </div>
               </div>
 
-              <div v-if="enableResize" class="space-y-4">
-                <!-- Resolution Presets -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Resolution Presets
-                  </label>
-                  <div class="grid grid-cols-2 gap-2 mb-3">
-                    <button
-                      v-for="preset in resolutionPresets"
-                      :key="`${preset.width}x${preset.height}`"
-                      @click="applyResolutionPreset(preset)"
-                      class="px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 rounded transition-colors"
-                      :class="{ 'ring-2 ring-blue-500': newWidth === preset.width && newHeight === preset.height }"
-                    >
-                      {{ preset.name }}<br>
-                      <span class="text-gray-500 dark:text-gray-400">{{ preset.width }}×{{ preset.height }}</span>
-                    </button>
-                  </div>
+              <!-- Scale by Percentage -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Scale by Percentage
+                </label>
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-model.number="scalePercentage"
+                    type="number"
+                    min="1"
+                    max="500"
+                    step="1"
+                    class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                    :disabled="!selectedImage"
+                  />
+                  <span class="text-sm text-gray-600 dark:text-gray-300">%</span>
+                  <button
+                    @click="applyScalePercentage"
+                    class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded transition-colors"
+                    :disabled="!selectedImage"
+                  >
+                    Apply
+                  </button>
                 </div>
+              </div>
 
-                <!-- Scale by Percentage -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Scale by Percentage
-                  </label>
-                  <div class="flex items-center space-x-2">
+              <!-- Custom Dimensions -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Custom Dimensions
+                </label>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                      Width (px)
+                    </label>
                     <input
-                      v-model.number="scalePercentage"
+                      v-model.number="newWidth"
                       type="number"
                       min="1"
-                      max="500"
-                      step="1"
-                      class="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      max="4000"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600"
+                      :placeholder="selectedImage ? originalDimensions.width.toString() : '1920'"
+                      :disabled="!selectedImage"
                     />
-                    <span class="text-sm text-gray-600 dark:text-gray-300">%</span>
-                    <button
-                      @click="applyScalePercentage"
-                      class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
-                    >
-                      Apply
-                    </button>
                   </div>
-                </div>
-
-                <!-- Custom Dimensions -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Custom Dimensions
-                  </label>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                        Width (px)
-                      </label>
-                      <input
-                        v-model.number="newWidth"
-                        type="number"
-                        min="1"
-                        max="4000"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        :placeholder="originalDimensions.width.toString()"
-                      />
-                    </div>
-                    <div>
-                      <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                        Height (px)
-                      </label>
-                      <input
-                        v-model.number="newHeight"
-                        type="number"
-                        min="1"
-                        max="4000"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        :placeholder="originalDimensions.height.toString()"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Aspect Ratio Options -->
-                <div class="space-y-2">
-                  <label class="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                  <div>
+                    <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                      Height (px)
+                    </label>
                     <input
-                      v-model="maintainAspectRatio"
-                      type="checkbox"
-                      class="mr-2 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600"
+                      v-model.number="newHeight"
+                      type="number"
+                      min="1"
+                      max="4000"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-600"
+                      :placeholder="selectedImage ? originalDimensions.height.toString() : '1080'"
+                      :disabled="!selectedImage"
                     />
-                    Maintain aspect ratio
-                  </label>
-                  
-                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aspect Ratio Options -->
+              <div class="space-y-2">
+                <label class="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                  <input
+                    v-model="maintainAspectRatio"
+                    type="checkbox"
+                    class="mr-2 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600"
+                    :disabled="!selectedImage"
+                  />
+                  Maintain aspect ratio
+                </label>
+                
+                <div class="text-xs text-gray-500 dark:text-gray-400">
+                  <span v-if="selectedImage">
                     Current ratio: {{ currentAspectRatio }}
                     <span v-if="newWidth && newHeight">
                       → New ratio: {{ newAspectRatio }}
                     </span>
-                  </div>
+                  </span>
+                  <span v-else>
+                    Upload an image to see aspect ratio information
+                  </span>
                 </div>
               </div>
-
-              <!-- Convert Button -->
-              <button
-                @click="convertImage"
-                :disabled="isConverting"
-                class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-md transition-colors"
-              >
-                {{ isConverting ? 'Converting...' : 'Convert Image' }}
-              </button>
             </div>
+
+            <!-- Convert Button -->
+            <button
+              @click="convertImage"
+              :disabled="isConverting || !selectedImage"
+              class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-md transition-colors"
+            >
+              {{ isConverting ? 'Converting...' : !selectedImage ? 'Upload image to convert' : 'Convert Image' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Image Preview -->
+        <div v-if="imagePreview" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Preview</h3>
+          <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
+            <img
+              :src="imagePreview"
+              alt="Preview"
+              class="max-w-full max-h-64 mx-auto rounded"
+            />
+            <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
+              Original: {{ originalDimensions.width }}×{{ originalDimensions.height }}px
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature Overview -->
+        <div v-if="!imagePreview" class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-700">
+          <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            What You Can Do
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="space-y-2">
+              <h4 class="font-medium text-blue-800 dark:text-blue-300">Format Conversion</h4>
+              <ul class="space-y-1 text-blue-700 dark:text-blue-400">
+                <li>• Convert between JPEG, PNG, WebP</li>
+                <li>• Adjust quality for compressed formats</li>
+                <li>• Optimize file size vs quality</li>
+              </ul>
+            </div>
+            <div class="space-y-2">
+              <h4 class="font-medium text-blue-800 dark:text-blue-300">Resize & Scale</h4>
+              <ul class="space-y-1 text-blue-700 dark:text-blue-400">
+                <li>• Use preset resolutions (HD, 4K, Social media)</li>
+                <li>• Scale by percentage (10% - 500%)</li>
+                <li>• Custom dimensions with aspect ratio</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-4 p-3 bg-blue-100 dark:bg-blue-800/30 rounded text-blue-800 dark:text-blue-300 text-sm">
+            <strong>Getting Started:</strong> Upload an image above to see live preview and access all conversion options.
           </div>
         </div>
 
