@@ -25,7 +25,7 @@
               >
                 <option value="lorem">Lorem Ipsum (Latin)</option>
                 <option value="english">English Words</option>
-                <option value="japanese">Japanese (Hiragana)</option>
+                <option value="japanese">Japanese (銀河鉄道の夜)</option>
                 <option value="numbers">Numbers</option>
               </select>
             </div>
@@ -217,12 +217,12 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            About Lorem Ipsum
+            About Lorem Ipsum & Japanese Text
           </h3>
           <div class="space-y-2 text-blue-800 dark:text-blue-300 text-sm">
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has been the industry's standard dummy text since the 1500s.</p>
-            <p>It is derived from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC.</p>
-            <p>Use this tool to generate placeholder text for your design mockups, websites, and documents.</p>
+            <p><strong>Lorem Ipsum:</strong> The standard dummy text of the printing industry since the 1500s, derived from Cicero's "de Finibus Bonorum et Malorum" (45 BC).</p>
+            <p><strong>銀河鉄道の夜 (Night on the Galactic Railroad):</strong> A masterpiece by Japanese author Kenji Miyazawa, featuring the journey of Giovanni and Campanella through the Milky Way. The Japanese option uses vocabulary from this beloved story.</p>
+            <p>Use this tool to generate placeholder text for your design mockups, websites, and documents in multiple languages.</p>
           </div>
         </div>
       </div>
@@ -280,12 +280,19 @@ const englishWords = [
 ]
 
 const japaneseWords = [
-  'あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの',
-  'はひふへほ', 'まみむめも', 'やゆよ', 'らりるれろ', 'わをん',
-  'こんにちは', 'ありがとう', 'さようなら', 'おはよう', 'こんばんは',
-  'すみません', 'ごめんなさい', 'はじめまして', 'よろしく', 'どうぞ',
-  'にほん', 'とうきょう', 'おおさか', 'きょうと', 'なごや', 'ふくおか',
-  'せかい', 'ちきゅう', 'うちゅう', 'しぜん', 'どうぶつ', 'しょくぶつ'
+  '銀河鉄道', 'ジョバンニ', 'カムパネルラ', '星座', '天の川', '白鳥座', 'さそり座',
+  '石炭袋', 'プリオシン海岸', '鷺', 'プリオシン', '化石', '発掘', '博物館',
+  '活版所', '新聞', '牛乳', '母親', '病気', '父親', '漁', '北海道',
+  'ケンタウル', '南十字', '石炭', '汽車', '切符', '車掌', '燈台', '信号',
+  '鳥捕り', '雁', '白鳥', '青い', '美しい', '光る', '輝く', '流れる',
+  '歌声', '音楽', '笛', '鐘', '祈り', '讃美歌', '教会', '十字架',
+  '林檎', '胡桃', '砂糖', '水晶', '宝石', '金', '銀', '真珠',
+  '友達', '仲間', '約束', '旅', '冒険', '夢', '希望', '勇気',
+  '悲しい', '寂しい', '嬉しい', '楽しい', '優しい', '温かい', '冷たい', '静か',
+  '空', '雲', '風', '雨', '雪', '月', '太陽', '星',
+  '野原', '草原', '森', '山', '川', '海', '湖', '島',
+  '町', '村', '家', '学校', '教室', '机', '本', '鉛筆',
+  'みんな', 'ほんとう', 'どこまでも', 'いっしょに', 'きっと', 'まもなく', 'やがて', 'そして'
 ]
 
 const numberWords = Array.from({ length: 100 }, (_, i) => (i + 1).toString())
@@ -307,9 +314,14 @@ const getRandomWord = (): string => {
 const generateWords = (count: number): string => {
   const words: string[] = []
   
-  if (startWithLorem.value && textType.value === 'lorem') {
-    words.push('Lorem', 'ipsum')
-    count -= 2
+  if (startWithLorem.value) {
+    if (textType.value === 'lorem') {
+      words.push('Lorem', 'ipsum')
+      count -= 2
+    } else if (textType.value === 'japanese') {
+      words.push('ジョバンニ', 'は')
+      count -= 2
+    }
   }
   
   for (let i = 0; i < count; i++) {
@@ -318,12 +330,12 @@ const generateWords = (count: number): string => {
   
   let result = words.join(' ')
   
-  if (capitalizeFirst.value) {
+  if (capitalizeFirst.value && textType.value !== 'japanese') {
     result = result.charAt(0).toUpperCase() + result.slice(1)
   }
   
   if (addPunctuation.value) {
-    result += '.'
+    result += textType.value === 'japanese' ? '。' : '.'
   }
   
   return result
