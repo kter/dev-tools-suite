@@ -201,22 +201,41 @@ const previewRef = ref<HTMLDivElement>()
 const configureMarked = () => {
   if (!process.client) return
 
-  marked.setOptions({
-    highlight: (code, lang) => {
-      if (!enableSyntaxHighlighting.value) return code
-      
-      if (lang && hljs.getLanguage(lang)) {
+  try {
+    // Reset marked to default configuration first
+    marked.setOptions(marked.getDefaults())
+    
+    // Set our custom options
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      pedantic: false,
+      sanitize: false,
+      smartypants: false,
+      highlight: function(code, lang) {
+        if (!enableSyntaxHighlighting.value) {
+          return code
+        }
+        
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(code, { language: lang }).value
+          } catch (err) {
+            console.warn('Syntax highlighting failed for', lang, ':', err)
+            return code
+          }
+        }
         try {
-          return hljs.highlight(code, { language: lang }).value
+          return hljs.highlightAuto(code).value
         } catch (err) {
-          console.warn('Syntax highlighting failed:', err)
+          console.warn('Auto highlighting failed:', err)
+          return code
         }
       }
-      return hljs.highlightAuto(code).value
-    },
-    breaks: true,
-    gfm: true
-  })
+    })
+  } catch (error) {
+    console.error('Error configuring marked:', error)
+  }
 }
 
 // Initialize marked configuration
@@ -234,7 +253,13 @@ const renderedMarkdown = computed(() => {
   
   try {
     const rawHtml = marked(markdownText.value)
-    return DOMPurify.sanitize(rawHtml)
+    // Configure DOMPurify to allow more HTML elements for markdown
+    const cleanHtml = DOMPurify.sanitize(rawHtml, {
+      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'strong', 'em', 'u', 's', 'del', 'ins', 'mark', 'small', 'sub', 'sup', 'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'a', 'img', 'hr', 'div', 'span'],
+      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'style'],
+      ALLOW_DATA_ATTR: false
+    })
+    return cleanHtml
   } catch (error) {
     console.error('Markdown parsing error:', error)
     return '<p class="text-red-600">Error parsing markdown</p>'
