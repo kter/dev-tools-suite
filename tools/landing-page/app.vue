@@ -185,6 +185,9 @@ const imageConverterUrl = isDevEnvironment
 const timerUrl = isDevEnvironment 
   ? 'https://timer.dev.devtools.site'
   : 'https://timer.devtools.site'
+const characterCodeConverterUrl = isDevEnvironment 
+  ? 'https://character-code-converter.dev.devtools.site'
+  : 'https://character-code-converter.devtools.site'
 
 const availableTools = [
   {
@@ -294,6 +297,12 @@ const availableTools = [
     description: 'Countdown timer, stopwatch, and Pomodoro technique timer for productivity',
     icon: '⏱️',
     url: timerUrl
+  },
+  {
+    name: 'Character Code Converter',
+    description: 'Convert characters to various encoding formats including ASCII, Unicode, UTF-8, and more',
+    icon: '🔢',
+    url: characterCodeConverterUrl
   }
 ]
 
