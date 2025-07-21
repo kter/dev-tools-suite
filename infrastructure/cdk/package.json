@@ -7,10 +7,12 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy:dev": "cdk deploy --profile dev --context environment=dev",
-    "deploy:prd": "cdk deploy --profile prd --context environment=prd",
-    "destroy:dev": "cdk destroy --profile dev --context environment=dev",
-    "destroy:prd": "cdk destroy --profile prd --context environment=prd"
+    "diff:dev": "cdk diff --profile dev --context environment=dev --all",
+    "diff:prd": "cdk diff --profile prd --context environment=prd --all",
+    "deploy:dev": "cdk deploy --profile dev --context environment=dev --all",
+    "deploy:prd": "cdk deploy --profile prd --context environment=prd --all",
+    "destroy:dev": "cdk destroy --profile dev --context environment=dev --all",
+    "destroy:prd": "cdk destroy --profile prd --context environment=prd --all"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",
