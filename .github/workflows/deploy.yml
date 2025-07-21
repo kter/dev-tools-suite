@@ -34,7 +34,7 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      changed-tools: ${{ steps.changes.outputs.changes }}
+      changed-tools: ${{ steps.set-matrix.outputs.changed-tools }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout code
@@ -109,6 +109,7 @@ jobs:
           fi
           
           echo "Detected tools: $changed_tools"
+          echo "changed-tools=$changed_tools" >> $GITHUB_OUTPUT
           
           if [ "$changed_tools" = "[]" ]; then
             echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
@@ -120,7 +121,7 @@ jobs:
 
   deploy:
     needs: detect-changes
-    if: needs.detect-changes.outputs.changed-tools != '[]'
+    if: needs.detect-changes.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
