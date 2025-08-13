@@ -48,6 +48,7 @@ export class DevToolsStack extends cdk.Stack {
     this.createToolInfrastructure('image-converter', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('timer', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('character-code-converter', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('badger-image-generator', props.domain, certificate, hostedZone);
     
     // Create landing page for root domain
     this.createLandingPageInfrastructure(props.domain, certificate, hostedZone);

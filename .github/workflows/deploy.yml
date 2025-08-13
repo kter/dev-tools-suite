@@ -85,6 +85,8 @@ jobs:
               - 'tools/timer/**'
             character-code-converter:
               - 'tools/character-code-converter/**'
+            badger-image-generator:
+              - 'tools/badger-image-generator/**'
             landing-page:
               - 'tools/landing-page/**'
 
@@ -95,7 +97,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             if [[ "${{ github.event.inputs.force_deploy }}" == "true" ]]; then
               # Force deploy all tools
-              changed_tools='["hash-generator","qr-generator","unix-time-converter","password-generator","ip-calculator","markdown-preview","placeholder-generator","ip-info","timezone-converter","string-converter","code-diff","mic-test","json-yaml-converter","jwt-decoder","regex-tester","lorem-ipsum-generator","image-converter","timer","character-code-converter","landing-page"]'
+              changed_tools='["hash-generator","qr-generator","unix-time-converter","password-generator","ip-calculator","markdown-preview","placeholder-generator","ip-info","timezone-converter","string-converter","code-diff","mic-test","json-yaml-converter","jwt-decoder","regex-tester","lorem-ipsum-generator","image-converter","timer","character-code-converter","badger-image-generator","landing-page"]'
             elif [[ "${{ github.event.inputs.tool }}" != "" ]]; then
               # Deploy specific tool
               changed_tools='["${{ github.event.inputs.tool }}"]'
