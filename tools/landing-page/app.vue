@@ -188,6 +188,12 @@ const timerUrl = isDevEnvironment
 const characterCodeConverterUrl = isDevEnvironment 
   ? 'https://character-code-converter.dev.devtools.site'
   : 'https://character-code-converter.devtools.site'
+const badgerImageGeneratorUrl = isDevEnvironment 
+  ? 'https://badger-image-generator.dev.devtools.site'
+  : 'https://badger-image-generator.devtools.site'
+const posterSplitterUrl = isDevEnvironment 
+  ? 'https://poster-splitter.dev.devtools.site'
+  : 'https://poster-splitter.devtools.site'
 
 const availableTools = [
   {
@@ -303,6 +309,18 @@ const availableTools = [
     description: 'Convert characters to various encoding formats including ASCII, Unicode, UTF-8, and more',
     icon: '🔢',
     url: characterCodeConverterUrl
+  },
+  {
+    name: 'Badger2040 Image Generator',
+    description: 'Generate 296x128 pixel monochrome images for Badger2040 e-ink display with text and formatting options',
+    icon: '🦡',
+    url: badgerImageGeneratorUrl
+  },
+  {
+    name: 'Poster Splitter',
+    description: 'Split A3 images and PDFs into A4 pages for easy printing on standard printers',
+    icon: '📐',
+    url: posterSplitterUrl
   }
 ]
 
