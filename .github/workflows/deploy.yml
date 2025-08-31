@@ -220,7 +220,19 @@ jobs:
           echo "Deploying $TOOL_NAME to Firebase Hosting site: $FIREBASE_SITE_ID"
           
           cd tools/${{ matrix.tool }}
-          firebase deploy --only hosting --project ${{ vars.GOOGLE_CLOUD_PROJECT_ID }} --site $FIREBASE_SITE_ID --public .output/public
+          
+          # Create firebase.json configuration
+          cat > firebase.json << EOF
+          {
+            "hosting": {
+              "site": "$FIREBASE_SITE_ID",
+              "public": ".output/public",
+              "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+            }
+          }
+          EOF
+          
+          firebase deploy --only hosting --project ${{ vars.GOOGLE_CLOUD_PROJECT_ID }}
 
       - name: Invalidate CloudFront cache with retry
         id: invalidate-cache
