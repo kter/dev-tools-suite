@@ -43,19 +43,19 @@ gcloud auth application-default login
 echo "🔧 Setting up Google Cloud project..."
 gcloud config set project dev-tools-suite
 
+# Navigate to the environment directory
+echo "📁 Navigating to environment directory: $ENVIRONMENT"
+cd "environments/$ENVIRONMENT"
+
 # Initialize Terraform
 echo "🔧 Initializing Terraform..."
 terraform init
-
-# Select workspace based on environment
-echo "🔧 Selecting Terraform workspace: $ENVIRONMENT"
-terraform workspace select $ENVIRONMENT || terraform workspace new $ENVIRONMENT
 
 # Execute Terraform action
 case $ACTION in
     plan)
         echo "📋 Planning Terraform changes..."
-        terraform plan -var-file="${ENVIRONMENT}.tfvars" -out="${ENVIRONMENT}.tfplan"
+        terraform plan -out="${ENVIRONMENT}.tfplan"
         ;;
     apply)
         echo "🚀 Applying Terraform changes..."
@@ -63,12 +63,12 @@ case $ACTION in
             terraform apply "${ENVIRONMENT}.tfplan"
             rm -f "${ENVIRONMENT}.tfplan"
         else
-            terraform apply -var-file="${ENVIRONMENT}.tfvars" -auto-approve
+            terraform apply -auto-approve
         fi
         ;;
     destroy)
         echo "🗑️  Destroying Terraform infrastructure..."
-        terraform destroy -var-file="${ENVIRONMENT}.tfvars" -auto-approve
+        terraform destroy -auto-approve
         ;;
 esac
 

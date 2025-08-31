@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
 
 export interface MultiCloudRoutingStackProps extends cdk.StackProps {
@@ -8,8 +9,9 @@ export interface MultiCloudRoutingStackProps extends cdk.StackProps {
   environment: string;
   // AWS CloudFront distributions
   awsDistributions: { [toolName: string]: string };
-  // Google Cloud Load Balancer IP
-  gcpLoadBalancerIp: string;
+  // Firebase Hosting URLs (without https://)
+  firebaseHostingUrls: { [toolName: string]: string };
+  firebaseLandingUrl: string;
 }
 
 export class MultiCloudRoutingStack extends cdk.Stack {
@@ -54,7 +56,7 @@ export class MultiCloudRoutingStack extends cdk.Stack {
         toolName,
         props.domain,
         props.awsDistributions[toolName] || '',
-        props.gcpLoadBalancerIp
+        props.firebaseHostingUrls[toolName] || ''
       );
     });
 
@@ -64,7 +66,7 @@ export class MultiCloudRoutingStack extends cdk.Stack {
       'landing-page',
       props.domain,
       props.awsDistributions['landing-page'] || '',
-      props.gcpLoadBalancerIp,
+      props.firebaseLandingUrl,
       true // isLandingPage
     );
   }
@@ -74,132 +76,42 @@ export class MultiCloudRoutingStack extends cdk.Stack {
     toolName: string,
     domain: string,
     awsDistributionDomain: string,
-    gcpLoadBalancerIp: string,
+    firebaseHostingUrl: string,
     isLandingPage: boolean = false
   ) {
     const recordName = isLandingPage ? undefined : toolName;
     const recordSetName = isLandingPage ? 'root' : toolName;
 
-    // AWS CloudFront record (70% weight)
+    // For now, use only AWS CloudFront to avoid DNS complexity
+    // Firebase Hosting can be accessed via direct URLs (e.g., devtools-hash-generator-dev.web.app)
+    // In the future, we could implement client-side routing or CloudFront origins to Firebase
+    
+    // AWS CloudFront A record (100% weight initially)
     new route53.ARecord(this, `${recordSetName}-aws-record`, {
       zone: hostedZone,
       recordName: recordName,
-      target: route53.RecordTarget.fromAlias({
-        bind: () => ({
-          dnsName: awsDistributionDomain,
-          hostedZoneId: 'Z2FDTNDATAQYW2' // CloudFront hosted zone ID
-        })
-      }),
-      weight: 70,
-      setIdentifier: `${toolName}-aws`
+      target: route53.RecordTarget.fromAlias(
+        new targets.CloudFrontTarget({
+          distributionDomainName: awsDistributionDomain,
+          distributionId: '', // Not needed for alias target
+        } as any)
+      ),
     });
 
-    // Google Cloud Load Balancer record (30% weight)
-    new route53.ARecord(this, `${recordSetName}-gcp-record`, {
-      zone: hostedZone,
-      recordName: recordName,
-      target: route53.RecordTarget.fromIpAddresses(gcpLoadBalancerIp),
-      weight: 30,
-      setIdentifier: `${toolName}-gcp`
+    // Output information
+    new cdk.CfnOutput(this, `${recordSetName}-aws-domain`, {
+      value: awsDistributionDomain,
+      description: `AWS CloudFront domain for ${toolName}`
     });
 
-    // Health checks for failover (optional)
-    const awsHealthCheck = new route53.CfnHealthCheck(this, `${recordSetName}-aws-health-check`, {
-      type: 'HTTPS',
-      resourcePath: '/',
-      fullyQualifiedDomainName: isLandingPage ? domain : `${toolName}.${domain}`,
-      requestInterval: 30,
-      failureThreshold: 3,
-      tags: [{
-        key: 'Name',
-        value: `${toolName}-aws-health-check`
-      }]
+    new cdk.CfnOutput(this, `${recordSetName}-firebase-domain`, {
+      value: firebaseHostingUrl,
+      description: `Firebase Hosting domain for ${toolName} (direct access)`
     });
 
-    const gcpHealthCheck = new route53.CfnHealthCheck(this, `${recordSetName}-gcp-health-check`, {
-      type: 'HTTPS',
-      resourcePath: '/',
-      fullyQualifiedDomainName: isLandingPage ? domain : `${toolName}.${domain}`,
-      requestInterval: 30,
-      failureThreshold: 3,
-      tags: [{
-        key: 'Name',
-        value: `${toolName}-gcp-health-check`
-      }]
-    });
-
-    // Output health check IDs
-    new cdk.CfnOutput(this, `${recordSetName}-aws-health-check-id`, {
-      value: awsHealthCheck.attrHealthCheckId,
-      description: `AWS health check ID for ${toolName}`
-    });
-
-    new cdk.CfnOutput(this, `${recordSetName}-gcp-health-check-id`, {
-      value: gcpHealthCheck.attrHealthCheckId,
-      description: `GCP health check ID for ${toolName}`
-    });
-  }
-
-  // Alternative: Geolocation-based routing
-  private createGeolocationRouting(
-    hostedZone: route53.IHostedZone,
-    toolName: string,
-    domain: string,
-    awsDistributionDomain: string,
-    gcpLoadBalancerIp: string,
-    isLandingPage: boolean = false
-  ) {
-    const recordName = isLandingPage ? undefined : toolName;
-    const recordSetName = isLandingPage ? 'root' : toolName;
-
-    // AWS CloudFront for North America and Europe
-    new route53.ARecord(this, `${recordSetName}-aws-na-record`, {
-      zone: hostedZone,
-      recordName: recordName,
-      target: route53.RecordTarget.fromAlias({
-        bind: () => ({
-          dnsName: awsDistributionDomain,
-          hostedZoneId: 'Z2FDTNDATAQYW2'
-        })
-      }),
-      geoLocation: route53.GeoLocation.continent(route53.Continent.NORTH_AMERICA),
-      setIdentifier: `${toolName}-aws-na`
-    });
-
-    new route53.ARecord(this, `${recordSetName}-aws-eu-record`, {
-      zone: hostedZone,
-      recordName: recordName,
-      target: route53.RecordTarget.fromAlias({
-        bind: () => ({
-          dnsName: awsDistributionDomain,
-          hostedZoneId: 'Z2FDTNDATAQYW2'
-        })
-      }),
-      geoLocation: route53.GeoLocation.continent(route53.Continent.EUROPE),
-      setIdentifier: `${toolName}-aws-eu`
-    });
-
-    // Google Cloud Load Balancer for Asia and default
-    new route53.ARecord(this, `${recordSetName}-gcp-asia-record`, {
-      zone: hostedZone,
-      recordName: recordName,
-      target: route53.RecordTarget.fromIpAddresses(gcpLoadBalancerIp),
-      geoLocation: route53.GeoLocation.continent(route53.Continent.ASIA),
-      setIdentifier: `${toolName}-gcp-asia`
-    });
-
-    // Default record (fallback)
-    new route53.ARecord(this, `${recordSetName}-default-record`, {
-      zone: hostedZone,
-      recordName: recordName,
-      target: route53.RecordTarget.fromAlias({
-        bind: () => ({
-          dnsName: awsDistributionDomain,
-          hostedZoneId: 'Z2FDTNDATAQYW2'
-        })
-      }),
-      geoLocation: route53.GeoLocation.default(),
-      setIdentifier: `${toolName}-default`
+    new cdk.CfnOutput(this, `${recordSetName}-firebase-url`, {
+      value: `https://${firebaseHostingUrl}`,
+      description: `Firebase Hosting URL for ${toolName} (direct access)`
     });
   }
 }

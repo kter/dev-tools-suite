@@ -7,6 +7,9 @@ export interface DevToolsStackProps extends cdk.StackProps {
     environment: string;
 }
 export declare class DevToolsStack extends cdk.Stack {
+    readonly cloudFrontDistributions: {
+        [toolName: string]: string;
+    };
     constructor(scope: Construct, id: string, props: DevToolsStackProps);
     private createToolInfrastructure;
     private createLandingPageInfrastructure;
