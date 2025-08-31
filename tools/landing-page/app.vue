@@ -191,6 +191,9 @@ const characterCodeConverterUrl = isDevEnvironment
 const badgerImageGeneratorUrl = isDevEnvironment 
   ? 'https://badger-image-generator.dev.devtools.site'
   : 'https://badger-image-generator.devtools.site'
+const posterSplitterUrl = isDevEnvironment 
+  ? 'https://poster-splitter.dev.devtools.site'
+  : 'https://poster-splitter.devtools.site'
 
 const availableTools = [
   {
@@ -312,6 +315,12 @@ const availableTools = [
     description: 'Generate 296x128 pixel monochrome images for Badger2040 e-ink display with text and formatting options',
     icon: '🦡',
     url: badgerImageGeneratorUrl
+  },
+  {
+    name: 'Poster Splitter',
+    description: 'Split A3 images and PDFs into A4 pages for easy printing on standard printers',
+    icon: '📐',
+    url: posterSplitterUrl
   }
 ]
 
