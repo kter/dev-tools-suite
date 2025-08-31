@@ -107,3 +107,4 @@ const copyToClipboard = async (text: string) => {
   }
 }
 </script>
+<!-- Test multi-cloud deployment Firebase + AWS - 2025-08-31 -->

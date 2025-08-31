@@ -18,6 +18,10 @@ dist/
 cdk.out/
 *.js.map
 
+# TypeScript compiled files (infrastructure only)
+infrastructure/cdk/**/*.js
+infrastructure/cdk/**/*.d.ts
+
 # IDE
 .vscode/
 .idea/

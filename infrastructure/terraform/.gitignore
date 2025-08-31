@@ -1,0 +1,15 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform/
+.terraform.lock.hcl
+terraform.log
+crash.log
+crash.*.log
+
+# Sensitive files
+*.pem
+*.key
+secrets/
