@@ -34,7 +34,14 @@ This contains a collection of developer utility tools (Hash Generator, QR Code G
 ### Directory Structure
 - **tools/***: Individual Nuxt 3 applications (SPA mode, TypeScript, Tailwind CSS) with their own package.json and dependencies
 - **infrastructure/cdk**: AWS CDK infrastructure code (TypeScript)
+- **infrastructure/terraform**: Google Cloud Terraform infrastructure code
 - **tests/**: Playwright E2E tests
+
+### Multi-Cloud Architecture
+The application now supports deployment to both AWS and Google Cloud Platform:
+- **AWS**: CloudFront + S3 (primary, 70% traffic weight)
+- **Google Cloud**: Cloud Storage + Load Balancer + Cloud CDN (secondary, 30% traffic weight)
+- **DNS**: Route53 with weighted routing and health checks for automatic failover
 
 ### Key Architectural Decisions
 - **Independent Tools**: Each tool has its own npm package with individual dependency management
@@ -74,18 +81,42 @@ done
 ```
 
 ### Infrastructure Management
+
+#### AWS Infrastructure (CDK)
 ```bash
-# Deploy infrastructure to dev environment
+# Deploy AWS infrastructure to dev environment
 cd infrastructure/cdk
-npx cdk deploy DevToolsStack-dev -c environment=dev --profile dev
+AWS_PROFILE=dev npm run cdk deploy DevToolsStack-dev -c environment=dev --require-approval never
 
-# Deploy infrastructure to production
+# Deploy AWS infrastructure to production
 cd infrastructure/cdk  
-npx cdk deploy DevToolsStack-prd -c environment=prd --profile prd
+AWS_PROFILE=prd npm run cdk deploy DevToolsStack-prd -c environment=prd --require-approval never
 
-# Destroy infrastructure (careful!)
-npx cdk destroy DevToolsStack-dev -c environment=dev --profile dev
-npx cdk destroy DevToolsStack-prd -c environment=prd --profile prd
+# Destroy AWS infrastructure (careful!)
+AWS_PROFILE=dev npm run cdk destroy DevToolsStack-dev -c environment=dev --require-approval never
+```
+
+#### Google Cloud Infrastructure (Terraform)
+```bash
+# Deploy Google Cloud infrastructure to dev environment
+cd infrastructure/terraform
+./deploy.sh dev plan    # Review changes
+./deploy.sh dev apply   # Deploy
+
+# Deploy Google Cloud infrastructure to production
+./deploy.sh prd plan    # Review changes
+./deploy.sh prd apply   # Deploy
+
+# Destroy Google Cloud infrastructure (careful!)
+./deploy.sh dev destroy
+```
+
+#### Multi-Cloud DNS Routing
+```bash
+# Deploy multi-cloud routing after both AWS and GCP are deployed
+cd infrastructure/cdk
+AWS_PROFILE=dev npm run cdk deploy MultiCloudRoutingStack-dev \
+  -c environment=dev -c gcpLoadBalancerIp=<GCP_LB_IP> --require-approval never
 ```
 
 ### Version Management
@@ -118,24 +149,44 @@ export default defineNuxtConfig({
 
 ## Deployment Architecture
 
-### Infrastructure as Code (AWS CDK)
+### Multi-Cloud Infrastructure as Code
+The application supports deployment to both AWS and Google Cloud:
+
+#### AWS Infrastructure (CDK)
 - **ALL AWS infrastructure is managed by CDK in TypeScript** (`infrastructure/cdk/`)
 - **NEVER use AWS CLI or console for infrastructure changes** - always update CDK code
-- **Each tool gets**: S3 bucket, CloudFront distribution, Route53 A record, and SSL certificate
+- **Each tool gets**: S3 bucket, CloudFront distribution, and SSL certificate
 - **Stack naming**: `DevToolsStack-{environment}` (dev/prd)
-- **New tools MUST be added to both**:
-  - `infrastructure/cdk/lib/dev-tools-stack.ts` (add `createToolInfrastructure` call)
-  - `.github/workflows/deploy.yml` (add to paths-filter)
+
+#### Google Cloud Infrastructure (Terraform)  
+- **ALL GCP infrastructure is managed by Terraform** (`infrastructure/terraform/`)
+- **Each tool gets**: Cloud Storage bucket, Load Balancer backend, CDN, and SSL certificate
+- **Project**: `dev-tools-suite`
+
+#### DNS Routing (Route53)
+- **Weighted routing**: 70% AWS, 30% GCP
+- **Health checks**: Automatic failover between clouds
+- **Stack naming**: `MultiCloudRoutingStack-{environment}`
+
+#### New Tool Integration
+**When adding new tools, update these files**:
+- `infrastructure/cdk/lib/dev-tools-stack.ts` (add `createToolInfrastructure` call)
+- `infrastructure/terraform/main.tf` (add tool to `locals.tools` array)
+- `.github/workflows/deploy.yml` (add to paths-filter)
+- `.github/workflows/deploy-multicloud.yml` (add to paths-filter)
 
 ### GitHub Actions Workflow
-- **Matrix Strategy**: Deploys each tool independently
+- **Single-Cloud Workflow**: `.github/workflows/deploy.yml` (AWS only)
+- **Multi-Cloud Workflow**: `.github/workflows/deploy-multicloud.yml` (AWS + GCP)
+- **Matrix Strategy**: Deploys each tool independently to both clouds
 - **Environment Detection**: Branch-based (`develop` = dev, `main` = prd)
+- **Cloud Selection**: Deploy to `both`, `aws`, or `gcp`
 - **Independent Builds**: Each tool installs its own dependencies and builds independently
-- **S3 + CloudFront**: Static assets deployed to S3, served via CloudFront
 
 ### Environment URLs
 - **Dev**: `https://[tool-name].dev.devtools.site` (landing page: `https://dev.devtools.site`)
 - **Production**: `https://[tool-name].devtools.site` (landing page: `https://devtools.site`)
+- **Traffic Routing**: Weighted routing automatically distributes traffic between AWS and GCP
 
 ### AWS Resource Naming Convention
 - Stack: `DevToolsStack-{environment}`

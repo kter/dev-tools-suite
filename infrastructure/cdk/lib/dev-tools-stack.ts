@@ -16,6 +16,8 @@ export interface DevToolsStackProps extends cdk.StackProps {
 }
 
 export class DevToolsStack extends cdk.Stack {
+  public readonly cloudFrontDistributions: { [toolName: string]: string } = {};
+
   constructor(scope: Construct, id: string, props: DevToolsStackProps) {
     super(scope, id, props);
 
@@ -125,6 +127,14 @@ export class DevToolsStack extends cdk.Stack {
       value: `https://${toolName}.${domain}`,
       description: `URL for ${toolName}`
     });
+
+    new cdk.CfnOutput(this, `${toolName}-cloudfront-domain`, {
+      value: distribution.distributionDomainName,
+      description: `CloudFront domain for ${toolName}`
+    });
+
+    // Store CloudFront domain for multi-cloud routing
+    this.cloudFrontDistributions[toolName] = distribution.distributionDomainName;
   }
 
   private createLandingPageInfrastructure(
@@ -195,5 +205,13 @@ export class DevToolsStack extends cdk.Stack {
       value: `https://${domain}`,
       description: 'URL for landing page'
     });
+
+    new cdk.CfnOutput(this, 'landing-page-cloudfront-domain', {
+      value: distribution.distributionDomainName,
+      description: 'CloudFront domain for landing page'
+    });
+
+    // Store CloudFront domain for multi-cloud routing
+    this.cloudFrontDistributions['landing-page'] = distribution.distributionDomainName;
   }
 }
