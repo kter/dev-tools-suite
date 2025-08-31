@@ -101,14 +101,14 @@ export class DevToolsStack extends cdk.Stack {
       ]
     });
 
-    // Route53 Record
-    new route53.ARecord(this, `${toolName}-record`, {
-      zone: hostedZone,
-      recordName: toolName,
-      target: route53.RecordTarget.fromAlias(
-        new targets.CloudFrontTarget(distribution)
-      )
-    });
+    // Route53 Record (only for single-cloud mode, commented out for multi-cloud)
+    // new route53.ARecord(this, `${toolName}-record`, {
+    //   zone: hostedZone,
+    //   recordName: toolName,
+    //   target: route53.RecordTarget.fromAlias(
+    //     new targets.CloudFrontTarget(distribution)
+    //   )
+    // });
 
     // Output values
     new cdk.CfnOutput(this, `${toolName}-bucket-name`, {
@@ -124,6 +124,11 @@ export class DevToolsStack extends cdk.Stack {
     new cdk.CfnOutput(this, `${toolName}-url`, {
       value: `https://${toolName}.${domain}`,
       description: `URL for ${toolName}`
+    });
+
+    new cdk.CfnOutput(this, `${toolName}-cloudfront-domain`, {
+      value: distribution.distributionDomainName,
+      description: `CloudFront domain for ${toolName}`
     });
   }
 
@@ -172,13 +177,13 @@ export class DevToolsStack extends cdk.Stack {
       ]
     });
 
-    // Route53 Record for root domain
-    new route53.ARecord(this, 'landing-page-record', {
-      zone: hostedZone,
-      target: route53.RecordTarget.fromAlias(
-        new targets.CloudFrontTarget(distribution)
-      )
-    });
+    // Route53 Record for root domain (commented out for multi-cloud)
+    // new route53.ARecord(this, 'landing-page-record', {
+    //   zone: hostedZone,
+    //   target: route53.RecordTarget.fromAlias(
+    //     new targets.CloudFrontTarget(distribution)
+    //   )
+    // });
 
     // Output values
     new cdk.CfnOutput(this, 'landing-page-bucket-name', {
@@ -194,6 +199,11 @@ export class DevToolsStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'landing-page-url', {
       value: `https://${domain}`,
       description: 'URL for landing page'
+    });
+
+    new cdk.CfnOutput(this, 'landing-page-cloudfront-domain', {
+      value: distribution.distributionDomainName,
+      description: 'CloudFront domain for landing page'
     });
   }
 }

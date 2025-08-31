@@ -1,0 +1,299 @@
+name: Deploy DevTools Suite (Multi-Cloud)
+
+on:
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prd
+      tool:
+        description: 'Specific tool to deploy (leave empty for all changed tools)'
+        required: false
+        type: string
+      force_deploy:
+        description: 'Force deploy all tools (ignore change detection)'
+        required: false
+        default: false
+        type: boolean
+      cloud_provider:
+        description: 'Deploy to specific cloud provider'
+        required: false
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - aws
+          - gcp
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed-tools: ${{ steps.set-matrix.outputs.changed-tools }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            hash-generator:
+              - 'tools/hash-generator/**'
+            qr-generator:
+              - 'tools/qr-generator/**'
+            unix-time-converter:
+              - 'tools/unix-time-converter/**'
+            password-generator:
+              - 'tools/password-generator/**'
+            ip-calculator:
+              - 'tools/ip-calculator/**'
+            markdown-preview:
+              - 'tools/markdown-preview/**'
+            placeholder-generator:
+              - 'tools/placeholder-generator/**'
+            ip-info:
+              - 'tools/ip-info/**'
+            timezone-converter:
+              - 'tools/timezone-converter/**'
+            string-converter:
+              - 'tools/string-converter/**'
+            code-diff:
+              - 'tools/code-diff/**'
+            mic-test:
+              - 'tools/mic-test/**'
+            json-yaml-converter:
+              - 'tools/json-yaml-converter/**'
+            jwt-decoder:
+              - 'tools/jwt-decoder/**'
+            regex-tester:
+              - 'tools/regex-tester/**'
+            lorem-ipsum-generator:
+              - 'tools/lorem-ipsum-generator/**'
+            image-converter:
+              - 'tools/image-converter/**'
+            timer:
+              - 'tools/timer/**'
+            character-code-converter:
+              - 'tools/character-code-converter/**'
+            badger-image-generator:
+              - 'tools/badger-image-generator/**'
+            poster-splitter:
+              - 'tools/poster-splitter/**'
+            landing-page:
+              - 'tools/landing-page/**'
+
+      - name: Set matrix for deployment
+        id: set-matrix
+        run: |
+          # Handle manual workflow dispatch
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event.inputs.force_deploy }}" == "true" ]]; then
+              # Force deploy all tools
+              changed_tools='["hash-generator","qr-generator","unix-time-converter","password-generator","ip-calculator","markdown-preview","placeholder-generator","ip-info","timezone-converter","string-converter","code-diff","mic-test","json-yaml-converter","jwt-decoder","regex-tester","lorem-ipsum-generator","image-converter","timer","character-code-converter","badger-image-generator","poster-splitter","landing-page"]'
+            elif [[ "${{ github.event.inputs.tool }}" != "" ]]; then
+              # Deploy specific tool
+              changed_tools='["${{ github.event.inputs.tool }}"]'
+            else
+              # Use change detection for workflow_dispatch without specific inputs
+              changed_tools='${{ steps.changes.outputs.changes }}'
+            fi
+          else
+            # Use change detection for push events
+            changed_tools='${{ steps.changes.outputs.changes }}'
+          fi
+          
+          echo "Detected tools: $changed_tools"
+          echo "changed-tools=$changed_tools" >> $GITHUB_OUTPUT
+          
+          if [ "$changed_tools" = "[]" ]; then
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+          else
+            # Convert the JSON array to matrix format
+            matrix=$(echo "$changed_tools" | jq -c '. | map({tool: .}) | {include: .}')
+            echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          fi
+
+  deploy-aws:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.matrix != '{"include":[]}' && (github.event.inputs.cloud_provider == 'aws' || github.event.inputs.cloud_provider == 'both' || github.event.inputs.cloud_provider == '')
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    
+    environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'tools/${{ matrix.tool }}/package-lock.json'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+
+      - name: Install dependencies and build
+        run: |
+          cd tools/${{ matrix.tool }}
+          npm ci
+          npm run generate
+
+      - name: Get AWS stack outputs
+        id: aws-stack-outputs
+        run: |
+          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
+          STACK_NAME="DevToolsStack-${ENV}"
+          
+          # Get bucket name (remove hyphens from tool name for output key)
+          TOOL_KEY=$(echo "${{ matrix.tool }}" | tr -d '-')
+          BUCKET_OUTPUT_KEY="${TOOL_KEY}bucketname"
+          DISTRIBUTION_OUTPUT_KEY="${TOOL_KEY}distributionid"
+          
+          echo "Getting outputs for stack: $STACK_NAME"
+          echo "Looking for bucket output: $BUCKET_OUTPUT_KEY"
+          echo "Looking for distribution output: $DISTRIBUTION_OUTPUT_KEY"
+          
+          BUCKET_NAME=$(aws cloudformation describe-stacks \
+            --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='$BUCKET_OUTPUT_KEY'].OutputValue" \
+            --output text)
+          
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+            --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='$DISTRIBUTION_OUTPUT_KEY'].OutputValue" \
+            --output text)
+          
+          echo "bucket-name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+          echo "distribution-id=$DISTRIBUTION_ID" >> $GITHUB_OUTPUT
+          
+          echo "Found AWS bucket: $BUCKET_NAME"
+          echo "Found AWS distribution: $DISTRIBUTION_ID"
+
+      - name: Deploy to AWS S3
+        run: |
+          cd tools/${{ matrix.tool }}
+          aws s3 sync .output/public/ s3://${{ steps.aws-stack-outputs.outputs.bucket-name }}/ --delete
+
+      - name: Invalidate AWS CloudFront cache
+        run: |
+          DISTRIBUTION_ID="${{ steps.aws-stack-outputs.outputs.distribution-id }}"
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+
+  deploy-gcp:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.matrix != '{"include":[]}' && (github.event.inputs.cloud_provider == 'gcp' || github.event.inputs.cloud_provider == 'both' || github.event.inputs.cloud_provider == '')
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    
+    environment: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'tools/${{ matrix.tool }}/package-lock.json'
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install dependencies and build
+        run: |
+          cd tools/${{ matrix.tool }}
+          npm ci
+          npm run generate
+
+      - name: Deploy to Google Cloud Storage
+        run: |
+          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
+          DOMAIN_SUFFIX=${{ env.NODE_ENV == 'production' && 'devtools.site' || 'dev.devtools.site' }}
+          
+          # Determine bucket name
+          if [ "${{ matrix.tool }}" = "landing-page" ]; then
+            BUCKET_NAME="landing-page-$(echo $DOMAIN_SUFFIX | tr '.' '-')"
+          else
+            BUCKET_NAME="${{ matrix.tool }}-$(echo $DOMAIN_SUFFIX | tr '.' '-')"
+          fi
+          
+          echo "Deploying to GCP bucket: $BUCKET_NAME"
+          
+          cd tools/${{ matrix.tool }}
+          gsutil -m rsync -r -d .output/public/ gs://$BUCKET_NAME/
+
+      - name: Invalidate Google Cloud CDN cache (optional)
+        run: |
+          # Note: This requires additional setup for Google Cloud CDN cache invalidation
+          echo "GCP CDN cache invalidation would be implemented here"
+
+  deployment-status:
+    needs: [detect-changes, deploy-aws, deploy-gcp]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Overall deployment status
+        run: |
+          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
+          CHANGED_TOOLS='${{ needs.detect-changes.outputs.changed-tools }}'
+          AWS_DEPLOY_RESULT="${{ needs.deploy-aws.result }}"
+          GCP_DEPLOY_RESULT="${{ needs.deploy-gcp.result }}"
+          
+          echo "========================================="
+          echo "📊 Multi-Cloud Deployment Status"
+          echo "========================================="
+          echo "Environment: $ENV"
+          echo "Changed tools: $CHANGED_TOOLS"
+          echo "AWS deployment result: $AWS_DEPLOY_RESULT"
+          echo "GCP deployment result: $GCP_DEPLOY_RESULT"
+          
+          if [ "$CHANGED_TOOLS" = "[]" ]; then
+            echo "ℹ️  No tools were changed - no deployment needed"
+          elif [ "$AWS_DEPLOY_RESULT" = "success" ] && [ "$GCP_DEPLOY_RESULT" = "success" ]; then
+            echo "✅ All multi-cloud deployments completed successfully"
+          elif [ "$AWS_DEPLOY_RESULT" = "failure" ] || [ "$GCP_DEPLOY_RESULT" = "failure" ]; then
+            echo "❌ Some deployments failed"
+            echo "AWS: $AWS_DEPLOY_RESULT"
+            echo "GCP: $GCP_DEPLOY_RESULT"
+            exit 1
+          else
+            echo "⚠️  Deployment completed with warnings"
+          fi
+          echo "========================================="
