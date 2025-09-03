@@ -158,205 +158,175 @@ onMounted(() => {
 })
 
 // Determine URLs based on environment and platform
-const isDevEnvironment = process.client && window.location.hostname.includes('dev.devtools.site')
-const getToolUrl = (toolName) => {
+const isDevEnvironment = ref(false)
+onMounted(() => {
+  isDevEnvironment.value = window.location.hostname.includes('dev.devtools.site')
+})
+
+const getToolUrl = computed(() => (toolName) => {
   if (isGCPDomain.value) {
     // GCP subdomain URLs
-    return isDevEnvironment
+    return isDevEnvironment.value
       ? `https://${toolName}.gcp.dev.devtools.site`
       : `https://${toolName}.gcp.devtools.site`
   } else {
     // AWS main URLs
-    return isDevEnvironment
+    return isDevEnvironment.value
       ? `https://${toolName}.dev.devtools.site`
       : `https://${toolName}.devtools.site`
   }
-}
+})
 
-const hashGeneratorUrl = computed(() => getToolUrl('hash-generator'))
-const qrGeneratorUrl = computed(() => getToolUrl('qr-generator'))
-const unixTimeConverterUrl = computed(() => getToolUrl('unix-time-converter'))
-const passwordGeneratorUrl = computed(() => getToolUrl('password-generator'))
-const ipCalculatorUrl = isDevEnvironment 
-  ? 'https://ip-calculator.dev.devtools.site'
-  : 'https://ip-calculator.devtools.site'
-const markdownPreviewUrl = isDevEnvironment 
-  ? 'https://markdown-preview.dev.devtools.site'
-  : 'https://markdown-preview.devtools.site'
-const placeholderGeneratorUrl = isDevEnvironment 
-  ? 'https://placeholder-generator.dev.devtools.site'
-  : 'https://placeholder-generator.devtools.site'
-const ipInfoUrl = isDevEnvironment 
-  ? 'https://ip-info.dev.devtools.site'
-  : 'https://ip-info.devtools.site'
-const timezoneConverterUrl = isDevEnvironment 
-  ? 'https://timezone-converter.dev.devtools.site'
-  : 'https://timezone-converter.devtools.site'
-const stringConverterUrl = isDevEnvironment 
-  ? 'https://string-converter.dev.devtools.site'
-  : 'https://string-converter.devtools.site'
-const codeDiffUrl = isDevEnvironment 
-  ? 'https://code-diff.dev.devtools.site'
-  : 'https://code-diff.devtools.site'
-const micTestUrl = isDevEnvironment 
-  ? 'https://mic-test.dev.devtools.site'
-  : 'https://mic-test.devtools.site'
-const jsonYamlConverterUrl = isDevEnvironment 
-  ? 'https://json-yaml-converter.dev.devtools.site'
-  : 'https://json-yaml-converter.devtools.site'
-const jwtDecoderUrl = isDevEnvironment 
-  ? 'https://jwt-decoder.dev.devtools.site'
-  : 'https://jwt-decoder.devtools.site'
-const regexTesterUrl = isDevEnvironment 
-  ? 'https://regex-tester.dev.devtools.site'
-  : 'https://regex-tester.devtools.site'
-const loremIpsumGeneratorUrl = isDevEnvironment 
-  ? 'https://lorem-ipsum-generator.dev.devtools.site'
-  : 'https://lorem-ipsum-generator.devtools.site'
-const imageConverterUrl = isDevEnvironment 
-  ? 'https://image-converter.dev.devtools.site'
-  : 'https://image-converter.devtools.site'
-const timerUrl = isDevEnvironment 
-  ? 'https://timer.dev.devtools.site'
-  : 'https://timer.devtools.site'
-const characterCodeConverterUrl = isDevEnvironment 
-  ? 'https://character-code-converter.dev.devtools.site'
-  : 'https://character-code-converter.devtools.site'
-const badgerImageGeneratorUrl = isDevEnvironment 
-  ? 'https://badger-image-generator.dev.devtools.site'
-  : 'https://badger-image-generator.devtools.site'
-const posterSplitterUrl = isDevEnvironment 
-  ? 'https://poster-splitter.dev.devtools.site'
-  : 'https://poster-splitter.devtools.site'
+const hashGeneratorUrl = computed(() => getToolUrl.value('hash-generator'))
+const qrGeneratorUrl = computed(() => getToolUrl.value('qr-generator'))
+const unixTimeConverterUrl = computed(() => getToolUrl.value('unix-time-converter'))
+const passwordGeneratorUrl = computed(() => getToolUrl.value('password-generator'))
+const ipCalculatorUrl = computed(() => getToolUrl.value('ip-calculator'))
+const markdownPreviewUrl = computed(() => getToolUrl.value('markdown-preview'))
+const placeholderGeneratorUrl = computed(() => getToolUrl.value('placeholder-generator'))
+const ipInfoUrl = computed(() => getToolUrl.value('ip-info'))
+const timezoneConverterUrl = computed(() => getToolUrl.value('timezone-converter'))
+const stringConverterUrl = computed(() => getToolUrl.value('string-converter'))
+const codeDiffUrl = computed(() => getToolUrl.value('code-diff'))
+const micTestUrl = computed(() => getToolUrl.value('mic-test'))
+const jsonYamlConverterUrl = computed(() => getToolUrl.value('json-yaml-converter'))
+const jwtDecoderUrl = computed(() => getToolUrl.value('jwt-decoder'))
+const regexTesterUrl = computed(() => getToolUrl.value('regex-tester'))
+const loremIpsumGeneratorUrl = computed(() => getToolUrl.value('lorem-ipsum-generator'))
+const imageConverterUrl = computed(() => getToolUrl.value('image-converter'))
+const timerUrl = computed(() => getToolUrl.value('timer'))
+const characterCodeConverterUrl = computed(() => getToolUrl.value('character-code-converter'))
+const badgerImageGeneratorUrl = computed(() => getToolUrl.value('badger-image-generator'))
+const posterSplitterUrl = computed(() => getToolUrl.value('poster-splitter'))
 
-const availableTools = [
+const availableTools = computed(() => [
   {
     name: 'Hash Generator',
     description: 'Generate SHA-256, SHA-1, MD5, and SHA-512 hashes from text input',
     icon: '#',
-    url: hashGeneratorUrl
+    url: hashGeneratorUrl.value
   },
   {
     name: 'QR Code Generator',
     description: 'Generate QR codes from text, URLs, or any content with customizable options',
     icon: '⬛',
-    url: qrGeneratorUrl
+    url: qrGeneratorUrl.value
   },
   {
     name: 'Unix Time Converter',
     description: 'Convert between Unix timestamps and human-readable dates',
     icon: '🕐',
-    url: unixTimeConverterUrl
+    url: unixTimeConverterUrl.value
   },
   {
     name: 'Password Generator',
     description: 'Generate secure passwords with customizable options',
     icon: '🔐',
-    url: passwordGeneratorUrl
+    url: passwordGeneratorUrl.value
   },
   {
     name: 'IP Calculator',
     description: 'Calculate subnet masks, network addresses, and IP ranges',
     icon: '🌐',
-    url: ipCalculatorUrl
+    url: ipCalculatorUrl.value
   },
   {
     name: 'Markdown Preview',
     description: 'Preview Markdown files with live rendering and syntax highlighting',
     icon: '📋',
-    url: markdownPreviewUrl
+    url: markdownPreviewUrl.value
   },
   {
     name: 'Placeholder Generator',
     description: 'Generate custom placeholder images with various sizes and colors',
     icon: '🖼️',
-    url: placeholderGeneratorUrl
+    url: placeholderGeneratorUrl.value
   },
   {
     name: 'IP Info',
     description: 'Display your IP address information including location and ISP details',
     icon: '🌍',
-    url: ipInfoUrl
+    url: ipInfoUrl.value
   },
   {
     name: 'Timezone Converter',
     description: 'Convert time between different timezones with world clock display',
     icon: '🌐',
-    url: timezoneConverterUrl
+    url: timezoneConverterUrl.value
   },
   {
     name: 'String Converter',
     description: 'Convert strings between formats: Base64, URL encoding, case conversion and more',
     icon: '🔤',
-    url: stringConverterUrl
+    url: stringConverterUrl.value
   },
   {
     name: 'Code Diff',
     description: 'Compare and visualize differences between text files or code snippets',
     icon: '📊',
-    url: codeDiffUrl
+    url: codeDiffUrl.value
   },
   {
     name: 'Mic Test',
     description: 'Test your microphone by recording and playing back audio to verify it works correctly',
     icon: '🎤',
-    url: micTestUrl
+    url: micTestUrl.value
   },
   {
     name: 'JSON/YAML Converter',
     description: 'Convert between JSON, YAML, and TOML formats with validation and formatting',
     icon: '📝',
-    url: jsonYamlConverterUrl
+    url: jsonYamlConverterUrl.value
   },
   {
     name: 'JWT Decoder',
     description: 'Decode and validate JSON Web Tokens with detailed information display',
     icon: '🔍',
-    url: jwtDecoderUrl
+    url: jwtDecoderUrl.value
   },
   {
     name: 'Regex Tester',
     description: 'Test and validate regular expressions with live matching and detailed explanations',
     icon: '✅',
-    url: regexTesterUrl
+    url: regexTesterUrl.value
   },
   {
     name: 'Lorem Ipsum Generator',
     description: 'Generate placeholder text for your projects with customizable options',
     icon: '📄',
-    url: loremIpsumGeneratorUrl
+    url: loremIpsumGeneratorUrl.value
   },
   {
     name: 'Image Converter',
     description: 'Convert image formats and resize images with quality controls',
     icon: '🖼️',
-    url: imageConverterUrl
+    url: imageConverterUrl.value
   },
   {
     name: 'Timer',
     description: 'Countdown timer, stopwatch, and Pomodoro technique timer for productivity',
     icon: '⏱️',
-    url: timerUrl
+    url: timerUrl.value
   },
   {
     name: 'Character Code Converter',
     description: 'Convert characters to various encoding formats including ASCII, Unicode, UTF-8, and more',
     icon: '🔢',
-    url: characterCodeConverterUrl
+    url: characterCodeConverterUrl.value
   },
   {
     name: 'Badger2040 Image Generator',
     description: 'Generate 296x128 pixel monochrome images for Badger2040 e-ink display with text and formatting options',
     icon: '🦡',
-    url: badgerImageGeneratorUrl
+    url: badgerImageGeneratorUrl.value
   },
   {
     name: 'Poster Splitter',
     description: 'Split A3 images and PDFs into A4 pages for easy printing on standard printers',
     icon: '📐',
-    url: posterSplitterUrl
+    url: posterSplitterUrl.value
   }
-]
+])
 
 const comingSoonTools = [
   // All tools have been implemented!
