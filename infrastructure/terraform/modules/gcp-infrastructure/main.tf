@@ -94,3 +94,38 @@ resource "google_firebase_hosting_site" "landing_site" {
     google_project_service.firebase_hosting_api
   ]
 }
+
+# Add custom domains for all tools
+resource "google_firebase_hosting_custom_domain" "tool_domains" {
+  provider = google-beta
+  for_each = toset(local.tools)
+  
+  project   = var.project_id
+  site_id   = google_firebase_hosting_site.tool_sites[each.value].site_id
+  custom_domain = "${each.value}.gcp.${var.environment}.devtools.site"
+  
+  # SSL証明書の自動プロビジョニング（グループ化で効率的）
+  cert_preference = "GROUPED"
+  
+  # DNS設定完了まで待機
+  wait_dns_verification = true
+  
+  depends_on = [google_firebase_hosting_site.tool_sites]
+}
+
+# Add custom domain for landing page
+resource "google_firebase_hosting_custom_domain" "landing_domain" {
+  provider = google-beta
+  
+  project   = var.project_id
+  site_id   = google_firebase_hosting_site.landing_site.site_id
+  custom_domain = "gcp.${var.environment}.devtools.site"
+  
+  # SSL証明書の自動プロビジョニング
+  cert_preference = "GROUPED"
+  
+  # DNS設定完了まで待機
+  wait_dns_verification = true
+  
+  depends_on = [google_firebase_hosting_site.landing_site]
+}

@@ -356,14 +356,18 @@ jobs:
           if [ "$ENV" = "dev" ]; then
             if [ "$TOOL_NAME" = "landing-page" ]; then
               echo "  Primary (AWS): https://dev.devtools.site"
+              echo "  GCP Mirror: https://gcp.dev.devtools.site"
             else
               echo "  Primary (AWS): https://$TOOL_NAME.dev.devtools.site"
+              echo "  GCP Mirror: https://$TOOL_NAME.gcp.dev.devtools.site"
             fi
           else
             if [ "$TOOL_NAME" = "landing-page" ]; then
               echo "  Primary (AWS): https://devtools.site"
+              echo "  GCP Mirror: https://gcp.devtools.site"
             else
               echo "  Primary (AWS): https://$TOOL_NAME.devtools.site"
+              echo "  GCP Mirror: https://$TOOL_NAME.gcp.devtools.site"
             fi
           fi
           echo "  Firebase Direct: https://${FIREBASE_SITE_ID}.web.app"
@@ -390,14 +394,18 @@ jobs:
           if [ "$ENV" = "dev" ]; then
             if [ "$TOOL_NAME" = "landing-page" ]; then
               echo "- **Primary (AWS)**: https://dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **GCP Mirror**: https://gcp.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
             else
               echo "- **Primary (AWS)**: https://$TOOL_NAME.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **GCP Mirror**: https://$TOOL_NAME.gcp.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
             fi
           else
             if [ "$TOOL_NAME" = "landing-page" ]; then
               echo "- **Primary (AWS)**: https://devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **GCP Mirror**: https://gcp.devtools.site" >> $GITHUB_STEP_SUMMARY
             else
               echo "- **Primary (AWS)**: https://$TOOL_NAME.devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **GCP Mirror**: https://$TOOL_NAME.gcp.devtools.site" >> $GITHUB_STEP_SUMMARY
             fi
           fi
           echo "- **Firebase Direct**: https://${FIREBASE_SITE_ID}.web.app" >> $GITHUB_STEP_SUMMARY

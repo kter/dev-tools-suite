@@ -37,3 +37,28 @@ output "landing_custom_domain" {
   description = "Custom domain for landing page"
   value       = var.domain_suffix
 }
+
+# Firebase Custom Domains with SSL
+output "firebase_custom_domains" {
+  description = "Map of tool names to Firebase custom domains"
+  value       = {
+    for tool in local.tools :
+    tool => google_firebase_hosting_custom_domain.tool_domains[tool].custom_domain
+  }
+}
+
+output "firebase_landing_custom_domain" {
+  description = "Firebase custom domain for landing page"
+  value       = google_firebase_hosting_custom_domain.landing_domain.custom_domain
+}
+
+output "custom_domain_status" {
+  description = "Custom domain status for all domains"
+  value       = {
+    landing = google_firebase_hosting_custom_domain.landing_domain.custom_domain
+    tools = {
+      for tool in local.tools :
+      tool => google_firebase_hosting_custom_domain.tool_domains[tool].custom_domain
+    }
+  }
+}
