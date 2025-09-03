@@ -24,23 +24,48 @@ module "dev_tools_gcp" {
   domain_suffix = "devtools.site"
 }
 
-# Outputs
-output "load_balancer_ip" {
-  description = "The IP address of the load balancer"
-  value       = module.dev_tools_gcp.load_balancer_ip
+# Outputs for Firebase Hosting
+output "firebase_hosting_sites" {
+  description = "Map of tool names to Firebase Hosting site IDs"
+  value       = module.dev_tools_gcp.firebase_hosting_sites
 }
 
-output "ssl_certificate_id" {
-  description = "The ID of the SSL certificate"
-  value       = module.dev_tools_gcp.ssl_certificate_id
+output "landing_site_id" {
+  description = "Firebase Hosting site ID for landing page"
+  value       = module.dev_tools_gcp.landing_site_id
 }
 
-output "bucket_names" {
-  description = "Map of tool names to bucket names"
-  value       = module.dev_tools_gcp.bucket_names
+output "firebase_hosting_urls" {
+  description = "Map of tool names to default Firebase Hosting URLs"
+  value       = module.dev_tools_gcp.firebase_hosting_urls
 }
 
-output "landing_bucket_name" {
-  description = "Landing page bucket name"
-  value       = module.dev_tools_gcp.landing_bucket_name
+output "landing_url" {
+  description = "Default Firebase Hosting URL for landing page"
+  value       = module.dev_tools_gcp.landing_url
+}
+
+output "custom_domains" {
+  description = "Map of tool names to custom domains"
+  value       = module.dev_tools_gcp.custom_domains
+}
+
+output "landing_custom_domain" {
+  description = "Custom domain for landing page"
+  value       = module.dev_tools_gcp.landing_custom_domain
+}
+
+output "firebase_custom_domains" {
+  description = "Map of tool names to Firebase custom domains"
+  value       = module.dev_tools_gcp.firebase_custom_domains
+}
+
+output "firebase_landing_custom_domain" {
+  description = "Firebase custom domain for landing page"
+  value       = module.dev_tools_gcp.firebase_landing_custom_domain
+}
+
+output "custom_domain_status" {
+  description = "Custom domain status for all domains"
+  value       = module.dev_tools_gcp.custom_domain_status
 }

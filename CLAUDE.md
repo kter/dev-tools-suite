@@ -39,9 +39,10 @@ This contains a collection of developer utility tools (Hash Generator, QR Code G
 
 ### Multi-Cloud Architecture
 The application now supports deployment to both AWS and Google Cloud Platform:
-- **AWS**: CloudFront + S3 (primary, 70% traffic weight)
-- **Google Cloud**: Cloud Storage + Load Balancer + Cloud CDN (secondary, 30% traffic weight)
-- **DNS**: Route53 with weighted routing and health checks for automatic failover
+- **AWS**: CloudFront + S3 (primary platform)
+- **Google Cloud**: Firebase Hosting with custom domains and SSL certificates
+- **DNS**: Route53 manages custom domain routing for both platforms
+- **GCP Custom Domains**: `*.gcp.dev.devtools.site` format with automatic SSL provisioning
 
 ### Key Architectural Decisions
 - **Independent Tools**: Each tool has its own npm package with individual dependency management
@@ -160,33 +161,51 @@ The application supports deployment to both AWS and Google Cloud:
 
 #### Google Cloud Infrastructure (Terraform)  
 - **ALL GCP infrastructure is managed by Terraform** (`infrastructure/terraform/`)
-- **Each tool gets**: Cloud Storage bucket, Load Balancer backend, CDN, and SSL certificate
+- **Each tool gets**: Firebase Hosting site with custom domain and SSL certificate
 - **Project**: `dev-tools-suite`
+- **Custom Domain Format**: 
+  - Landing: `gcp.{environment}.devtools.site`
+  - Tools: `{tool-name}.gcp.{environment}.devtools.site`
+- **SSL Certificate Management**: Automatic provisioning via Firebase Hosting with Route53 DNS verification
 
 #### DNS Routing (Route53)
-- **Weighted routing**: 70% AWS, 30% GCP
-- **Health checks**: Automatic failover between clouds
-- **Stack naming**: `MultiCloudRoutingStack-{environment}`
+- **GCP Custom Domains**: Direct CNAME routing to Firebase Hosting
+- **SSL Certificate Verification**: ACME challenge DNS TXT records managed via Route53
+- **Domain Structure**: 
+  - AWS: `{tool-name}.{environment}.devtools.site`
+  - GCP: `{tool-name}.gcp.{environment}.devtools.site`
 
 #### New Tool Integration
 **When adding new tools, update these files**:
 - `infrastructure/cdk/lib/dev-tools-stack.ts` (add `createToolInfrastructure` call)
-- `infrastructure/terraform/main.tf` (add tool to `locals.tools` array)
+- `infrastructure/terraform/modules/gcp-infrastructure/main.tf` (add tool to `locals.tools` array)
 - `.github/workflows/deploy.yml` (add to paths-filter)
-- `.github/workflows/deploy-multicloud.yml` (add to paths-filter)
+
+#### SSL Certificate Troubleshooting (GCP)
+**If GCP custom domains show SSL certificate errors**:
+1. **Check Certificate Status**: Use `terraform show` to verify certificate state
+2. **DNS Verification Records**: Extract ACME challenge records from Terraform state
+3. **Add DNS Records to Route53**: Create TXT records for domain verification
+4. **Monitor Certificate Activation**: Certificates typically activate within 15-60 minutes
+
+**Common SSL Certificate Issues**:
+- `CERT_PROPAGATING`: Certificate is being provisioned, DNS verification needed
+- `CERT_ACTIVE`: Certificate is working properly
+- `net::ERR_CERT_COMMON_NAME_INVALID`: DNS verification records missing from Route53
 
 ### GitHub Actions Workflow
-- **Single-Cloud Workflow**: `.github/workflows/deploy.yml` (AWS only)
-- **Multi-Cloud Workflow**: `.github/workflows/deploy-multicloud.yml` (AWS + GCP)
-- **Matrix Strategy**: Deploys each tool independently to both clouds
+- **Multi-Cloud Workflow**: `.github/workflows/deploy.yml` (AWS + Firebase Hosting)
+- **Matrix Strategy**: Deploys each tool independently to both platforms
 - **Environment Detection**: Branch-based (`develop` = dev, `main` = prd)
-- **Cloud Selection**: Deploy to `both`, `aws`, or `gcp`
 - **Independent Builds**: Each tool installs its own dependencies and builds independently
+- **Deployment Targets**: S3 + CloudFront (AWS) and Firebase Hosting (GCP) simultaneously
 
 ### Environment URLs
-- **Dev**: `https://[tool-name].dev.devtools.site` (landing page: `https://dev.devtools.site`)
-- **Production**: `https://[tool-name].devtools.site` (landing page: `https://devtools.site`)
-- **Traffic Routing**: Weighted routing automatically distributes traffic between AWS and GCP
+- **AWS Dev**: `https://[tool-name].dev.devtools.site` (landing page: `https://dev.devtools.site`)  
+- **GCP Dev**: `https://[tool-name].gcp.dev.devtools.site` (landing page: `https://gcp.dev.devtools.site`)
+- **AWS Production**: `https://[tool-name].devtools.site` (landing page: `https://devtools.site`)
+- **GCP Production**: `https://[tool-name].gcp.devtools.site` (landing page: `https://gcp.devtools.site`)
+- **Cross-Platform Navigation**: Landing pages include links to switch between AWS and GCP versions
 
 ### AWS Resource Naming Convention
 - Stack: `DevToolsStack-{environment}`
