@@ -108,6 +108,22 @@
 
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Rotation
+              </label>
+              <select
+                v-model="rotation"
+                @change="splitFile"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="0">No rotation (0°)</option>
+                <option value="90">Rotate 90° clockwise</option>
+                <option value="180">Rotate 180°</option>
+                <option value="270">Rotate 270° clockwise (90° counter-clockwise)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Add Overlap (mm)
               </label>
               <input
@@ -194,6 +210,7 @@
           <li>Upload your A3-sized image or PDF file</li>
           <li>Choose the output format (PNG, JPG, or PDF)</li>
           <li>Select split direction (horizontal or vertical)</li>
+          <li>Set rotation angle (0°, 90°, 180°, or 270°) if needed</li>
           <li>Optionally add overlap for easier alignment when joining printed pages</li>
           <li>Click "Split File" to process</li>
           <li>Download individual A4 pages or all pages at once</li>
@@ -226,6 +243,7 @@ const fileInput = ref<HTMLInputElement>()
 const uploadedFile = ref<File | null>(null)
 const outputFormat = ref<'png' | 'jpg' | 'pdf'>('png')
 const splitDirection = ref<'horizontal' | 'vertical'>('horizontal')
+const rotation = ref<0 | 90 | 180 | 270>(0)
 const overlap = ref(10) // mm
 const processing = ref(false)
 const splitPages = ref<Array<{
@@ -326,45 +344,58 @@ const splitImage = async (file: File) => {
       const a4Width = 794 // 210mm
       const a4Height = 1123 // 297mm
       
-      // Calculate scale to fit A3
-      const scaleX = a3Width / img.width
-      const scaleY = a3Height / img.height
-      const scale = Math.min(scaleX, scaleY)
-      
-      const scaledWidth = img.width * scale
-      const scaledHeight = img.height * scale
-      
-      // Calculate overlap in pixels
-      const overlapPx = (overlap.value / 297) * a4Height
-      
-      if (splitDirection.value === 'horizontal') {
-        // Split into left and right
-        const splitX = scaledWidth / 2
+      // Create a temporary canvas for rotation if needed
+      let sourceImg = img
+      if (rotation.value !== 0) {
+        const tempCanvas = document.createElement('canvas')
+        const tempCtx = tempCanvas.getContext('2d')
+        if (!tempCtx) throw new Error('Cannot get temp canvas context')
         
-        // Left page
-        canvas.width = a4Width
-        canvas.height = a4Height
-        ctx.fillStyle = 'white'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.drawImage(img, 0, 0, img.width / 2 + (overlapPx / scale), img.height, 
-                      0, 0, a4Width, a4Height)
+        // Calculate rotated dimensions
+        const angle = (rotation.value * Math.PI) / 180
+        const cos = Math.abs(Math.cos(angle))
+        const sin = Math.abs(Math.sin(angle))
+        tempCanvas.width = img.width * cos + img.height * sin
+        tempCanvas.height = img.width * sin + img.height * cos
         
-        canvas.toBlob((blob) => {
-          if (blob) {
-            splitPages.value.push({
-              data: blob,
-              preview: URL.createObjectURL(blob)
-            })
-          }
-        }, `image/${outputFormat.value}`)
+        // Apply rotation
+        tempCtx.translate(tempCanvas.width / 2, tempCanvas.height / 2)
+        tempCtx.rotate(angle)
+        tempCtx.drawImage(img, -img.width / 2, -img.height / 2)
         
-        // Right page
-        setTimeout(() => {
+        // Create new image from rotated canvas
+        sourceImg = new Image()
+        sourceImg.src = tempCanvas.toDataURL()
+        
+        // Wait for rotated image to load
+        sourceImg.onload = () => processRotatedImage()
+        return
+      } else {
+        processRotatedImage()
+      }
+      
+      function processRotatedImage() {
+        // Calculate scale to fit A3
+        const scaleX = a3Width / sourceImg.width
+        const scaleY = a3Height / sourceImg.height
+        const scale = Math.min(scaleX, scaleY)
+        
+        const scaledWidth = sourceImg.width * scale
+        const scaledHeight = sourceImg.height * scale
+        
+        // Calculate overlap in pixels
+        const overlapPx = (overlap.value / 297) * a4Height
+      
+        if (splitDirection.value === 'horizontal') {
+          // Split into left and right
+          const splitX = scaledWidth / 2
+          
+          // Left page
           canvas.width = a4Width
           canvas.height = a4Height
           ctx.fillStyle = 'white'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
-          ctx.drawImage(img, img.width / 2 - (overlapPx / scale), 0, img.width / 2 + (overlapPx / scale), img.height,
+          ctx.drawImage(sourceImg, 0, 0, sourceImg.width / 2 + (overlapPx / scale), sourceImg.height, 
                         0, 0, a4Width, a4Height)
           
           canvas.toBlob((blob) => {
@@ -373,38 +404,38 @@ const splitImage = async (file: File) => {
                 data: blob,
                 preview: URL.createObjectURL(blob)
               })
-              resolve()
             }
           }, `image/${outputFormat.value}`)
-        }, 100)
-      } else {
-        // Split into top and bottom
-        const splitY = scaledHeight / 2
-        
-        // Top page
-        canvas.width = a4Height
-        canvas.height = a4Width
-        ctx.fillStyle = 'white'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.drawImage(img, 0, 0, img.width, img.height / 2 + (overlapPx / scale),
-                      0, 0, a4Height, a4Width)
-        
-        canvas.toBlob((blob) => {
-          if (blob) {
-            splitPages.value.push({
-              data: blob,
-              preview: URL.createObjectURL(blob)
-            })
-          }
-        }, `image/${outputFormat.value}`)
-        
-        // Bottom page
-        setTimeout(() => {
+          
+          // Right page
+          setTimeout(() => {
+            canvas.width = a4Width
+            canvas.height = a4Height
+            ctx.fillStyle = 'white'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.drawImage(sourceImg, sourceImg.width / 2 - (overlapPx / scale), 0, sourceImg.width / 2 + (overlapPx / scale), sourceImg.height,
+                          0, 0, a4Width, a4Height)
+            
+            canvas.toBlob((blob) => {
+              if (blob) {
+                splitPages.value.push({
+                  data: blob,
+                  preview: URL.createObjectURL(blob)
+                })
+                resolve()
+              }
+            }, `image/${outputFormat.value}`)
+          }, 100)
+        } else {
+          // Split into top and bottom
+          const splitY = scaledHeight / 2
+          
+          // Top page
           canvas.width = a4Height
           canvas.height = a4Width
           ctx.fillStyle = 'white'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
-          ctx.drawImage(img, 0, img.height / 2 - (overlapPx / scale), img.width, img.height / 2 + (overlapPx / scale),
+          ctx.drawImage(sourceImg, 0, 0, sourceImg.width, sourceImg.height / 2 + (overlapPx / scale),
                         0, 0, a4Height, a4Width)
           
           canvas.toBlob((blob) => {
@@ -413,10 +444,29 @@ const splitImage = async (file: File) => {
                 data: blob,
                 preview: URL.createObjectURL(blob)
               })
-              resolve()
             }
           }, `image/${outputFormat.value}`)
-        }, 100)
+          
+          // Bottom page
+          setTimeout(() => {
+            canvas.width = a4Height
+            canvas.height = a4Width
+            ctx.fillStyle = 'white'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.drawImage(sourceImg, 0, sourceImg.height / 2 - (overlapPx / scale), sourceImg.width, sourceImg.height / 2 + (overlapPx / scale),
+                          0, 0, a4Height, a4Width)
+            
+            canvas.toBlob((blob) => {
+              if (blob) {
+                splitPages.value.push({
+                  data: blob,
+                  preview: URL.createObjectURL(blob)
+                })
+                resolve()
+              }
+            }, `image/${outputFormat.value}`)
+          }, 100)
+        }
       }
     }
     
