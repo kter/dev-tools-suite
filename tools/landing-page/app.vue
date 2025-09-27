@@ -130,15 +130,28 @@
         <p>&copy; 2025 DevTools. Built with Nuxt 3 and deployed on AWS.</p>
       </footer>
     </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
+
 const { $config } = useNuxtApp()
 const runtimeConfig = useRuntimeConfig()
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
+})
 
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {

@@ -1,11 +1,15 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8">
         <div class="flex justify-between items-center mb-4">
           <div class="flex-1"></div>
           <div class="flex-1 text-center">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Placeholder Generator</h1>
+            <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            Placeholder Generator
+          </span>
+        </h1>
           </div>
           <div class="flex-1 flex justify-end">
             <ThemeToggle />
@@ -16,7 +20,7 @@
 
       <div class="max-w-6xl mx-auto">
         <!-- Settings Panel -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Image Settings</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -194,13 +198,13 @@
         <!-- Preview and Generation -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Preview -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Preview</h3>
               <span class="text-sm text-gray-500 dark:text-gray-400">{{ settings.width }}×{{ settings.height }}</span>
             </div>
             
-            <div class="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[300px] transition-colors">
+            <div class="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl min-h-[300px] transition-colors">
               <div class="relative">
                 <canvas
                   ref="previewCanvas"
@@ -216,7 +220,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions</h3>
             
             <div class="space-y-4">
@@ -298,18 +302,18 @@
         </div>
 
         <!-- Usage Examples -->
-        <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Common Use Cases</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
               <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Website Design</h4>
               <p class="text-sm text-gray-600 dark:text-gray-400">Use placeholders during development to visualize layout before final images are ready.</p>
             </div>
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
               <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Prototyping</h4>
               <p class="text-sm text-gray-600 dark:text-gray-400">Quickly create mockups with consistent placeholder images for presentations.</p>
             </div>
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
               <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Testing</h4>
               <p class="text-sm text-gray-600 dark:text-gray-400">Generate images of specific sizes to test responsive design and loading behavior.</p>
             </div>
@@ -323,9 +327,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 interface PlaceholderSettings {
   width: number
   height: number
@@ -580,10 +589,15 @@ const showCopyMessage = (message: string) => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   generatePreview()
   
   // Initialize dark mode
   const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

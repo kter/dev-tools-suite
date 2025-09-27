@@ -1,11 +1,15 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8">
         <div class="flex justify-between items-center mb-4">
           <div class="flex-1"></div>
           <div class="flex-1 text-center">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Code Diff</h1>
+            <h1 class="text-4xl font-bold mb-2">
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+                Code Diff
+              </span>
+            </h1>
           </div>
           <div class="flex-1 flex justify-end">
             <ThemeToggle />
@@ -16,7 +20,7 @@
 
       <div class="max-w-7xl mx-auto">
         <!-- Options Panel -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
               <label for="language" class="text-sm font-medium text-gray-700 dark:text-gray-300">Language:</label>
@@ -93,7 +97,7 @@
         <!-- Input Areas -->
         <div v-if="viewMode === 'side-by-side'" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <!-- Original Text -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md transition-colors">
             <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Original</h3>
               <div class="flex gap-2">
@@ -125,7 +129,7 @@
           </div>
 
           <!-- Modified Text -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md transition-colors">
             <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Modified</h3>
               <div class="flex gap-2">
@@ -158,7 +162,7 @@
         </div>
 
         <!-- Unified Input -->
-        <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6 transition-colors">
+        <div v-else class="bg-white dark:bg-gray-800 rounded-xl shadow-md mb-6 transition-colors">
           <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Input Files</h3>
             <div class="flex gap-2">
@@ -194,22 +198,22 @@
         </div>
 
         <!-- Diff Statistics -->
-        <div v-if="diffStats" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div v-if="diffStats" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Diff Statistics</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg transition-colors">
+            <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-xl transition-colors">
               <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ diffStats.additions }}</div>
               <div class="text-sm text-green-700 dark:text-green-300">Additions</div>
             </div>
-            <div class="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg transition-colors">
+            <div class="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-xl transition-colors">
               <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ diffStats.deletions }}</div>
               <div class="text-sm text-red-700 dark:text-red-300">Deletions</div>
             </div>
-            <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+            <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl transition-colors">
               <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ diffStats.changes }}</div>
               <div class="text-sm text-blue-700 dark:text-blue-300">Changes</div>
             </div>
-            <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors">
+            <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
               <div class="text-2xl font-bold text-gray-600 dark:text-gray-400">{{ diffStats.unchanged }}</div>
               <div class="text-sm text-gray-700 dark:text-gray-300">Unchanged</div>
             </div>
@@ -217,7 +221,7 @@
         </div>
 
         <!-- Diff Output -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md transition-colors">
           <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Diff Result</h3>
             <div class="flex gap-2">
@@ -317,14 +321,14 @@
         </div>
 
         <!-- Quick Examples -->
-        <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+        <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Examples</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <button
               v-for="example in examples"
               :key="example.name"
               @click="loadExample(example)"
-              class="p-3 text-left border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+              class="p-3 text-left border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
             >
               <div class="font-medium text-gray-800 dark:text-gray-200">{{ example.name }}</div>
               <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ example.description }}</div>
@@ -348,9 +352,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 import { diffLines, diffWordsWithSpace, Change } from 'diff'
 
 interface DiffLine {
@@ -747,6 +756,8 @@ const showCopyMessage = (message: string) => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   // Load a default example
   if (!originalText.value && !modifiedText.value) {
     loadExample(examples[0])
@@ -754,6 +765,9 @@ onMounted(() => {
   
   // Initialize dark mode
   const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

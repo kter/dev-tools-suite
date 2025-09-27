@@ -1,15 +1,19 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-    <div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="mb-8">
         <div class="flex justify-between items-center">
-          <h1 class="text-3xl font-bold">Character Code Converter</h1>
+          <h1 class="text-4xl font-bold mb-2">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+              Character Code Converter
+            </span>
+          </h1>
           <ThemeToggle />
         </div>
       </header>
 
       <main>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <div class="mb-4">
             <label for="input" class="block text-sm font-medium mb-2">
               Input Text
@@ -106,13 +110,21 @@
       </main>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 import { ref, onMounted } from 'vue'
 import { useDarkMode } from './composables/useDarkMode'
 
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 const inputText = ref('')
 const results = ref<CharacterInfo[]>([])
@@ -170,6 +182,8 @@ const convertCharacters = () => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
 
   // Add noindex meta tag if in development

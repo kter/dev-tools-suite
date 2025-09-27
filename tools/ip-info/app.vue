@@ -1,11 +1,15 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8">
         <div class="flex justify-between items-center mb-4">
           <div class="flex-1"></div>
           <div class="flex-1 text-center">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">IP Info</h1>
+            <h1 class="text-4xl font-bold mb-2">
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+                IP Info
+              </span>
+            </h1>
           </div>
           <div class="flex-1 flex justify-end">
             <ThemeToggle />
@@ -16,7 +20,7 @@
 
       <div class="max-w-4xl mx-auto">
         <!-- Your IP Address -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 text-center transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 text-center transition-colors">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Your IP Address</h2>
           <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
             {{ ipInfo?.ip || 'Loading...' }}
@@ -43,13 +47,13 @@
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading && !ipInfo" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 text-center transition-colors">
+        <div v-if="loading && !ipInfo" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 text-center transition-colors">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
           <p class="text-gray-600 dark:text-gray-400">Loading IP information...</p>
         </div>
 
         <!-- Error State -->
-        <div v-if="error" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 text-center transition-colors">
+        <div v-if="error" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 text-center transition-colors">
           <div class="text-red-600 dark:text-red-400 mb-4">
             <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.996-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
@@ -68,7 +72,7 @@
         <!-- IP Information Details -->
         <div v-if="ipInfo && !loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Location Information -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -109,7 +113,7 @@
           </div>
 
           <!-- Network Information -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
@@ -137,7 +141,7 @@
           </div>
 
           <!-- Security & Privacy -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
@@ -153,7 +157,7 @@
                 <span class="text-gray-600 dark:text-gray-400">IPv6 Support:</span>
                 <span class="font-medium text-gray-900 dark:text-white">{{ ipInfo.version === 6 ? 'Yes' : 'Unknown' }}</span>
               </div>
-              <div class="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg transition-colors">
+              <div class="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl transition-colors">
                 <p class="text-sm text-yellow-800 dark:text-yellow-200">
                   <strong>Privacy Note:</strong> This information is publicly visible to websites you visit. Consider using a VPN for enhanced privacy.
                 </p>
@@ -162,7 +166,7 @@
           </div>
 
           <!-- Additional Tools -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -197,7 +201,7 @@
         </div>
 
         <!-- Custom IP Lookup -->
-        <div v-if="showCustomLookup" class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+        <div v-if="showCustomLookup" class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Lookup Custom IP Address</h3>
           <div class="flex gap-2">
             <input
@@ -236,9 +240,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 interface IPInfo {
   ip: string
   type?: string
@@ -420,10 +429,15 @@ const showCopyMessage = (message: string) => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   fetchIPInfo()
   
   // Initialize dark mode
   const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

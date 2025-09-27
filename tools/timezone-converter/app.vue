@@ -1,11 +1,15 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8">
         <div class="flex justify-between items-center mb-4">
           <div class="flex-1"></div>
           <div class="flex-1 text-center">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Timezone Converter</h1>
+            <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            Timezone Converter
+          </span>
+        </h1>
           </div>
           <div class="flex-1 flex justify-end">
             <ThemeToggle />
@@ -16,20 +20,20 @@
 
       <div class="max-w-4xl mx-auto">
         <!-- Current Time -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Current Time</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+            <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl transition-colors">
               <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Local Time</h3>
               <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ currentLocalTime }}</div>
               <div class="text-sm text-gray-500 dark:text-gray-400">{{ userTimezone }}</div>
             </div>
-            <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg transition-colors">
+            <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl transition-colors">
               <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">UTC</h3>
               <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ currentUtcTime }}</div>
               <div class="text-sm text-gray-500 dark:text-gray-400">Coordinated Universal Time</div>
             </div>
-            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg transition-colors">
+            <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl transition-colors">
               <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Unix Timestamp</h3>
               <div class="text-xl font-bold text-purple-600 dark:text-purple-400">{{ currentUnixTime }}</div>
               <div class="text-sm text-gray-500 dark:text-gray-400">Seconds since epoch</div>
@@ -38,7 +42,7 @@
         </div>
 
         <!-- Time Converter -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Convert Time</h2>
           
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -80,7 +84,7 @@
                 />
               </div>
 
-              <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+              <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl transition-colors">
                 <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Full DateTime</div>
                 <div class="font-medium text-blue-800 dark:text-blue-200">{{ formatFromDateTime }}</div>
               </div>
@@ -124,7 +128,7 @@
                 />
               </div>
 
-              <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg transition-colors">
+              <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-xl transition-colors">
                 <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Full DateTime</div>
                 <div class="font-medium text-green-800 dark:text-green-200">{{ formatToDateTime }}</div>
               </div>
@@ -154,7 +158,7 @@
           </div>
 
           <!-- Time Difference -->
-          <div v-if="timeDifference" class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg transition-colors">
+          <div v-if="timeDifference" class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl transition-colors">
             <div class="text-sm text-yellow-800 dark:text-yellow-200">
               <strong>Time Difference:</strong> {{ timeDifference }}
             </div>
@@ -162,14 +166,14 @@
         </div>
 
         <!-- Multiple Timezone Display -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">World Clock</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div
               v-for="worldTime in worldTimes"
               :key="worldTime.timezone"
-              class="p-4 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg transition-colors"
+              class="p-4 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-xl transition-colors"
             >
               <h3 class="font-medium text-gray-800 dark:text-gray-200 mb-1">{{ worldTime.city }}</h3>
               <div class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ worldTime.time }}</div>
@@ -180,7 +184,7 @@
         </div>
 
         <!-- Timezone Information -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Timezone Information</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -229,9 +233,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 import { format, parse, addHours } from 'date-fns'
 import { zonedTimeToUtc, utcToZonedTime, format as formatTz } from 'date-fns-tz'
 
@@ -467,6 +476,8 @@ const showCopyMessage = (message: string) => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   setCurrentTime()
   updateCurrentTime()
   
@@ -481,6 +492,9 @@ onMounted(() => {
   
   // Initialize dark mode
   const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

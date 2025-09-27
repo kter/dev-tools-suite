@@ -150,16 +150,6 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ap-northeast-1
 
-      - name: Setup Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ vars.GOOGLE_CLOUD_PROJECT_ID }}
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GOOGLE_CLOUD_SA_KEY }}
-
       - name: Install dependencies and build
         run: |
           cd tools/${{ matrix.tool }}
@@ -201,38 +191,6 @@ jobs:
         run: |
           cd tools/${{ matrix.tool }}
           aws s3 sync .output/public/ s3://${{ steps.stack-outputs.outputs.bucket-name }}/ --delete
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Deploy to Firebase Hosting
-        run: |
-          ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
-          TOOL_NAME="${{ matrix.tool }}"
-          
-          # Determine Firebase site ID based on tool and environment
-          if [ "$TOOL_NAME" = "landing-page" ]; then
-            FIREBASE_SITE_ID="devtools-landing-page-${ENV}"
-          else
-            FIREBASE_SITE_ID="devtools-${TOOL_NAME}-${ENV}"
-          fi
-          
-          echo "Deploying $TOOL_NAME to Firebase Hosting site: $FIREBASE_SITE_ID"
-          
-          cd tools/${{ matrix.tool }}
-          
-          # Create firebase.json configuration
-          cat > firebase.json << EOF
-          {
-            "hosting": {
-              "site": "$FIREBASE_SITE_ID",
-              "public": ".output/public",
-              "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-            }
-          }
-          EOF
-          
-          firebase deploy --only hosting --project ${{ vars.GOOGLE_CLOUD_PROJECT_ID }}
 
       - name: Invalidate CloudFront cache with retry
         id: invalidate-cache
@@ -315,69 +273,50 @@ jobs:
           ENV=${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'prd') && 'prd' || 'dev' }}
           TOOL_NAME="${{ matrix.tool }}"
           INVALIDATION_SUCCESS="${{ steps.invalidate-cache.outputs.invalidation-success }}"
-          
+
           echo "========================================="
-          echo "🚀 Multi-Cloud Deployment Summary for $TOOL_NAME"
+          echo "🚀 AWS Deployment Summary for $TOOL_NAME"
           echo "========================================="
           echo "Environment: $ENV"
           echo ""
           echo "📦 AWS Deployment:"
           echo "  S3 Bucket: ${{ steps.stack-outputs.outputs.bucket-name }}"
           echo "  CloudFront Distribution: ${{ steps.stack-outputs.outputs.distribution-id }}"
-          
-          # Determine Firebase site ID
-          if [ "$TOOL_NAME" = "landing-page" ]; then
-            FIREBASE_SITE_ID="devtools-landing-page-${ENV}"
-          else
-            FIREBASE_SITE_ID="devtools-${TOOL_NAME}-${ENV}"
-          fi
-          
-          echo ""
-          echo "🔥 Firebase Deployment:"
-          echo "  Firebase Site ID: $FIREBASE_SITE_ID"
-          echo "  Firebase URL: https://${FIREBASE_SITE_ID}.web.app"
-          
+
           echo ""
           if [ "$INVALIDATION_SUCCESS" = "true" ]; then
             echo "✅ AWS S3 upload: SUCCESS"
             echo "✅ AWS CloudFront invalidation: SUCCESS"
-            echo "✅ Firebase Hosting deployment: SUCCESS"
-            echo "🌐 Both platforms updated successfully"
+            echo "🌐 AWS deployment completed successfully"
           else
             echo "✅ AWS S3 upload: SUCCESS"
             echo "⚠️  AWS CloudFront invalidation: FAILED (but deployment successful)"
-            echo "✅ Firebase Hosting deployment: SUCCESS"
             echo "📝 Note: CloudFront cache will refresh automatically within 24 hours"
             echo "🔧 You can manually invalidate the cache in AWS Console if needed"
           fi
-          
+
           echo ""
           echo "🔗 Access URLs:"
           if [ "$ENV" = "dev" ]; then
             if [ "$TOOL_NAME" = "landing-page" ]; then
-              echo "  Primary (AWS): https://dev.devtools.site"
-              echo "  GCP Mirror: https://gcp.dev.devtools.site"
+              echo "  https://dev.devtools.site"
             else
-              echo "  Primary (AWS): https://$TOOL_NAME.dev.devtools.site"
-              echo "  GCP Mirror: https://$TOOL_NAME.gcp.dev.devtools.site"
+              echo "  https://$TOOL_NAME.dev.devtools.site"
             fi
           else
             if [ "$TOOL_NAME" = "landing-page" ]; then
-              echo "  Primary (AWS): https://devtools.site"
-              echo "  GCP Mirror: https://gcp.devtools.site"
+              echo "  https://devtools.site"
             else
-              echo "  Primary (AWS): https://$TOOL_NAME.devtools.site"
-              echo "  GCP Mirror: https://$TOOL_NAME.gcp.devtools.site"
+              echo "  https://$TOOL_NAME.devtools.site"
             fi
           fi
-          echo "  Firebase Direct: https://${FIREBASE_SITE_ID}.web.app"
           echo "========================================="
-          
+
           # Add to GitHub step summary
           if [[ "$INVALIDATION_SUCCESS" == "true" ]]; then
-            echo "## ✅ Multi-Cloud Deployment Successful" >> $GITHUB_STEP_SUMMARY
+            echo "## ✅ AWS Deployment Successful" >> $GITHUB_STEP_SUMMARY
           else
-            echo "## ⚠️ Multi-Cloud Deployment Completed with Warnings" >> $GITHUB_STEP_SUMMARY
+            echo "## ⚠️ AWS Deployment Completed with Warnings" >> $GITHUB_STEP_SUMMARY
           fi
           echo "- **Tool**: $TOOL_NAME" >> $GITHUB_STEP_SUMMARY
           echo "- **Environment**: $ENV" >> $GITHUB_STEP_SUMMARY
@@ -386,29 +325,20 @@ jobs:
           echo "- **S3 Bucket**: ${{ steps.stack-outputs.outputs.bucket-name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **CloudFront**: ${{ steps.stack-outputs.outputs.distribution-id }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔥 Firebase Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "- **Site ID**: ${FIREBASE_SITE_ID}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Direct URL**: https://${FIREBASE_SITE_ID}.web.app" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔗 Access URLs" >> $GITHUB_STEP_SUMMARY
           if [ "$ENV" = "dev" ]; then
             if [ "$TOOL_NAME" = "landing-page" ]; then
-              echo "- **Primary (AWS)**: https://dev.devtools.site" >> $GITHUB_STEP_SUMMARY
-              echo "- **GCP Mirror**: https://gcp.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **URL**: https://dev.devtools.site" >> $GITHUB_STEP_SUMMARY
             else
-              echo "- **Primary (AWS)**: https://$TOOL_NAME.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
-              echo "- **GCP Mirror**: https://$TOOL_NAME.gcp.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **URL**: https://$TOOL_NAME.dev.devtools.site" >> $GITHUB_STEP_SUMMARY
             fi
           else
             if [ "$TOOL_NAME" = "landing-page" ]; then
-              echo "- **Primary (AWS)**: https://devtools.site" >> $GITHUB_STEP_SUMMARY
-              echo "- **GCP Mirror**: https://gcp.devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **URL**: https://devtools.site" >> $GITHUB_STEP_SUMMARY
             else
-              echo "- **Primary (AWS)**: https://$TOOL_NAME.devtools.site" >> $GITHUB_STEP_SUMMARY
-              echo "- **GCP Mirror**: https://$TOOL_NAME.gcp.devtools.site" >> $GITHUB_STEP_SUMMARY
+              echo "- **URL**: https://$TOOL_NAME.devtools.site" >> $GITHUB_STEP_SUMMARY
             fi
           fi
-          echo "- **Firebase Direct**: https://${FIREBASE_SITE_ID}.web.app" >> $GITHUB_STEP_SUMMARY
 
   deployment-status:
     needs: [detect-changes, deploy]
@@ -422,26 +352,25 @@ jobs:
           DEPLOY_RESULT="${{ needs.deploy.result }}"
           
           echo "========================================="
-          echo "📊 Multi-Cloud Deployment Status"
+          echo "📊 AWS Deployment Status"
           echo "========================================="
           echo "Environment: $ENV"
           echo "Changed tools: $CHANGED_TOOLS"
           echo "Deploy job result: $DEPLOY_RESULT"
           echo ""
-          echo "🏗️  Deployment targets:"
+          echo "🏗️  Deployment target:"
           echo "   • AWS (S3 + CloudFront)"
-          echo "   • Firebase Hosting"
-          
+
           if [ "$CHANGED_TOOLS" = "[]" ]; then
             echo "ℹ️  No tools were changed - no deployment needed"
           elif [ "$DEPLOY_RESULT" = "success" ]; then
-            echo "✅ All multi-cloud deployments completed successfully"
-            echo "🌐 Both AWS and Firebase hosting platforms are updated"
+            echo "✅ All AWS deployments completed successfully"
+            echo "🌐 AWS hosting platform updated"
           elif [ "$DEPLOY_RESULT" = "failure" ]; then
-            echo "❌ Some multi-cloud deployments failed"
+            echo "❌ Some AWS deployments failed"
             exit 1
           else
-            echo "⚠️  Multi-cloud deployment completed with warnings"
+            echo "⚠️  AWS deployment completed with warnings"
             echo "📝 Check individual tool deployment logs for details"
           fi
           echo "========================================="

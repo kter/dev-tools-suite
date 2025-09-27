@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8 relative">
         <!-- Theme Toggle -->
         <div class="absolute right-0 top-0">
           <ThemeToggle />
         </div>
         
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
             IP Calculator
           </span>
         </h1>
@@ -16,7 +16,7 @@
       </header>
 
       <div class="max-w-4xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors duration-300">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors duration-300">
           <label for="ip-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             IP Address with CIDR (e.g., 192.168.1.1/24)
           </label>
@@ -24,7 +24,7 @@
             id="ip-input"
             v-model="ipInput"
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="192.168.1.1/24"
           />
           <div v-if="inputError" class="mt-2 text-red-600 dark:text-red-400 text-sm">
@@ -33,7 +33,7 @@
         </div>
 
         <div v-if="calculation" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Network Information</h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
@@ -59,7 +59,7 @@
             </div>
           </div>
 
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Host Information</h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
@@ -85,7 +85,7 @@
             </div>
           </div>
 
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 md:col-span-2 transition-colors duration-300">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 md:col-span-2 transition-colors duration-300">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Binary Representation</h3>
             <div class="space-y-2">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -104,9 +104,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 interface IPCalculation {
   ipAddress: string
   subnetMask: string
@@ -133,6 +138,9 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
 
 // Dark mode
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 const ipInput = ref('192.168.1.1/24')
 const inputError = ref('')
@@ -226,6 +234,8 @@ function ipToBinary(ip: string): string {
 
 // Initialize dark mode
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
 })
 </script>

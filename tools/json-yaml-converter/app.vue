@@ -1,17 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8 relative">
         <div class="absolute top-0 right-0">
           <ThemeToggle />
         </div>
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">JSON/YAML Converter</h1>
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            JSON/YAML Converter
+          </span>
+        </h1>
         <p class="text-gray-600 dark:text-gray-300">Convert between JSON, YAML, and TOML formats with validation and formatting</p>
       </header>
 
       <div class="max-w-7xl mx-auto">
         <!-- Format Selection -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Conversion Settings</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -85,7 +89,7 @@
         <!-- Conversion Area -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Input -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 Input ({{ inputFormat.toUpperCase() }})
@@ -134,7 +138,7 @@
           </div>
 
           <!-- Output -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 Output ({{ outputFormat.toUpperCase() }})
@@ -192,7 +196,7 @@
         </div>
 
         <!-- Format Information -->
-        <div class="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6">
+        <div class="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl p-6">
           <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -217,14 +221,22 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 import yaml from 'js-yaml'
 import toml from 'toml'
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
@@ -237,6 +249,8 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
 
 // Initialize theme on client-side
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
 })
 

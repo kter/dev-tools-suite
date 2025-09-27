@@ -1,17 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8 relative">
         <div class="absolute top-0 right-0">
           <ThemeToggle />
         </div>
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">JWT Decoder</h1>
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            JWT Decoder
+          </span>
+        </h1>
         <p class="text-gray-600 dark:text-gray-300">Decode and validate JSON Web Tokens with detailed information display</p>
       </header>
 
       <div class="max-w-6xl mx-auto">
         <!-- JWT Input -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white">JWT Token</h2>
             <div class="flex gap-2">
@@ -76,7 +80,7 @@
 
         <div v-if="decodedToken" class="space-y-6">
           <!-- Header -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <div class="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -113,7 +117,7 @@
           </div>
 
           <!-- Payload -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
@@ -145,12 +149,12 @@
           </div>
 
           <!-- Token Status -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Token Status</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <!-- Expiration Status -->
-              <div class="p-4 rounded-lg" :class="expirationStatus.bgClass">
+              <div class="p-4 rounded-xl" :class="expirationStatus.bgClass">
                 <div class="flex items-center gap-2 mb-2">
                   <svg class="w-5 h-5" :class="expirationStatus.iconClass" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -161,7 +165,7 @@
               </div>
 
               <!-- Not Before Status -->
-              <div v-if="decodedToken.payload.nbf" class="p-4 rounded-lg" :class="notBeforeStatus.bgClass">
+              <div v-if="decodedToken.payload.nbf" class="p-4 rounded-xl" :class="notBeforeStatus.bgClass">
                 <div class="flex items-center gap-2 mb-2">
                   <svg class="w-5 h-5" :class="notBeforeStatus.iconClass" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -172,7 +176,7 @@
               </div>
 
               <!-- Issued At -->
-              <div v-if="decodedToken.payload.iat" class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div v-if="decodedToken.payload.iat" class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
                 <div class="flex items-center gap-2 mb-2">
                   <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -183,7 +187,7 @@
               </div>
 
               <!-- Algorithm -->
-              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
                 <div class="flex items-center gap-2 mb-2">
                   <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
@@ -196,7 +200,7 @@
           </div>
 
           <!-- Signature -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
@@ -230,7 +234,7 @@
         </div>
 
         <!-- Information -->
-        <div v-if="!decodedToken" class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6">
+        <div v-if="!decodedToken" class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl p-6">
           <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -250,13 +254,21 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 import { decodeJwt } from 'jose'
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
@@ -269,6 +281,8 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
 
 // Initialize theme on client-side
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
 })
 

@@ -1,15 +1,17 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-    <div class="container mx-auto p-4 max-w-6xl">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <!-- Header -->
       <header class="mb-8">
         <div class="flex justify-between items-center">
-          <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">
-            📐 Poster Splitter
+          <h1 class="text-4xl font-bold mb-2">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+              📐 Poster Splitter
+            </span>
           </h1>
           <button
             @click="toggleTheme"
-            class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            class="p-2 rounded-xl bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             :title="`Current theme: ${getThemeName()}`"
           >
             <span class="text-2xl">{{ getThemeIcon() }}</span>
@@ -23,7 +25,7 @@
       <!-- Main Content -->
       <div class="grid md:grid-cols-2 gap-6">
         <!-- Upload Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
             Upload File
           </h2>
@@ -32,7 +34,7 @@
             @drop="handleDrop"
             @dragover.prevent
             @dragenter.prevent
-            class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+            class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
           >
             <input
               ref="fileInput"
@@ -49,7 +51,7 @@
               </p>
               <button
                 @click="$refs.fileInput.click()"
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                class="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
               >
                 Browse Files
               </button>
@@ -68,7 +70,7 @@
               </p>
               <button
                 @click="clearFile"
-                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                class="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
               >
                 Remove File
               </button>
@@ -84,7 +86,7 @@
               <select
                 v-model="outputFormat"
                 @change="splitFile"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
               >
                 <option value="png">PNG</option>
                 <option value="jpg">JPG</option>
@@ -99,7 +101,7 @@
               <select
                 v-model="splitDirection"
                 @change="splitFile"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
               >
                 <option value="horizontal">Horizontal (Left & Right)</option>
                 <option value="vertical">Vertical (Top & Bottom)</option>
@@ -113,7 +115,7 @@
               <select
                 v-model="rotation"
                 @change="splitFile"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
               >
                 <option value="0">No rotation (0°)</option>
                 <option value="90">Rotate 90° clockwise</option>
@@ -132,7 +134,7 @@
                 type="number"
                 min="0"
                 max="50"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
               >
               <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Adds overlap area for easier alignment when joining pages
@@ -146,7 +148,7 @@
         </div>
 
         <!-- Preview & Download Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
             Preview & Download
           </h2>
@@ -159,7 +161,7 @@
           </div>
 
           <div v-else class="space-y-4">
-            <div v-for="(page, index) in splitPages" :key="index" class="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+            <div v-for="(page, index) in splitPages" :key="index" class="border border-gray-300 dark:border-gray-600 rounded-xl p-4">
               <div class="flex items-center justify-between mb-2">
                 <h3 class="font-medium text-gray-700 dark:text-gray-300">
                   Page {{ index + 1 }} (A4)
@@ -193,7 +195,7 @@
 
             <button
               @click="downloadAll"
-              class="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
+              class="w-full px-4 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors font-medium"
             >
               Download All Pages
             </button>
@@ -202,7 +204,7 @@
       </div>
 
       <!-- Instructions -->
-      <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
         <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
           📖 How to Use
         </h2>
@@ -217,7 +219,7 @@
           <li>Print each A4 page and join them together to create your A3 poster</li>
         </ol>
 
-        <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+        <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
           <p class="text-sm text-blue-800 dark:text-blue-300">
             <strong>Tip:</strong> Adding a small overlap (5-10mm) makes it easier to align and tape the pages together accurately.
           </p>
@@ -225,9 +227,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { useDarkMode } from './composables/useDarkMode'
 
@@ -235,6 +242,8 @@ import { useDarkMode } from './composables/useDarkMode'
 const { initializeTheme, toggleTheme, getThemeIcon, getThemeName } = useDarkMode()
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
 })
 
