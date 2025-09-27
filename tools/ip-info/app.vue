@@ -273,6 +273,12 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+
 const ipInfo = ref<IPInfo | null>(null)
 const loading = ref(false)
 const error = ref('')
@@ -432,12 +438,6 @@ onMounted(() => {
   kofiWidget.init(KOFI_CONFIG)
   kofiWidget.load()
   fetchIPInfo()
-  
-  // Initialize dark mode
-  const { initializeTheme } = useDarkMode()
-
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

@@ -395,6 +395,12 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+
 const originalText = ref('')
 const modifiedText = ref('')
 const selectedLanguage = ref('javascript')
@@ -762,12 +768,7 @@ onMounted(() => {
   if (!originalText.value && !modifiedText.value) {
     loadExample(examples[0])
   }
-  
-  // Initialize dark mode
-  const { initializeTheme } = useDarkMode()
 
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

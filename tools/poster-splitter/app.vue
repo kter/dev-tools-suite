@@ -241,6 +241,9 @@ import { useDarkMode } from './composables/useDarkMode'
 // Dark mode setup
 const { initializeTheme, toggleTheme, getThemeIcon, getThemeName } = useDarkMode()
 
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+
 onMounted(() => {
   kofiWidget.init(KOFI_CONFIG)
   kofiWidget.load()

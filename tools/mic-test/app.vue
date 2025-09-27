@@ -281,6 +281,12 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+
 const hasPermission = ref(false)
 const permissionDenied = ref(false)
 const requestingPermission = ref(false)
@@ -533,12 +539,7 @@ onMounted(() => {
   } else {
     console.error('getUserMedia not supported')
   }
-  
-  // Initialize dark mode
-  const { initializeTheme } = useDarkMode()
 
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 

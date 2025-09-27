@@ -260,6 +260,12 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+
 const fromTimezone = ref('America/New_York')
 const toTimezone = ref('Asia/Tokyo')
 const fromDate = ref('')
@@ -489,12 +495,7 @@ onMounted(() => {
     const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone
     fromTimezone.value = userTz
   }
-  
-  // Initialize dark mode
-  const { initializeTheme } = useDarkMode()
 
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

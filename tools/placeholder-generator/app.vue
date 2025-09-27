@@ -363,6 +363,12 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+
 const settings = ref<PlaceholderSettings>({
   width: 300,
   height: 200,
@@ -592,12 +598,6 @@ onMounted(() => {
   kofiWidget.init(KOFI_CONFIG)
   kofiWidget.load()
   generatePreview()
-  
-  // Initialize dark mode
-  const { initializeTheme } = useDarkMode()
-
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

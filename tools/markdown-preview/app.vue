@@ -162,8 +162,11 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
-// Dark mode
+// Initialize dark mode
 const { initializeTheme, isDarkMode } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 const markdownText = ref(`# Welcome to Markdown Preview
 
