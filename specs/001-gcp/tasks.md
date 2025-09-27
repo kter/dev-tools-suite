@@ -31,24 +31,24 @@
 - Include exact file paths in descriptions
 
 ## Phase 3.1: Setup & Preparation
-- [ ] T001 Create backup of current git state and verify clean working directory
-- [ ] T002 [P] Stop all running development servers (hash-generator, qr-generator, timer, etc.)
-- [ ] T003 [P] Run full test suite to establish baseline (npx playwright test)
+- [x] T001 Create backup of current git state and verify clean working directory
+- [x] T002 [P] Stop all running development servers (hash-generator, qr-generator, timer, etc.)
+- [x] T003 [P] Run full test suite to establish baseline (npx playwright test)
 
 ## Phase 3.2: Verification Tests (MUST COMPLETE BEFORE 3.3) ⚠️
 **CRITICAL: These verification tests MUST pass/validate before ANY removal operations**
-- [ ] T004 [P] Create verification test for Terraform directory removal in tests/contract/test_terraform_removal.js
-- [ ] T005 [P] Create verification test for Firebase config removal in tests/contract/test_firebase_removal.js
-- [ ] T006 [P] Create verification test for GitHub Actions cleanup in tests/contract/test_workflow_cleanup.js
-- [ ] T007 [P] Create verification test for CDK build success in tests/contract/test_cdk_build.js
-- [ ] T008 [P] Create verification test for documentation cleanup in tests/contract/test_docs_cleanup.js
-- [ ] T009 [P] Create verification test for Vue component updates in tests/contract/test_vue_cleanup.js
+- [x] T004 [P] Create verification test for Terraform directory removal in tests/contract/test_terraform_removal.js
+- [x] T005 [P] Create verification test for Firebase config removal in tests/contract/test_firebase_removal.js
+- [x] T006 [P] Create verification test for GitHub Actions cleanup in tests/contract/test_workflow_cleanup.js
+- [x] T007 [P] Create verification test for CDK build success in tests/contract/test_cdk_build.js
+- [x] T008 [P] Create verification test for documentation cleanup in tests/contract/test_docs_cleanup.js
+- [x] T009 [P] Create verification test for Vue component updates in tests/contract/test_vue_cleanup.js
 
 ## Phase 3.3: Infrastructure Removal (ONLY after verification tests exist)
-- [ ] T010 Remove entire infrastructure/terraform/ directory completely
-- [ ] T011 Remove firebase.json from repository root
-- [ ] T012 [P] Remove infrastructure/cdk/lib/multi-cloud-routing-stack.ts
-- [ ] T013 Verify no broken references after infrastructure removal
+- [x] T010 Remove entire infrastructure/terraform/ directory completely
+- [x] T011 Remove firebase.json from repository root
+- [x] T012 [P] Remove infrastructure/cdk/lib/multi-cloud-routing-stack.ts
+- [x] T013 Verify no broken references after infrastructure removal
 
 ## Phase 3.4: Code Modifications
 - [ ] T014 Remove GCP deployment steps from .github/workflows/deploy.yml preserving AWS deployment
