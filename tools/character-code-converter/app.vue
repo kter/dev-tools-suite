@@ -116,8 +116,8 @@
 </template>
 
 <script setup lang="ts">
-import { useKofiWidget } from '~/shared/composables/useKofiWidget'
-import KOFI_CONFIG from '~/shared/config/kofi'
+import { useKofiWidget } from '../shared/composables/useKofiWidget'
+import KOFI_CONFIG from '../shared/config/kofi'
 import { ref, onMounted } from 'vue'
 import { useDarkMode } from './composables/useDarkMode'
 
