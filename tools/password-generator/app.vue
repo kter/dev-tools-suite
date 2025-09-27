@@ -1,7 +1,7 @@
 <template>
   <!-- Password Generator Tool v1.1 -->
   <div class="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-12">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-12 relative">
         <!-- Theme Toggle -->
         <div class="absolute right-0 top-0">
@@ -149,7 +149,7 @@
                 
                 <button
                   @click="togglePasswordVisibility"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+                  class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center space-x-2"
                 >
                   <svg v-if="showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
@@ -202,7 +202,7 @@
               <span class="font-mono break-all flex-1 mr-4 text-gray-900 dark:text-white">{{ password.slice(0, 20) }}{{ password.length > 20 ? '...' : '' }}</span>
               <button
                 @click="copyToClipboard(password)"
-                class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+                class="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded transition-colors"
               >
                 Copy
               </button>

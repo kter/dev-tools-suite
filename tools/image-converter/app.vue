@@ -1,17 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8 relative">
         <div class="absolute top-0 right-0">
           <ThemeToggle />
         </div>
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Image Converter</h1>
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            Image Converter
+          </span>
+        </h1>
         <p class="text-gray-600 dark:text-gray-300">Convert image formats and resize images online</p>
       </header>
 
       <div class="max-w-4xl mx-auto space-y-6">
         <!-- File Upload Area -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
           <div class="p-6">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upload Image</h2>
             
@@ -19,7 +23,7 @@
               @drop="onDrop"
               @dragover.prevent
               @dragenter.prevent
-              class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center transition-colors"
+              class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center transition-colors"
               :class="{ 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20': isDragging }"
               @dragenter="isDragging = true"
               @dragleave="isDragging = false"
@@ -65,7 +69,7 @@
         </div>
 
         <!-- Conversion Settings -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Conversion Settings</h3>
           
           <div class="space-y-4">
@@ -95,7 +99,7 @@
                 min="10"
                 max="100"
                 step="5"
-                class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-xl appearance-none cursor-pointer"
               />
             </div>
 
@@ -233,9 +237,9 @@
         </div>
 
         <!-- Image Preview -->
-        <div v-if="imagePreview" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div v-if="imagePreview" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Preview</h3>
-          <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
+          <div class="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 text-center">
             <img
               :src="imagePreview"
               alt="Preview"
@@ -248,7 +252,7 @@
         </div>
 
         <!-- Feature Overview -->
-        <div v-if="!imagePreview" class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-700">
+        <div v-if="!imagePreview" class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-700">
           <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-4 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -279,7 +283,7 @@
         </div>
 
         <!-- Converted Image -->
-        <div v-if="convertedImage" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div v-if="convertedImage" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Converted Image</h3>
             <button
@@ -290,7 +294,7 @@
             </button>
           </div>
           
-          <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
+          <div class="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 text-center">
             <img
               :src="convertedImage"
               alt="Converted"

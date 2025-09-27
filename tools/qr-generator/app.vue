@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-200">
-    <div class="container mx-auto max-w-4xl px-4">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 transition-colors duration-200">
+    <div class="container mx-auto px-4 max-w-6xl">
       <!-- Header -->
       <div class="text-center mb-8 relative">
         <!-- Theme Toggle -->
@@ -8,12 +8,16 @@
           <ThemeToggle />
         </div>
         
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">QR Code Generator</h1>
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            QR Code Generator
+          </span>
+        </h1>
         <p class="text-lg text-gray-600 dark:text-gray-300">Generate QR codes from text, URLs, or any content instantly</p>
       </div>
 
       <!-- Input Section -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors duration-200">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors duration-200">
         <div class="mb-4">
           <label for="text-input" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Enter text or URL
@@ -64,12 +68,12 @@
       </div>
 
       <!-- QR Code Display -->
-      <div v-if="inputText.trim()" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-200">
+      <div v-if="inputText.trim()" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-200">
         <div class="text-center">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Generated QR Code</h2>
           
           <div class="flex justify-center mb-6">
-            <div class="p-4 bg-white dark:bg-gray-100 rounded-lg shadow-lg">
+            <div class="p-4 bg-white dark:bg-gray-100 rounded-xl shadow-lg">
               <canvas 
                 ref="qrCanvas" 
                 class="mx-auto"
@@ -96,7 +100,7 @@
           </div>
 
           <!-- QR Code Info -->
-          <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+          <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors duration-200">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-300">
               <div>
                 <span class="font-medium">Size:</span> {{ qrSize }}x{{ qrSize }}px
@@ -113,24 +117,24 @@
       </div>
 
       <!-- Instructions -->
-      <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center transition-colors duration-200">
+      <div v-else class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 text-center transition-colors duration-200">
         <div class="text-gray-500 dark:text-gray-400">
           <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">How to use</h2>
           <p class="mb-4">Enter any text, URL, or content in the text area above to instantly generate a QR code.</p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors duration-200">
               <h3 class="font-medium mb-2 text-gray-900 dark:text-white">📱 Website URLs</h3>
               <p class="text-sm text-gray-600 dark:text-gray-300">https://example.com</p>
             </div>
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors duration-200">
               <h3 class="font-medium mb-2 text-gray-900 dark:text-white">📧 Email Address</h3>
               <p class="text-sm text-gray-600 dark:text-gray-300">mailto:user@example.com</p>
             </div>
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors duration-200">
               <h3 class="font-medium mb-2 text-gray-900 dark:text-white">📞 Phone Number</h3>
               <p class="text-sm text-gray-600 dark:text-gray-300">tel:+1234567890</p>
             </div>
-            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors duration-200">
               <h3 class="font-medium mb-2 text-gray-900 dark:text-white">💬 Plain Text</h3>
               <p class="text-sm text-gray-600 dark:text-gray-300">Any text content</p>
             </div>

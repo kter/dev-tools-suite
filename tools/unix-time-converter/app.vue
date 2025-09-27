@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-12">
+  <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-12 relative">
         <!-- Theme Toggle -->
         <div class="absolute right-0 top-0">
           <ThemeToggle />
         </div>
         
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
             Unix Time Converter
           </span>
         </h1>
@@ -43,7 +43,7 @@
                 v-model="unixInput"
                 type="number"
                 placeholder="1640995200"
-                class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 @input="convertUnixToHuman"
               />
             </div>
@@ -70,7 +70,7 @@
                 <input
                   v-model="dateInput"
                   type="date"
-                  class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   @input="convertHumanToUnix"
                 />
               </div>
@@ -79,7 +79,7 @@
                 <input
                   v-model="timeInput"
                   type="time"
-                  class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   @input="convertHumanToUnix"
                 />
               </div>
@@ -105,7 +105,7 @@
               v-for="preset in commonTimestamps"
               :key="preset.name"
               @click="usePreset(preset.timestamp)"
-              class="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
+              class="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors"
             >
               <div class="font-semibold text-gray-900 dark:text-white">{{ preset.name }}</div>
               <div class="text-sm text-gray-600 dark:text-gray-300 font-mono">{{ preset.timestamp }}</div>
