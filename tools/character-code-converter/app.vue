@@ -106,13 +106,21 @@
       </main>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '~/shared/composables/useKofiWidget'
+import KOFI_CONFIG from '~/shared/config/kofi'
 import { ref, onMounted } from 'vue'
 import { useDarkMode } from './composables/useDarkMode'
 
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 const inputText = ref('')
 const results = ref<CharacterInfo[]>([])
@@ -170,6 +178,8 @@ const convertCharacters = () => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
 
   // Add noindex meta tag if in development

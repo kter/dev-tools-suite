@@ -144,13 +144,21 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '~/shared/composables/useKofiWidget'
+import KOFI_CONFIG from '~/shared/config/kofi'
 import QRCode from 'qrcode'
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
@@ -163,6 +171,8 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
 
 // Initialize dark mode on mount
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
   // Generate initial QR code if there's default text
   if (inputText.value.trim()) {

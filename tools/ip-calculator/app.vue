@@ -104,9 +104,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '~/shared/composables/useKofiWidget'
+import KOFI_CONFIG from '~/shared/config/kofi'
 interface IPCalculation {
   ipAddress: string
   subnetMask: string
@@ -133,6 +138,9 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
 
 // Dark mode
 const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
 
 const ipInput = ref('192.168.1.1/24')
 const inputError = ref('')
@@ -226,6 +234,8 @@ function ipToBinary(ip: string): string {
 
 // Initialize dark mode
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   initializeTheme()
 })
 </script>
