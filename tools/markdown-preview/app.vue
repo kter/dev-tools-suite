@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8 relative">
         <!-- Theme Toggle -->
         <div class="absolute right-0 top-0">
@@ -8,7 +8,7 @@
         </div>
         
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
             Markdown Preview
           </span>
         </h1>
@@ -17,7 +17,7 @@
 
       <div class="max-w-7xl mx-auto">
         <!-- Toolbar -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6 transition-colors duration-300">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-6 transition-colors duration-300">
           <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
               <label for="view-mode" class="text-sm font-medium text-gray-700 dark:text-gray-300">View Mode:</label>
@@ -63,7 +63,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors duration-300">
           <div class="grid" :class="gridClass">
             <!-- Editor Panel -->
             <div v-if="showEditor" class="border-r border-gray-200 dark:border-gray-700">
@@ -109,7 +109,7 @@
         </div>
 
         <!-- Quick Reference -->
-        <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Markdown Quick Reference</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
             <div>

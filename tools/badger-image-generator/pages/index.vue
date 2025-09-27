@@ -1,15 +1,19 @@
 <template>
-  <div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-3xl mx-auto">
-      <div class="bg-white shadow-xl rounded-lg">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
+      <div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl">
         <div class="px-6 py-8">
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">Badger2040 Image Generator</h1>
-          <p class="text-gray-600 mb-8">Generate 296x128 pixel monochrome images for your Badger2040 display</p>
+          <h1 class="text-4xl font-bold mb-2">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+              Badger2040 Image Generator
+            </span>
+          </h1>
+          <p class="text-gray-600 dark:text-gray-400 mb-8">Generate 296x128 pixel monochrome images for your Badger2040 display</p>
           
           <div class="space-y-6">
             <!-- Text Input -->
             <div>
-              <label for="text" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Enter Text
               </label>
               <textarea
@@ -17,7 +21,7 @@
                 @input="generateImage"
                 id="text"
                 rows="3"
-                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-3"
+                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 dark:text-gray-100"
                 placeholder="Enter the text to display on your Badger2040..."
               ></textarea>
             </div>
@@ -26,7 +30,7 @@
             <div class="grid grid-cols-2 gap-4">
               <!-- Font Size -->
               <div>
-                <label for="fontSize" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="fontSize" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Font Size: {{ fontSize }}px
                 </label>
                 <input
@@ -42,7 +46,7 @@
 
               <!-- Font Weight -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Font Weight
                 </label>
                 <div class="flex space-x-2">
@@ -51,8 +55,8 @@
                     :class="[
                       'flex-1 px-3 py-2 rounded-md text-sm font-medium',
                       !fontBold 
-                        ? 'bg-indigo-600 text-white' 
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-200 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
                     ]"
                   >
                     Normal
@@ -62,8 +66,8 @@
                     :class="[
                       'flex-1 px-3 py-2 rounded-md text-sm font-medium',
                       fontBold 
-                        ? 'bg-indigo-600 text-white' 
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-200 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
                     ]"
                   >
                     Bold
@@ -75,7 +79,7 @@
             <!-- Text Position -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label for="textX" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="textX" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   X Position
                 </label>
                 <input
@@ -85,11 +89,11 @@
                   id="textX"
                   min="0"
                   max="296"
-                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2"
+                  class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 dark:text-gray-100"
                 />
               </div>
               <div>
-                <label for="textY" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="textY" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Y Position
                 </label>
                 <input
@@ -99,14 +103,14 @@
                   id="textY"
                   min="0"
                   max="128"
-                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2"
+                  class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 dark:text-gray-100"
                 />
               </div>
             </div>
 
             <!-- Alignment -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Text Alignment
               </label>
               <div class="grid grid-cols-3 gap-2">
@@ -115,8 +119,8 @@
                   :class="[
                     'px-4 py-2 rounded-md text-sm font-medium',
                     textAlign === 'left' 
-                      ? 'bg-indigo-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
                   ]"
                 >
                   Left
@@ -126,8 +130,8 @@
                   :class="[
                     'px-4 py-2 rounded-md text-sm font-medium',
                     textAlign === 'center' 
-                      ? 'bg-indigo-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
                   ]"
                 >
                   Center
@@ -137,8 +141,8 @@
                   :class="[
                     'px-4 py-2 rounded-md text-sm font-medium',
                     textAlign === 'right' 
-                      ? 'bg-indigo-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
                   ]"
                 >
                   Right
@@ -153,16 +157,16 @@
                 @change="generateImage"
                 type="checkbox"
                 id="invert"
-                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded"
               />
-              <label for="invert" class="ml-2 block text-sm text-gray-900">
+              <label for="invert" class="ml-2 block text-sm text-gray-900 dark:text-gray-100">
                 Invert colors (white text on black background)
               </label>
             </div>
 
             <!-- Image Quality for JPG -->
             <div>
-              <label for="quality" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="quality" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 JPG Quality: {{ jpgQuality }}%
               </label>
               <input
@@ -180,7 +184,7 @@
 
           <!-- Preview -->
           <div v-if="imageUrl" class="mt-8">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Preview</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Preview</h2>
             <div class="border-4 border-gray-800 inline-block bg-gray-200 p-2">
               <img 
                 :src="imageUrl" 

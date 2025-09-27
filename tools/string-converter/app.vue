@@ -1,11 +1,15 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8">
         <div class="flex justify-between items-center mb-4">
           <div class="flex-1"></div>
           <div class="flex-1 text-center">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">String Converter</h1>
+            <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+            String Converter
+          </span>
+        </h1>
           </div>
           <div class="flex-1 flex justify-end">
             <ThemeToggle />
@@ -16,7 +20,7 @@
 
       <div class="max-w-6xl mx-auto">
         <!-- Conversion Type Selector -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Conversion Type</h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             <button
@@ -24,7 +28,7 @@
               :key="type.id"
               @click="selectedType = type.id"
               :class="[
-                'p-3 text-left border rounded-lg transition-colors',
+                'p-3 text-left border rounded-xl transition-colors',
                 selectedType === type.id 
                   ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 text-blue-900 dark:text-blue-100' 
                   : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-white'
@@ -39,7 +43,7 @@
         <!-- Conversion Area -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <!-- Input -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Input</h3>
               <div class="flex gap-2">
@@ -70,7 +74,7 @@
           </div>
 
           <!-- Output -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Output</h3>
               <div class="flex gap-2">
@@ -107,7 +111,7 @@
         </div>
 
         <!-- Batch Conversion -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Batch Conversion</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -139,13 +143,13 @@
         </div>
 
         <!-- Quick Examples -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Examples</h3>
           <div v-if="currentConverter?.examples" class="space-y-3">
             <div
               v-for="example in currentConverter.examples"
               :key="example.input"
-              class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors"
+              class="p-3 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors"
             >
               <div class="flex justify-between items-start gap-4">
                 <div class="flex-1">

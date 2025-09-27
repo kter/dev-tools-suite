@@ -1,17 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       <header class="text-center mb-8 relative">
         <div class="absolute top-0 right-0">
           <ThemeToggle />
         </div>
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Timer</h1>
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+            Timer
+          </span>
+        </h1>
         <p class="text-gray-600 dark:text-gray-300">Countdown timer, stopwatch, and Pomodoro technique timer</p>
       </header>
 
       <div class="max-w-4xl mx-auto space-y-6">
         <!-- Timer Mode Selection -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Timer Mode</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
@@ -71,7 +75,7 @@
         </div>
 
         <!-- Timer Settings -->
-        <div v-if="mode === 'countdown'" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div v-if="mode === 'countdown'" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Set Timer</h3>
           <div class="grid grid-cols-3 gap-4 max-w-md mx-auto">
             <div class="text-center">
@@ -81,7 +85,7 @@
                 type="number"
                 min="0"
                 max="23"
-                class="w-full px-3 py-2 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                class="w-full px-3 py-2 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 :disabled="isRunning"
               />
             </div>
@@ -92,7 +96,7 @@
                 type="number"
                 min="0"
                 max="59"
-                class="w-full px-3 py-2 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                class="w-full px-3 py-2 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 :disabled="isRunning"
               />
             </div>
@@ -103,7 +107,7 @@
                 type="number"
                 min="0"
                 max="59"
-                class="w-full px-3 py-2 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                class="w-full px-3 py-2 text-center text-lg border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 :disabled="isRunning"
               />
             </div>
@@ -127,7 +131,7 @@
         </div>
 
         <!-- Pomodoro Settings -->
-        <div v-if="mode === 'pomodoro'" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div v-if="mode === 'pomodoro'" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pomodoro Settings</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
             <div class="text-center">
@@ -137,7 +141,7 @@
                 type="number"
                 min="1"
                 max="60"
-                class="w-full px-3 py-2 text-center border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                class="w-full px-3 py-2 text-center border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 :disabled="isRunning"
               />
               <span class="text-xs text-gray-500">minutes</span>
@@ -149,7 +153,7 @@
                 type="number"
                 min="1"
                 max="30"
-                class="w-full px-3 py-2 text-center border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                class="w-full px-3 py-2 text-center border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 :disabled="isRunning"
               />
               <span class="text-xs text-gray-500">minutes</span>
@@ -161,7 +165,7 @@
                 type="number"
                 min="1"
                 max="60"
-                class="w-full px-3 py-2 text-center border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                class="w-full px-3 py-2 text-center border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 :disabled="isRunning"
               />
               <span class="text-xs text-gray-500">minutes</span>
@@ -180,7 +184,7 @@
         </div>
 
         <!-- Timer Display -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 border border-gray-200 dark:border-gray-700">
           <div class="text-center">
             <!-- Time Display -->
             <div class="text-6xl md:text-8xl font-mono font-bold text-gray-900 dark:text-white mb-6 tracking-wider">
@@ -219,7 +223,7 @@
                 v-if="mode === 'stopwatch'"
                 @click="lap"
                 :disabled="!isRunning"
-                class="px-8 py-3 text-lg font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-blue-300"
+                class="px-8 py-3 text-lg font-semibold bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-300"
               >
                 Lap
               </button>
@@ -228,7 +232,7 @@
         </div>
 
         <!-- Lap Times (Stopwatch) -->
-        <div v-if="mode === 'stopwatch' && lapTimes.length > 0" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div v-if="mode === 'stopwatch' && lapTimes.length > 0" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Lap Times</h3>
           <div class="space-y-2 max-h-64 overflow-y-auto">
             <div
@@ -372,7 +376,7 @@ const formatTime = (timeMs: number): string => {
 const getProgressBarColor = () => {
   switch (mode.value) {
     case 'countdown':
-      return 'bg-blue-600'
+      return 'bg-indigo-600'
     case 'pomodoro':
       return pomodoroPhase.value === 'work' ? 'bg-red-600' : 'bg-green-600'
     default:
