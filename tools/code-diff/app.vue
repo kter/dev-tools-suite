@@ -348,9 +348,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '~/shared/composables/useKofiWidget'
+import KOFI_CONFIG from '~/shared/config/kofi'
 import { diffLines, diffWordsWithSpace, Change } from 'diff'
 
 interface DiffLine {
@@ -747,6 +752,8 @@ const showCopyMessage = (message: string) => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   // Load a default example
   if (!originalText.value && !modifiedText.value) {
     loadExample(examples[0])
@@ -754,6 +761,9 @@ onMounted(() => {
   
   // Initialize dark mode
   const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>

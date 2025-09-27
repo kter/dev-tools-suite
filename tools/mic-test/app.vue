@@ -260,9 +260,14 @@
       </div>
     </div>
   </div>
+
+    <!-- Ko-fi Widget Container (for testing) -->
+    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
 </template>
 
 <script setup lang="ts">
+import { useKofiWidget } from '~/shared/composables/useKofiWidget'
+import KOFI_CONFIG from '~/shared/config/kofi'
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   useHead({
@@ -516,6 +521,8 @@ const refreshPage = () => {
 }
 
 onMounted(() => {
+  kofiWidget.init(KOFI_CONFIG)
+  kofiWidget.load()
   // Check if microphone is already available
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     // Browser supports getUserMedia
@@ -525,6 +532,9 @@ onMounted(() => {
   
   // Initialize dark mode
   const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 

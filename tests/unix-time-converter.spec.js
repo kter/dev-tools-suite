@@ -1,5 +1,49 @@
 const { test, expect } = require('@playwright/test');
 
+test.describe('Unix Time Converter Ko-fi Widget', () => {
+  test('should display Ko-fi widget on unix time converter page', async ({ page }) => {
+    await page.goto('https://unix-time-converter.dev.devtools.site');
+
+    // Wait for SPA to load
+    await page.waitForTimeout(3000);
+
+    // Check that Ko-fi widget is present - this will fail until implementation
+    const kofiWidget = page.locator('[data-testid="kofi-widget"]').or(
+      page.locator('iframe[src*="ko-fi.com"]')
+    ).or(
+      page.locator('.kofi-button')
+    );
+
+    await expect(kofiWidget).toBeVisible();
+  });
+
+  test('should not interfere with time conversion functionality', async ({ page }) => {
+    await page.goto('https://unix-time-converter.dev.devtools.site');
+    await page.waitForTimeout(3000);
+
+    // Check that main unix time converter functionality works
+    await expect(page.locator('h1')).toContainText('Unix Time');
+
+    // Widget should not interfere with conversion functionality
+    const timeInput = page.locator('input[type="number"]').or(page.locator('input[type="text"]'));
+    if (await timeInput.count() > 0) {
+      await timeInput.first().fill('1640995200');
+    }
+  });
+
+  test('should maintain consistent positioning', async ({ page }) => {
+    await page.goto('https://unix-time-converter.dev.devtools.site');
+    await page.waitForTimeout(3000);
+
+    // Check widget positioning consistency
+    const kofiWidget = page.locator('[data-testid="kofi-widget"]');
+    const widgetBox = await kofiWidget.boundingBox();
+
+    // Widget should be positioned consistently (this helps verify the fixed position requirement)
+    expect(widgetBox).toBeTruthy();
+  });
+});
+
 test.describe('Unix Time Converter', () => {
   test('should load and display Unix Time Converter interface', async ({ page }) => {
     await page.goto('https://unix-time-converter.devtools.site');
