@@ -16,25 +16,6 @@
           A collection of useful developer utilities to boost your productivity
         </p>
         
-        <!-- Cross-platform navigation -->
-        <div class="mt-6 flex justify-center gap-4">
-          <a v-if="!isGCPDomain"
-             href="https://gcp.dev.devtools.site"
-             class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M22.548 9.594l-2-3.463a1.09 1.09 0 0 0-.945-.547H16.69l-1.726-2.99a1.09 1.09 0 0 0-.946-.547h-4.002c-.396 0-.762.215-.945.547l-1.726 2.99H4.396c-.396 0-.761.215-.945.547l-2 3.463a1.09 1.09 0 0 0 0 1.094l1.726 2.99-1.726 2.99a1.09 1.09 0 0 0 0 1.094l2 3.463c.184.332.549.547.945.547h2.913l1.726 2.99c.183.332.549.547.945.547h4.002c.396 0 .762-.215.946-.547l1.726-2.99h2.913c.396 0 .761-.215.945-.547l2-3.463a1.09 1.09 0 0 0 0-1.094l-1.726-2.99 1.726-2.99a1.09 1.09 0 0 0 0-1.094z"/>
-            </svg>
-            Switch to GCP Mirror
-          </a>
-          <a v-else
-             href="https://dev.devtools.site"
-             class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            Switch to AWS Main
-          </a>
-        </div>
       </header>
 
       <div class="max-w-6xl mx-auto">
@@ -162,13 +143,6 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
-// Determine if running on GCP domain
-const isGCPDomain = ref(false)
-onMounted(() => {
-  isGCPDomain.value = window.location.hostname.includes('gcp.dev.devtools.site') || 
-                      window.location.hostname.includes('.web.app') ||
-                      window.location.hostname.includes('.firebaseapp.com')
-})
 
 // Determine URLs based on environment and platform
 const isDevEnvironment = ref(false)
@@ -177,17 +151,10 @@ onMounted(() => {
 })
 
 const getToolUrl = computed(() => (toolName) => {
-  if (isGCPDomain.value) {
-    // GCP subdomain URLs
-    return isDevEnvironment.value
-      ? `https://${toolName}.gcp.dev.devtools.site`
-      : `https://${toolName}.gcp.devtools.site`
-  } else {
-    // AWS main URLs
-    return isDevEnvironment.value
-      ? `https://${toolName}.dev.devtools.site`
-      : `https://${toolName}.devtools.site`
-  }
+  // AWS URLs only
+  return isDevEnvironment.value
+    ? `https://${toolName}.dev.devtools.site`
+    : `https://${toolName}.devtools.site`
 })
 
 const hashGeneratorUrl = computed(() => getToolUrl.value('hash-generator'))
