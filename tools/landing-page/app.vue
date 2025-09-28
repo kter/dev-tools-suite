@@ -1,12 +1,20 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <!-- Search Modal (Teleported to body via component) -->
+    <ToolSearch
+      v-model="isSearchOpen"
+      :tools="allTools"
+      @select="handleToolSelect"
+      @close="handleSearchClose"
+    />
+
     <div class="container mx-auto px-4 py-12">
       <header class="text-center mb-16 relative">
         <!-- テーマ切り替えボタン -->
         <div class="absolute top-0 right-0">
           <ThemeToggle />
         </div>
-        
+
         <h1 class="text-5xl font-bold text-gray-900 dark:text-white mb-4">
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
             DevTools
@@ -15,62 +23,19 @@
         <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           A collection of useful developer utilities to boost your productivity
         </p>
-        
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
+          Press <kbd class="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded border">
+            /
+          </kbd> to search tools
+        </p>
       </header>
 
       <div class="max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Available Tools -->
-          <div
-            v-for="tool in availableTools"
-            :key="tool.name"
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:scale-105"
-          >
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 dark:from-green-500 dark:to-green-700 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold text-lg">{{ tool.icon }}</span>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ tool.name }}</h3>
-                <span class="inline-block px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
-                  Available
-                </span>
-              </div>
-            </div>
-            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ tool.description }}</p>
-            <a
-              :href="tool.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-block w-full text-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
-            >
-              Launch Tool
-            </a>
-          </div>
-
-          <!-- Coming Soon Tools -->
-          <div
-            v-for="tool in comingSoonTools"
-            :key="tool.name"
-            class="bg-white rounded-xl shadow-md p-6 border border-gray-100 opacity-75"
-          >
-            <div class="flex items-center mb-4">
-              <div class="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-500 rounded-lg flex items-center justify-center mr-4">
-                <span class="text-white font-bold text-lg">{{ tool.icon }}</span>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-700">{{ tool.name }}</h3>
-                <span class="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
-                  Coming Soon
-                </span>
-              </div>
-            </div>
-            <p class="text-gray-500 text-sm mb-4">{{ tool.description }}</p>
-            <div class="w-full text-center px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed">
-              Coming Soon
-            </div>
-          </div>
-        </div>
+        <!-- Tool Grid Component -->
+        <ToolGrid
+          :tools="allTools"
+          @select="handleToolSelect"
+        />
 
         <!-- Features Section -->
         <div class="mt-20 text-center">
@@ -118,8 +83,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { useKofiWidget } from '../shared/composables/useKofiWidget'
 import KOFI_CONFIG from '../shared/config/kofi'
+import ToolSearch from './components/ToolSearch.vue'
+import ToolGrid from './components/ToolGrid.vue'
+import type { Tool } from './types/tool'
 
 const { $config } = useNuxtApp()
 const runtimeConfig = useRuntimeConfig()
@@ -142,6 +111,9 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
     ]
   })
 }
+
+// Search modal state
+const isSearchOpen = ref(false)
 
 
 // Determine URLs based on environment and platform
@@ -179,139 +151,188 @@ const characterCodeConverterUrl = computed(() => getToolUrl.value('character-cod
 const badgerImageGeneratorUrl = computed(() => getToolUrl.value('badger-image-generator'))
 const posterSplitterUrl = computed(() => getToolUrl.value('poster-splitter'))
 
-const availableTools = computed(() => [
+// Tool data provider using Tool interface
+const allTools = computed<Tool[]>(() => [
   {
+    id: 'hash-generator',
     name: 'Hash Generator',
     description: 'Generate SHA-256, SHA-1, MD5, and SHA-512 hashes from text input',
     icon: '#',
-    url: hashGeneratorUrl.value
+    url: hashGeneratorUrl.value,
+    tags: ['hash', 'crypto', 'security', 'sha256', 'md5']
   },
   {
+    id: 'qr-generator',
     name: 'QR Code Generator',
     description: 'Generate QR codes from text, URLs, or any content with customizable options',
     icon: '⬛',
-    url: qrGeneratorUrl.value
+    url: qrGeneratorUrl.value,
+    tags: ['qr', 'code', 'generator', 'url', 'mobile']
   },
   {
+    id: 'unix-time-converter',
     name: 'Unix Time Converter',
     description: 'Convert between Unix timestamps and human-readable dates',
     icon: '🕐',
-    url: unixTimeConverterUrl.value
+    url: unixTimeConverterUrl.value,
+    tags: ['unix', 'time', 'timestamp', 'date', 'convert']
   },
   {
+    id: 'password-generator',
     name: 'Password Generator',
     description: 'Generate secure passwords with customizable options',
     icon: '🔐',
-    url: passwordGeneratorUrl.value
+    url: passwordGeneratorUrl.value,
+    tags: ['password', 'security', 'generator', 'random', 'secure']
   },
   {
+    id: 'ip-calculator',
     name: 'IP Calculator',
     description: 'Calculate subnet masks, network addresses, and IP ranges',
     icon: '🌐',
-    url: ipCalculatorUrl.value
+    url: ipCalculatorUrl.value,
+    tags: ['ip', 'network', 'subnet', 'cidr', 'calculator']
   },
   {
+    id: 'markdown-preview',
     name: 'Markdown Preview',
     description: 'Preview Markdown files with live rendering and syntax highlighting',
     icon: '📋',
-    url: markdownPreviewUrl.value
+    url: markdownPreviewUrl.value,
+    tags: ['markdown', 'preview', 'editor', 'rendering', 'docs']
   },
   {
+    id: 'placeholder-generator',
     name: 'Placeholder Generator',
     description: 'Generate custom placeholder images with various sizes and colors',
     icon: '🖼️',
-    url: placeholderGeneratorUrl.value
+    url: placeholderGeneratorUrl.value,
+    tags: ['placeholder', 'image', 'generator', 'design', 'mockup']
   },
   {
+    id: 'ip-info',
     name: 'IP Info',
     description: 'Display your IP address information including location and ISP details',
     icon: '🌍',
-    url: ipInfoUrl.value
+    url: ipInfoUrl.value,
+    tags: ['ip', 'info', 'location', 'isp', 'geolocation']
   },
   {
+    id: 'timezone-converter',
     name: 'Timezone Converter',
     description: 'Convert time between different timezones with world clock display',
     icon: '🌐',
-    url: timezoneConverterUrl.value
+    url: timezoneConverterUrl.value,
+    tags: ['timezone', 'time', 'convert', 'world', 'clock']
   },
   {
+    id: 'string-converter',
     name: 'String Converter',
     description: 'Convert strings between formats: Base64, URL encoding, case conversion and more',
     icon: '🔤',
-    url: stringConverterUrl.value
+    url: stringConverterUrl.value,
+    tags: ['string', 'convert', 'base64', 'url', 'encoding']
   },
   {
+    id: 'code-diff',
     name: 'Code Diff',
     description: 'Compare and visualize differences between text files or code snippets',
     icon: '📊',
-    url: codeDiffUrl.value
+    url: codeDiffUrl.value,
+    tags: ['diff', 'compare', 'code', 'text', 'merge']
   },
   {
+    id: 'mic-test',
     name: 'Mic Test',
     description: 'Test your microphone by recording and playing back audio to verify it works correctly',
     icon: '🎤',
-    url: micTestUrl.value
+    url: micTestUrl.value,
+    tags: ['microphone', 'audio', 'test', 'recording', 'voice']
   },
   {
+    id: 'json-yaml-converter',
     name: 'JSON/YAML Converter',
     description: 'Convert between JSON, YAML, and TOML formats with validation and formatting',
     icon: '📝',
-    url: jsonYamlConverterUrl.value
+    url: jsonYamlConverterUrl.value,
+    tags: ['json', 'yaml', 'toml', 'convert', 'format']
   },
   {
+    id: 'jwt-decoder',
     name: 'JWT Decoder',
     description: 'Decode and validate JSON Web Tokens with detailed information display',
     icon: '🔍',
-    url: jwtDecoderUrl.value
+    url: jwtDecoderUrl.value,
+    tags: ['jwt', 'token', 'decode', 'auth', 'security']
   },
   {
+    id: 'regex-tester',
     name: 'Regex Tester',
     description: 'Test and validate regular expressions with live matching and detailed explanations',
     icon: '✅',
-    url: regexTesterUrl.value
+    url: regexTesterUrl.value,
+    tags: ['regex', 'pattern', 'test', 'match', 'validation']
   },
   {
+    id: 'lorem-ipsum-generator',
     name: 'Lorem Ipsum Generator',
     description: 'Generate placeholder text for your projects with customizable options',
     icon: '📄',
-    url: loremIpsumGeneratorUrl.value
+    url: loremIpsumGeneratorUrl.value,
+    tags: ['lorem', 'ipsum', 'text', 'placeholder', 'content']
   },
   {
+    id: 'image-converter',
     name: 'Image Converter',
     description: 'Convert image formats and resize images with quality controls',
     icon: '🖼️',
-    url: imageConverterUrl.value
+    url: imageConverterUrl.value,
+    tags: ['image', 'convert', 'resize', 'format', 'quality']
   },
   {
+    id: 'timer',
     name: 'Timer',
     description: 'Countdown timer, stopwatch, and Pomodoro technique timer for productivity',
     icon: '⏱️',
-    url: timerUrl.value
+    url: timerUrl.value,
+    tags: ['timer', 'countdown', 'stopwatch', 'pomodoro', 'productivity']
   },
   {
+    id: 'character-code-converter',
     name: 'Character Code Converter',
     description: 'Convert characters to various encoding formats including ASCII, Unicode, UTF-8, and more',
     icon: '🔢',
-    url: characterCodeConverterUrl.value
+    url: characterCodeConverterUrl.value,
+    tags: ['character', 'ascii', 'unicode', 'utf8', 'encoding']
   },
   {
+    id: 'badger-image-generator',
     name: 'Badger2040 Image Generator',
     description: 'Generate 296x128 pixel monochrome images for Badger2040 e-ink display with text and formatting options',
     icon: '🦡',
-    url: badgerImageGeneratorUrl.value
+    url: badgerImageGeneratorUrl.value,
+    tags: ['badger2040', 'eink', 'display', 'monochrome', 'embed']
   },
   {
+    id: 'poster-splitter',
     name: 'Poster Splitter',
     description: 'Split A3 images and PDFs into A4 pages for easy printing on standard printers',
     icon: '📐',
-    url: posterSplitterUrl.value
+    url: posterSplitterUrl.value,
+    tags: ['poster', 'split', 'print', 'a3', 'a4']
   }
 ])
 
-const comingSoonTools = [
-  // All tools have been implemented!
-  // Future tools can be added here
-]
+// Event handlers for search and tool interaction
+const handleToolSelect = (tool: Tool): void => {
+  // Navigate to tool URL when selected
+  window.open(tool.url, '_blank', 'noopener,noreferrer')
+}
+
+const handleSearchClose = (): void => {
+  // Additional cleanup when search is closed (if needed)
+  isSearchOpen.value = false
+}
 
 // Initialize theme on mount
 onMounted(() => {
