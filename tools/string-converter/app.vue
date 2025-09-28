@@ -209,6 +209,12 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   })
 }
 
+// Initialize dark mode
+const { initializeTheme } = useDarkMode()
+
+// Initialize Ko-fi widget
+const kofiWidget = useKofiWidget()
+
 const inputText = ref('')
 const outputText = ref('')
 const selectedType = ref('base64-encode')
@@ -516,12 +522,6 @@ onMounted(() => {
   kofiWidget.init(KOFI_CONFIG)
   kofiWidget.load()
   convertText()
-  
-  // Initialize dark mode
-  const { initializeTheme } = useDarkMode()
-
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
   initializeTheme()
 })
 </script>
