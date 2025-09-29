@@ -230,6 +230,22 @@
 
     <!-- Universal Support Me Button -->
     <KofiButton kofi-username="kterr" />
+
+    <!-- Footer -->
+    <footer class="mt-20 text-center text-gray-500 dark:text-gray-400">
+      <p>
+        &copy; 2025 DevTools. Built with Nuxt 3 and deployed on AWS.
+        <span class="mx-2">|</span>
+        <a
+          href="https://www.tomohiko.io/legal-disclosure"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-gray-700 dark:hover:text-gray-300 underline transition-colors"
+        >
+          特定商取引法に基づく表記
+        </a>
+      </p>
+    </footer>
 </template>
 
 <script setup lang="ts">
