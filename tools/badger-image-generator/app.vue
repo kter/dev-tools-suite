@@ -2,20 +2,11 @@
   <div>
     <NuxtPage />
 
-    <!-- Ko-fi Widget Container (for testing) -->
-    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
+    <!-- Universal Support Me Button -->
+    <KofiButton kofi-username="kterr" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useKofiWidget } from '../shared/composables/useKofiWidget'
-import KOFI_CONFIG from '../shared/config/kofi'
-
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
-
-onMounted(() => {
-  kofiWidget.init(KOFI_CONFIG)
-  kofiWidget.load()
-})
+import KofiButton from '../shared/components/KofiButton.vue'
 </script>

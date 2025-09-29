@@ -77,17 +77,16 @@
       </footer>
     </div>
 
-    <!-- Ko-fi Widget Container (for testing) -->
-    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
+    <!-- Ko-fi Support Button -->
+    <KofiButton kofi-username="devtoolssuite" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useKofiWidget } from '../shared/composables/useKofiWidget'
-import KOFI_CONFIG from '../shared/config/kofi'
 import ToolSearch from './components/ToolSearch.vue'
 import ToolGrid from './components/ToolGrid.vue'
+import KofiButton from './components/KofiButton.vue'
 import type { Tool } from './types/tool'
 
 const { $config } = useNuxtApp()
@@ -95,13 +94,6 @@ const runtimeConfig = useRuntimeConfig()
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
-
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
-onMounted(() => {
-  kofiWidget.init(KOFI_CONFIG)
-  kofiWidget.load()
-})
 
 // Add noindex for development environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {

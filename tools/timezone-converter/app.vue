@@ -234,13 +234,12 @@
     </div>
   </div>
 
-    <!-- Ko-fi Widget Container (for testing) -->
-    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
+    <!-- Universal Support Me Button -->
+    <KofiButton kofi-username="kterr" />
 </template>
 
 <script setup lang="ts">
-import { useKofiWidget } from '../shared/composables/useKofiWidget'
-import KOFI_CONFIG from '../shared/config/kofi'
+import KofiButton from '../shared/components/KofiButton.vue'
 import { format, parse, addHours } from 'date-fns'
 import { zonedTimeToUtc, utcToZonedTime, format as formatTz } from 'date-fns-tz'
 
@@ -264,7 +263,6 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
 const { initializeTheme } = useDarkMode()
 
 // Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
 
 const fromTimezone = ref('America/New_York')
 const toTimezone = ref('Asia/Tokyo')
@@ -482,8 +480,6 @@ const showCopyMessage = (message: string) => {
 }
 
 onMounted(() => {
-  kofiWidget.init(KOFI_CONFIG)
-  kofiWidget.load()
   setCurrentTime()
   updateCurrentTime()
   
