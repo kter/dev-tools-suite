@@ -2,6 +2,10 @@ export default defineNuxtConfig({
   workspaceDir: '../../',
   devtools: { enabled: true },
   ssr: false,
+  components: [
+    '~/components',
+    '../shared/components'
+  ],
   app: {
     baseURL: '/',
     head: {

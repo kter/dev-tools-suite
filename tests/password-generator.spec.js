@@ -7,14 +7,12 @@ test.describe('Password Generator Ko-fi Widget', () => {
     // Wait for SPA to load
     await page.waitForTimeout(3000);
 
-    // Check that Ko-fi widget is present - this will fail until implementation
-    const kofiWidget = page.locator('[data-testid="kofi-widget"]').or(
-      page.locator('iframe[src*="ko-fi.com"]')
-    ).or(
-      page.locator('.kofi-button')
-    );
+    // Check that Ko-fi button is present with correct data-testid
+    const kofiButton = page.locator('[data-testid="kofi-button"]');
+    await expect(kofiButton).toBeInViewport();
 
-    await expect(kofiWidget).toBeVisible();
+    // Ko-fi button should be visible initially (before scrolling threshold)
+    await expect(kofiButton).toBeVisible();
   });
 
   test('should not interfere with password generation', async ({ page }) => {
