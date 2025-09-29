@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Footer Test Contract",
+  "description": "Contract defining test scenarios for footer implementation across all tools",
+  "type": "object",
+  "properties": {
+    "footerPresenceTest": {
+      "type": "object",
+      "description": "Test that footer element exists on tool page",
+      "properties": {
+        "selector": {
+          "type": "string",
+          "const": "footer",
+          "description": "CSS selector to locate footer element"
+        },
+        "expectedCount": {
+          "type": "integer",
+          "const": 1,
+          "description": "Exactly one footer should exist"
+        },
+        "visibility": {
+          "type": "boolean",
+          "const": true,
+          "description": "Footer must be visible to users"
+        }
+      },
+      "required": ["selector", "expectedCount", "visibility"]
+    },
+    "legalDisclosureLinkTest": {
+      "type": "object",
+      "description": "Test legal disclosure link functionality",
+      "properties": {
+        "linkSelector": {
+          "type": "string",
+          "const": "footer a[href='https://www.tomohiko.io/legal-disclosure']",
+          "description": "Specific selector for legal disclosure link"
+        },
+        "expectedText": {
+          "type": "string",
+          "const": "特定商取引法に基づく表記",
+          "description": "Expected link text"
+        },
+        "targetAttribute": {
+          "type": "string",
+          "const": "_blank",
+          "description": "Link must open in new tab"
+        },
+        "relAttribute": {
+          "type": "string",
+          "const": "noopener noreferrer",
+          "description": "Security attributes must be present"
+        }
+      },
+      "required": ["linkSelector", "expectedText", "targetAttribute", "relAttribute"]
+    },
+    "responsiveDesignTest": {
+      "type": "object",
+      "description": "Test footer responsive behavior",
+      "properties": {
+        "viewportSizes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "integer",
+                "minimum": 320
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 568
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": ["width", "height", "description"]
+          },
+          "minItems": 3,
+          "description": "Must test mobile, tablet, and desktop viewports"
+        },
+        "textReadability": {
+          "type": "boolean",
+          "const": true,
+          "description": "Footer text must remain readable at all viewport sizes"
+        }
+      },
+      "required": ["viewportSizes", "textReadability"]
+    },
+    "darkModeCompatibilityTest": {
+      "type": "object",
+      "description": "Test footer appearance in dark mode",
+      "properties": {
+        "lightModeColor": {
+          "type": "string",
+          "pattern": "text-gray-500",
+          "description": "Light mode text color class"
+        },
+        "darkModeColor": {
+          "type": "string",
+          "pattern": "dark:text-gray-400",
+          "description": "Dark mode text color class"
+        },
+        "themeToggleTest": {
+          "type": "boolean",
+          "const": true,
+          "description": "Footer must adapt when theme is toggled"
+        }
+      },
+      "required": ["lightModeColor", "darkModeColor", "themeToggleTest"]
+    }
+  },
+  "required": ["footerPresenceTest", "legalDisclosureLinkTest", "responsiveDesignTest", "darkModeCompatibilityTest"]
+}
