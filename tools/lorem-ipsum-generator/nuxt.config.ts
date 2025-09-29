@@ -1,6 +1,10 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
+  components: [
+    '~/components',
+    '../shared/components'
+  ],
   app: {
     baseURL: '/',
     head: {

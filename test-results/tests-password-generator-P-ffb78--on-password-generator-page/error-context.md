@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - button "💻 System"
+  - heading "Password Generator" [level=1]
+  - paragraph: Generate secure passwords with customizable options
+- heading "Password Settings" [level=2]
+- text: "Password Length: 16"
+- slider: "16"
+- text: 4 128
+- checkbox "Uppercase Letters (A-Z)" [checked]
+- text: Uppercase Letters (A-Z)
+- checkbox "Lowercase Letters (a-z)" [checked]
+- text: Lowercase Letters (a-z)
+- checkbox "Numbers (0-9)" [checked]
+- text: Numbers (0-9)
+- checkbox "Symbols (!@#$%^&*)"
+- text: Symbols (!@#$%^&*)
+- heading "Advanced Options" [level=3]
+- checkbox "Exclude similar characters (0, O, l, I, 1)"
+- text: Exclude similar characters (0, O, l, I, 1)
+- 'checkbox "Exclude ambiguous characters ({, }, [, ], (, ), /, \\, '', \", ~, ,, ;, <, >)"'
+- text: "Exclude ambiguous characters ({, }, [, ], (, ), /, \\, ', \", ~, ,, ;, <, >)"
+- checkbox "Require at least one character from each selected type"
+- text: Require at least one character from each selected type
+- button "Generate Password"
+- heading "Generated Password" [level=2]
+- text: finBzE8JNsLBt4Bg
+- button "Copy":
+  - img
+  - text: Copy
+- button "Hide":
+  - img
+  - text: Hide
+- heading "Password Strength Analysis" [level=3]
+- text: "Strength: Very Strong Entropy: ~95 bits"
+- heading "Password History" [level=2]
+- text: finBzE8JNsLBt4Bg
+- button "Copy"
+- button "Clear History"
+- heading "Security Tips" [level=2]
+- paragraph: Use unique passwords for each of your accounts
+- paragraph: Store passwords securely using a password manager
+- paragraph: Enable two-factor authentication whenever possible
+- paragraph: Regularly update your passwords, especially for important accounts
+- paragraph: Never share your passwords or store them in plain text
+- contentinfo:
+  - paragraph: All password generation happens locally in your browser for maximum security
+- iframe
+- img
+- img
+```

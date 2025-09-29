@@ -18,7 +18,7 @@
     "eslint": "^8.57.0",
     "nuxt": "^3.17.5",
     "typescript": "^5.2.2",
-    "vue-tsc": "^1.8.0"
+    "vue-tsc": "^2.2.12"
   },
   "dependencies": {
     "crypto-js": "^4.2.0"
