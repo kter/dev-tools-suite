@@ -179,14 +179,13 @@
     </div>
   </div>
 
-    <!-- Ko-fi Widget Container (for testing) -->
-    <div v-if="kofiWidget.state.value.isVisible" data-testid="kofi-widget" class="kofi-widget-container"></div>
+    <!-- Universal Support Me Button -->
+    <KofiButton kofi-username="kterr" />
 </template>
 
 <script setup lang="ts">
-import { useKofiWidget } from '../shared/composables/useKofiWidget'
-import KOFI_CONFIG from '../shared/config/kofi'
 import * as he from 'he'
+import KofiButton from '../shared/components/KofiButton.vue'
 
 interface ConversionType {
   id: string
@@ -211,9 +210,6 @@ if (process.client && window.location.hostname.includes('dev.devtools.site')) {
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
-
-// Initialize Ko-fi widget
-const kofiWidget = useKofiWidget()
 
 const inputText = ref('')
 const outputText = ref('')
@@ -519,8 +515,6 @@ watch([inputText, selectedType], () => {
 })
 
 onMounted(() => {
-  kofiWidget.init(KOFI_CONFIG)
-  kofiWidget.load()
   convertText()
   initializeTheme()
 })
