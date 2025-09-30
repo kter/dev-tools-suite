@@ -1,6 +1,6 @@
 <template>
   <ClientOnly>
-    <div class="relative h-full">
+    <div class="relative h-[500px] lg:h-full">
       <div ref="mapEl" class="h-full rounded-lg overflow-hidden shadow-lg"></div>
     </div>
   </ClientOnly>

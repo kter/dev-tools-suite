@@ -14,7 +14,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-240px)] min-h-[600px]">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:h-[calc(100vh-240px)] lg:min-h-[600px]">
         <!-- Sidebar -->
         <div class="lg:col-span-3 space-y-4">
           <!-- Control Buttons -->
