@@ -89,6 +89,8 @@ jobs:
               - 'tools/badger-image-generator/**'
             poster-splitter:
               - 'tools/poster-splitter/**'
+            map-distance-calculator:
+              - 'tools/map-distance-calculator/**'
             landing-page:
               - 'tools/landing-page/**'
 
