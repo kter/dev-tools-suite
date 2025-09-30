@@ -89,7 +89,7 @@
     </div>
 
     <!-- Ko-fi Support Button -->
-    <KofiButton kofi-username="devtoolssuite" />
+    <KofiButton kofi-username="kterr" />
   </div>
 </template>
 
