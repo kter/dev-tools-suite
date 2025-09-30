@@ -89,7 +89,7 @@
     </div>
 
     <!-- Ko-fi Support Button -->
-    <KofiButton kofi-username="devtoolssuite" />
+    <KofiButton kofi-username="kterr" />
   </div>
 </template>
 
@@ -153,6 +153,7 @@ const timerUrl = computed(() => getToolUrl.value('timer'))
 const characterCodeConverterUrl = computed(() => getToolUrl.value('character-code-converter'))
 const badgerImageGeneratorUrl = computed(() => getToolUrl.value('badger-image-generator'))
 const posterSplitterUrl = computed(() => getToolUrl.value('poster-splitter'))
+const mapDistanceCalculatorUrl = computed(() => getToolUrl.value('map-distance-calculator'))
 
 // Tool data provider using Tool interface
 const allTools = computed<Tool[]>(() => [
@@ -323,6 +324,14 @@ const allTools = computed<Tool[]>(() => [
     icon: '📐',
     url: posterSplitterUrl.value,
     tags: ['poster', 'split', 'print', 'a3', 'a4']
+  },
+  {
+    id: 'map-distance-calculator',
+    name: 'Map Distance Calculator',
+    description: 'Calculate great-circle distance and bearing between two points on a map',
+    icon: '🗺️',
+    url: mapDistanceCalculatorUrl.value,
+    tags: ['map', 'distance', 'bearing', 'geolocation', 'coordinates']
   }
 ])
 

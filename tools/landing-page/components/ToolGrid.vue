@@ -50,15 +50,9 @@
           </span>
         </div>
 
-        <a
-          :href="tool.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="tool-link"
-          @click.stop="handleToolClick(tool, $event)"
-        >
+        <span class="tool-link">
           Launch Tool
-        </a>
+        </span>
       </div>
     </div>
 
@@ -109,15 +103,6 @@ const displayedTools = computed(() => {
 // Select tool function
 const selectTool = (tool: Tool): void => {
   emit('select', tool)
-}
-
-// Handle tool click (for analytics or special behavior)
-const handleToolClick = (tool: Tool, event: Event): void => {
-  // Allow default link behavior but emit select event
-  emit('select', tool)
-
-  // Log click for analytics (optional)
-  console.log('Tool clicked:', tool.name)
 }
 
 // Get default icon for tools that don't have one
