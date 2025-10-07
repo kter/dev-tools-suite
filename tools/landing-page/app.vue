@@ -154,6 +154,7 @@ const characterCodeConverterUrl = computed(() => getToolUrl.value('character-cod
 const badgerImageGeneratorUrl = computed(() => getToolUrl.value('badger-image-generator'))
 const posterSplitterUrl = computed(() => getToolUrl.value('poster-splitter'))
 const mapDistanceCalculatorUrl = computed(() => getToolUrl.value('map-distance-calculator'))
+const amazonUrlNormalizerUrl = computed(() => getToolUrl.value('amazon-url-normalizer'))
 
 // Tool data provider using Tool interface
 const allTools = computed<Tool[]>(() => [
@@ -332,6 +333,14 @@ const allTools = computed<Tool[]>(() => [
     icon: '🗺️',
     url: mapDistanceCalculatorUrl.value,
     tags: ['map', 'distance', 'bearing', 'geolocation', 'coordinates']
+  },
+  {
+    id: 'amazon-url-normalizer',
+    name: 'Amazon URL Normalizer',
+    description: 'Clean and shorten Amazon product URLs by removing tracking parameters',
+    icon: '🔗',
+    url: amazonUrlNormalizerUrl.value,
+    tags: ['amazon', 'url', 'asin', 'normalize', 'shortener', 'clean']
   }
 ])
 

@@ -53,6 +53,7 @@ export class DevToolsStack extends cdk.Stack {
     this.createToolInfrastructure('badger-image-generator', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('poster-splitter', props.domain, certificate, hostedZone);
     this.createToolInfrastructure('map-distance-calculator', props.domain, certificate, hostedZone);
+    this.createToolInfrastructure('amazon-url-normalizer', props.domain, certificate, hostedZone);
 
     // Create landing page for root domain
     this.createLandingPageInfrastructure(props.domain, certificate, hostedZone);
