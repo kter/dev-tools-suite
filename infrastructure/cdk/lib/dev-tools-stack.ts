@@ -17,9 +17,39 @@ export interface DevToolsStackProps extends cdk.StackProps {
 
 export class DevToolsStack extends cdk.Stack {
   public readonly cloudFrontDistributions: { [toolName: string]: string } = {};
+  private responseHeadersPolicy: cloudfront.ResponseHeadersPolicy;
 
   constructor(scope: Construct, id: string, props: DevToolsStackProps) {
     super(scope, id, props);
+
+    // Create Response Headers Policy for security headers (clickjacking protection)
+    this.responseHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
+      responseHeadersPolicyName: `DevToolsSecurityHeaders-${props.environment}`,
+      comment: 'Security headers policy for clickjacking protection',
+      securityHeadersBehavior: {
+        frameOptions: {
+          frameOption: cloudfront.HeadersFrameOption.DENY,
+          override: true
+        },
+        contentTypeOptions: {
+          override: true
+        },
+        strictTransportSecurity: {
+          accessControlMaxAge: cdk.Duration.seconds(31536000),
+          includeSubdomains: true,
+          override: true
+        },
+        xssProtection: {
+          protection: true,
+          modeBlock: true,
+          override: true
+        },
+        referrerPolicy: {
+          referrerPolicy: cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+          override: true
+        }
+      }
+    });
 
     // Import existing hosted zone
     const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
@@ -91,7 +121,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.responseHeadersPolicy
       },
       domainNames: [`${toolName}.${domain}`],
       certificate,
@@ -180,7 +211,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.responseHeadersPolicy
       },
       domainNames: [domain],
       certificate,
