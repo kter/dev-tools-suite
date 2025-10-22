@@ -17,6 +17,7 @@ export interface DevToolsStackProps extends cdk.StackProps {
 
 export class DevToolsStack extends cdk.Stack {
   public readonly cloudFrontDistributions: { [toolName: string]: string } = {};
+  private readonly securityHeadersPolicy: cloudfront.ResponseHeadersPolicy;
 
   constructor(scope: Construct, id: string, props: DevToolsStackProps) {
     super(scope, id, props);
@@ -29,6 +30,51 @@ export class DevToolsStack extends cdk.Stack {
 
     // Import certificate from certificate stack (created in us-east-1)
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
+
+    // Create Response Headers Policy with Content Security Policy
+    this.securityHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
+      responseHeadersPolicyName: `devtools-security-headers-${props.environment}`,
+      comment: 'Security headers including CSP for DevTools Suite',
+      securityHeadersBehavior: {
+        contentSecurityPolicy: {
+          contentSecurityPolicy: [
+            "default-src 'self'",
+            "script-src 'self' 'wasm-unsafe-eval'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob: https:",
+            "font-src 'self' data:",
+            "connect-src 'self' https:",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'"
+          ].join('; '),
+          override: true
+        },
+        contentTypeOptions: {
+          override: true
+        },
+        frameOptions: {
+          frameOption: cloudfront.HeadersFrameOption.DENY,
+          override: true
+        },
+        referrerPolicy: {
+          referrerPolicy: cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+          override: true
+        },
+        strictTransportSecurity: {
+          accessControlMaxAge: cdk.Duration.seconds(63072000),
+          includeSubdomains: true,
+          preload: true,
+          override: true
+        },
+        xssProtection: {
+          protection: true,
+          modeBlock: true,
+          override: true
+        }
+      }
+    });
 
     // Create tool-specific infrastructure
     this.createToolInfrastructure('hash-generator', props.domain, certificate, hostedZone);
@@ -91,6 +137,7 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        responseHeadersPolicy: this.securityHeadersPolicy,
         compress: true
       },
       domainNames: [`${toolName}.${domain}`],
@@ -180,6 +227,7 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        responseHeadersPolicy: this.securityHeadersPolicy,
         compress: true
       },
       domainNames: [domain],
