@@ -17,6 +17,7 @@ export interface DevToolsStackProps extends cdk.StackProps {
 
 export class DevToolsStack extends cdk.Stack {
   public readonly cloudFrontDistributions: { [toolName: string]: string } = {};
+  private readonly securityHeadersPolicy: cloudfront.ResponseHeadersPolicy;
 
   constructor(scope: Construct, id: string, props: DevToolsStackProps) {
     super(scope, id, props);
@@ -29,6 +30,35 @@ export class DevToolsStack extends cdk.Stack {
 
     // Import certificate from certificate stack (created in us-east-1)
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
+
+    // Create security headers policy to prevent MIME type sniffing and other attacks
+    this.securityHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
+      responseHeadersPolicyName: `devtools-security-headers-${props.environment}`,
+      comment: 'Security headers to prevent MIME type sniffing and other web attacks',
+      securityHeadersBehavior: {
+        contentTypeOptions: {
+          override: true
+        },
+        frameOptions: {
+          frameOption: cloudfront.HeadersFrameOption.DENY,
+          override: true
+        },
+        referrerPolicy: {
+          referrerPolicy: cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+          override: true
+        },
+        strictTransportSecurity: {
+          accessControlMaxAge: cdk.Duration.seconds(63072000),
+          includeSubdomains: true,
+          override: true
+        },
+        xssProtection: {
+          protection: true,
+          modeBlock: true,
+          override: true
+        }
+      }
+    });
 
     // Create tool-specific infrastructure
     this.createToolInfrastructure('hash-generator', props.domain, certificate, hostedZone);
@@ -81,7 +111,7 @@ export class DevToolsStack extends cdk.Stack {
     );
     bucket.grantRead(originAccessIdentity);
 
-    // CloudFront Distribution
+    // CloudFront Distribution with security headers
     const distribution = new cloudfront.Distribution(this, `${toolName}-distribution`, {
       defaultBehavior: {
         origin: new origins.S3Origin(bucket, {
@@ -91,6 +121,7 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        responseHeadersPolicy: this.securityHeadersPolicy,
         compress: true
       },
       domainNames: [`${toolName}.${domain}`],
@@ -170,7 +201,7 @@ export class DevToolsStack extends cdk.Stack {
     );
     bucket.grantRead(originAccessIdentity);
 
-    // CloudFront Distribution for root domain
+    // CloudFront Distribution for root domain with security headers
     const distribution = new cloudfront.Distribution(this, 'landing-page-distribution', {
       defaultBehavior: {
         origin: new origins.S3Origin(bucket, {
@@ -180,6 +211,7 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        responseHeadersPolicy: this.securityHeadersPolicy,
         compress: true
       },
       domainNames: [domain],
