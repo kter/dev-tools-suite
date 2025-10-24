@@ -19,5 +19,8 @@
     "nuxt": "^3.17.5",
     "typescript": "^5.2.2",
     "vue-tsc": "^2.2.12"
+  },
+  "dependencies": {
+    "nuxt-gtag": "^4.1.0"
   }
 }

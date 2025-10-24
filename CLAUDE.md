@@ -148,6 +148,51 @@ export default defineNuxtConfig({
 ### Build Process Requirements
 - Build output is always in `.output/public/` directory
 
+### Google Analytics Configuration
+All tools are configured with `nuxt-gtag` module for Google Analytics 4 tracking.
+
+#### Setup Google Analytics 4
+1. Visit https://analytics.google.com/ and log in
+2. Create a new property:
+   - Click "Admin" (gear icon) → "Create Property"
+   - Enter property name (e.g., "DevTools Suite")
+   - Select timezone and currency
+3. Create a data stream:
+   - Select "Web" platform
+   - Enter website URL (e.g., https://devtools.site)
+   - Enter stream name (e.g., "DevTools Suite Web")
+4. Copy the **Measurement ID** (format: `G-XXXXXXXXXX`)
+
+#### Environment Variable Configuration
+Set the `NUXT_PUBLIC_GTAG_ID` environment variable with your Google Analytics measurement ID:
+
+**For Local Development:**
+Create a `.env` file in each tool directory:
+```bash
+# tools/hash-generator/.env
+NUXT_PUBLIC_GTAG_ID=G-XXXXXXXXXX
+```
+
+**For GitHub Actions:**
+Add the measurement ID as a repository secret:
+1. Go to repository Settings → Secrets and variables → Actions
+2. Add new repository secret:
+   - Name: `NUXT_PUBLIC_GTAG_ID`
+   - Value: `G-XXXXXXXXXX`
+3. Update `.github/workflows/deploy.yml` to include the environment variable in build steps
+
+**For AWS CDK Deployment:**
+The Google Analytics tracking is injected at build time, so no additional AWS infrastructure changes are needed.
+
+#### Verification
+After deployment, you can verify Google Analytics is working:
+1. Open any tool in your browser
+2. Open browser DevTools → Console
+3. Look for `gtag` function calls (no errors should appear)
+4. Check Google Analytics Real-Time reports to see active users
+
+**Note:** If `NUXT_PUBLIC_GTAG_ID` is not set, the tools will build successfully but Google Analytics tracking will be disabled.
+
 ## Deployment Architecture
 
 ### Multi-Cloud Infrastructure as Code

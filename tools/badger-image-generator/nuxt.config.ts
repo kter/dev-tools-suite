@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     preset: 'static'
   },
   workspaceDir: '../../',
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: [
+    'nuxt-gtag','@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css']
 })
