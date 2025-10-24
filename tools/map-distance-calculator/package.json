@@ -10,8 +10,9 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
+    "leaflet": "^1.9.4",
     "nuxt": "^3.14.159",
-    "leaflet": "^1.9.4"
+    "nuxt-gtag": "^4.1.0"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.12.2",

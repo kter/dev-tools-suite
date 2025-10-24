@@ -21,6 +21,7 @@
     "vue-tsc": "^2.2.12"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "nuxt-gtag": "^4.1.0"
   }
 }

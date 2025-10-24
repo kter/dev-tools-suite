@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     }
   },
   modules: [
+    'nuxt-gtag',
     '@nuxtjs/tailwindcss'
   ],
   typescript: {

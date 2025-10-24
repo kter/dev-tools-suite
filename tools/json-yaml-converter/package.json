@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@nuxt/devtools": "latest",
-    "nuxt": "^3.10.0",
     "js-yaml": "^4.1.0",
+    "nuxt": "^3.10.0",
+    "nuxt-gtag": "^4.1.0",
     "toml": "^3.0.0"
   },
   "devDependencies": {
