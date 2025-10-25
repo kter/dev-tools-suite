@@ -17,7 +17,7 @@ export interface DevToolsStackProps extends cdk.StackProps {
 
 export class DevToolsStack extends cdk.Stack {
   public readonly cloudFrontDistributions: { [toolName: string]: string } = {};
-  private readonly responseHeadersPolicy: cloudfront.ResponseHeadersPolicy;
+  private readonly securityHeadersPolicy: cloudfront.ResponseHeadersPolicy;
 
   constructor(scope: Construct, id: string, props: DevToolsStackProps) {
     super(scope, id, props);
@@ -31,10 +31,10 @@ export class DevToolsStack extends cdk.Stack {
     // Import certificate from certificate stack (created in us-east-1)
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
 
-    // Create Response Headers Policy to remove information-leaking headers and add security headers
-    this.responseHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
-      responseHeadersPolicyName: `${props.environment}-security-headers`,
-      comment: 'Remove Server headers and add security headers to prevent information leakage',
+    // Create Response Headers Policy with Content Security Policy and remove information-leaking headers
+    this.securityHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
+      responseHeadersPolicyName: `devtools-security-headers-${props.environment}`,
+      comment: 'Security headers including CSP, and remove Server headers to prevent information leakage',
       // Remove headers that leak information about the server
       removeHeaders: [
         'Server',
@@ -42,6 +42,21 @@ export class DevToolsStack extends cdk.Stack {
       ],
       // Add security headers
       securityHeadersBehavior: {
+        contentSecurityPolicy: {
+          contentSecurityPolicy: [
+            "default-src 'self'",
+            "script-src 'self' 'wasm-unsafe-eval'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob: https:",
+            "font-src 'self' data:",
+            "connect-src 'self' https:",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'"
+          ].join('; '),
+          override: true
+        },
         contentTypeOptions: {
           override: true
         },
@@ -54,7 +69,7 @@ export class DevToolsStack extends cdk.Stack {
           override: true
         },
         strictTransportSecurity: {
-          accessControlMaxAge: cdk.Duration.seconds(31536000), // 1 year
+          accessControlMaxAge: cdk.Duration.seconds(63072000), // 2 years
           includeSubdomains: true,
           preload: true,
           override: true
@@ -129,7 +144,7 @@ export class DevToolsStack extends cdk.Stack {
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
         compress: true,
-        responseHeadersPolicy: this.responseHeadersPolicy
+        responseHeadersPolicy: this.securityHeadersPolicy
       },
       domainNames: [`${toolName}.${domain}`],
       certificate,
@@ -219,7 +234,7 @@ export class DevToolsStack extends cdk.Stack {
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
         compress: true,
-        responseHeadersPolicy: this.responseHeadersPolicy
+        responseHeadersPolicy: this.securityHeadersPolicy
       },
       domainNames: [domain],
       certificate,
