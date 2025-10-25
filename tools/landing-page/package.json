@@ -21,6 +21,7 @@
     "vue-tsc": "^3.1.0"
   },
   "dependencies": {
-    "@vueuse/core": "^13.9.0"
+    "@vueuse/core": "^13.9.0",
+    "nuxt-gtag": "^4.1.0"
   }
 }

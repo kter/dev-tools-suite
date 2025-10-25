@@ -31,10 +31,16 @@ export class DevToolsStack extends cdk.Stack {
     // Import certificate from certificate stack (created in us-east-1)
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
 
-    // Create Response Headers Policy with Content Security Policy
+    // Create Response Headers Policy with Content Security Policy and remove information-leaking headers
     this.securityHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
       responseHeadersPolicyName: `devtools-security-headers-${props.environment}`,
-      comment: 'Security headers including CSP for DevTools Suite',
+      comment: 'Security headers including CSP, and remove Server headers to prevent information leakage',
+      // Remove headers that leak information about the server
+      removeHeaders: [
+        'Server',
+        'X-Powered-By'
+      ],
+      // Add security headers
       securityHeadersBehavior: {
         contentSecurityPolicy: {
           contentSecurityPolicy: [
@@ -63,7 +69,7 @@ export class DevToolsStack extends cdk.Stack {
           override: true
         },
         strictTransportSecurity: {
-          accessControlMaxAge: cdk.Duration.seconds(63072000),
+          accessControlMaxAge: cdk.Duration.seconds(63072000), // 2 years
           includeSubdomains: true,
           preload: true,
           override: true
@@ -137,8 +143,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        responseHeadersPolicy: this.securityHeadersPolicy,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.securityHeadersPolicy
       },
       domainNames: [`${toolName}.${domain}`],
       certificate,
@@ -227,8 +233,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        responseHeadersPolicy: this.securityHeadersPolicy,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.securityHeadersPolicy
       },
       domainNames: [domain],
       certificate,

@@ -22,7 +22,8 @@ export default defineNuxtConfig({
     }
   },
   modules: [
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    'nuxt-gtag'
   ],
   typescript: {
     strict: true,
@@ -31,6 +32,11 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       exclude: ['oxc-parser']
+    },
+    resolve: {
+      alias: {
+        'oxc-parser': 'node:path'
+      }
     },
     ssr: {
       noExternal: []

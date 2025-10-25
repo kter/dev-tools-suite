@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@nuxt/devtools": "latest",
+    "jose": "^5.2.0",
     "nuxt": "^3.10.0",
-    "jose": "^5.2.0"
+    "nuxt-gtag": "^4.1.0"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.11.1"
