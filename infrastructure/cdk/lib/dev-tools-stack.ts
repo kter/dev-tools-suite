@@ -133,7 +133,7 @@ export class DevToolsStack extends cdk.Stack {
     );
     bucket.grantRead(originAccessIdentity);
 
-    // CloudFront Distribution
+    // CloudFront Distribution with security headers
     const distribution = new cloudfront.Distribution(this, `${toolName}-distribution`, {
       defaultBehavior: {
         origin: new origins.S3Origin(bucket, {
@@ -223,7 +223,7 @@ export class DevToolsStack extends cdk.Stack {
     );
     bucket.grantRead(originAccessIdentity);
 
-    // CloudFront Distribution for root domain
+    // CloudFront Distribution for root domain with security headers
     const distribution = new cloudfront.Distribution(this, 'landing-page-distribution', {
       defaultBehavior: {
         origin: new origins.S3Origin(bucket, {

@@ -1,3 +1,5 @@
+import { getSecurityHeadersRouteRules } from '../shared/config/security-headers'
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
@@ -43,5 +45,9 @@ export default defineNuxtConfig({
   },
   experimental: {
     payloadExtraction: false
+  }
+,
+  nitro: {
+    routeRules: getSecurityHeadersRouteRules()
   }
 })

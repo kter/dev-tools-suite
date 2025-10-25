@@ -1,3 +1,5 @@
+import { getSecurityHeadersRouteRules } from '../shared/config/security-headers'
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
@@ -8,6 +10,7 @@ export default defineNuxtConfig({
     '../shared/components'
   ],
   nitro: {
+    routeRules: getSecurityHeadersRouteRules(),
     prerender: {
       routes: ['/']
     }
