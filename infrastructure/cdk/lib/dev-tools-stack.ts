@@ -17,6 +17,7 @@ export interface DevToolsStackProps extends cdk.StackProps {
 
 export class DevToolsStack extends cdk.Stack {
   public readonly cloudFrontDistributions: { [toolName: string]: string } = {};
+  private readonly responseHeadersPolicy: cloudfront.ResponseHeadersPolicy;
 
   constructor(scope: Construct, id: string, props: DevToolsStackProps) {
     super(scope, id, props);
@@ -29,6 +30,42 @@ export class DevToolsStack extends cdk.Stack {
 
     // Import certificate from certificate stack (created in us-east-1)
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
+
+    // Create Response Headers Policy to remove information-leaking headers and add security headers
+    this.responseHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
+      responseHeadersPolicyName: `${props.environment}-security-headers`,
+      comment: 'Remove Server headers and add security headers to prevent information leakage',
+      // Remove headers that leak information about the server
+      removeHeaders: [
+        'Server',
+        'X-Powered-By'
+      ],
+      // Add security headers
+      securityHeadersBehavior: {
+        contentTypeOptions: {
+          override: true
+        },
+        frameOptions: {
+          frameOption: cloudfront.HeadersFrameOption.DENY,
+          override: true
+        },
+        referrerPolicy: {
+          referrerPolicy: cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+          override: true
+        },
+        strictTransportSecurity: {
+          accessControlMaxAge: cdk.Duration.seconds(31536000), // 1 year
+          includeSubdomains: true,
+          preload: true,
+          override: true
+        },
+        xssProtection: {
+          protection: true,
+          modeBlock: true,
+          override: true
+        }
+      }
+    });
 
     // Create tool-specific infrastructure
     this.createToolInfrastructure('hash-generator', props.domain, certificate, hostedZone);
@@ -91,7 +128,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.responseHeadersPolicy
       },
       domainNames: [`${toolName}.${domain}`],
       certificate,
@@ -180,7 +218,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.responseHeadersPolicy
       },
       domainNames: [domain],
       certificate,
