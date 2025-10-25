@@ -31,11 +31,32 @@ export class DevToolsStack extends cdk.Stack {
     // Import certificate from certificate stack (created in us-east-1)
     const certificate = acm.Certificate.fromCertificateArn(this, 'Certificate', props.certificateArn);
 
-    // Create security headers policy to prevent MIME type sniffing and other attacks
+    // Create Response Headers Policy with Content Security Policy and remove information-leaking headers
     this.securityHeadersPolicy = new cloudfront.ResponseHeadersPolicy(this, 'SecurityHeadersPolicy', {
       responseHeadersPolicyName: `devtools-security-headers-${props.environment}`,
-      comment: 'Security headers to prevent MIME type sniffing and other web attacks',
+      comment: 'Security headers including CSP, and remove Server headers to prevent information leakage',
+      // Remove headers that leak information about the server
+      removeHeaders: [
+        'Server',
+        'X-Powered-By'
+      ],
+      // Add security headers
       securityHeadersBehavior: {
+        contentSecurityPolicy: {
+          contentSecurityPolicy: [
+            "default-src 'self'",
+            "script-src 'self' 'wasm-unsafe-eval'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob: https:",
+            "font-src 'self' data:",
+            "connect-src 'self' https:",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'"
+          ].join('; '),
+          override: true
+        },
         contentTypeOptions: {
           override: true
         },
@@ -48,8 +69,9 @@ export class DevToolsStack extends cdk.Stack {
           override: true
         },
         strictTransportSecurity: {
-          accessControlMaxAge: cdk.Duration.seconds(63072000),
+          accessControlMaxAge: cdk.Duration.seconds(63072000), // 2 years
           includeSubdomains: true,
+          preload: true,
           override: true
         },
         xssProtection: {
@@ -121,8 +143,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        responseHeadersPolicy: this.securityHeadersPolicy,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.securityHeadersPolicy
       },
       domainNames: [`${toolName}.${domain}`],
       certificate,
@@ -211,8 +233,8 @@ export class DevToolsStack extends cdk.Stack {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        responseHeadersPolicy: this.securityHeadersPolicy,
-        compress: true
+        compress: true,
+        responseHeadersPolicy: this.securityHeadersPolicy
       },
       domainNames: [domain],
       certificate,

@@ -16,11 +16,12 @@
     "@nuxt/eslint-config": "^0.2.0",
     "@nuxtjs/tailwindcss": "^6.8.4",
     "eslint": "^8.57.0",
-    "nuxt": "^3.17.5",
+    "nuxt": "3.17.5",
     "typescript": "^5.2.2",
     "vue-tsc": "^2.2.12"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "nuxt-gtag": "^4.1.0"
   }
 }

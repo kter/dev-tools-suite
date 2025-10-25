@@ -2,7 +2,8 @@ import { getSecurityHeadersRouteRules } from '../shared/config/security-headers'
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: [
+    'nuxt-gtag','@nuxtjs/tailwindcss'],
   ssr: false,
   components: [
     '~/components',
@@ -19,6 +20,10 @@ export default defineNuxtConfig({
       title: 'Password Generator - DevTools',
       meta: [
         { name: 'description', content: 'Generate secure passwords with customizable options' },
+        {
+          'http-equiv': 'Content-Security-Policy',
+          content: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none';"
+        },
         { name: 'keywords', content: 'password, generator, secure, random, strong' }
       ]
     }

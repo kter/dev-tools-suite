@@ -148,6 +148,51 @@ export default defineNuxtConfig({
 ### Build Process Requirements
 - Build output is always in `.output/public/` directory
 
+### Google Analytics Configuration
+All tools are configured with `nuxt-gtag` module for Google Analytics 4 tracking.
+
+#### Setup Google Analytics 4
+1. Visit https://analytics.google.com/ and log in
+2. Create a new property:
+   - Click "Admin" (gear icon) → "Create Property"
+   - Enter property name (e.g., "DevTools Suite")
+   - Select timezone and currency
+3. Create a data stream:
+   - Select "Web" platform
+   - Enter website URL (e.g., https://devtools.site)
+   - Enter stream name (e.g., "DevTools Suite Web")
+4. Copy the **Measurement ID** (format: `G-XXXXXXXXXX`)
+
+#### Environment Variable Configuration
+Set the `NUXT_PUBLIC_GTAG_ID` environment variable with your Google Analytics measurement ID:
+
+**For Local Development:**
+Create a `.env` file in each tool directory:
+```bash
+# tools/hash-generator/.env
+NUXT_PUBLIC_GTAG_ID=G-XXXXXXXXXX
+```
+
+**For GitHub Actions:**
+Add the measurement ID as a repository secret:
+1. Go to repository Settings → Secrets and variables → Actions
+2. Add new repository secret:
+   - Name: `NUXT_PUBLIC_GTAG_ID`
+   - Value: `G-XXXXXXXXXX`
+3. Update `.github/workflows/deploy.yml` to include the environment variable in build steps
+
+**For AWS CDK Deployment:**
+The Google Analytics tracking is injected at build time, so no additional AWS infrastructure changes are needed.
+
+#### Verification
+After deployment, you can verify Google Analytics is working:
+1. Open any tool in your browser
+2. Open browser DevTools → Console
+3. Look for `gtag` function calls (no errors should appear)
+4. Check Google Analytics Real-Time reports to see active users
+
+**Note:** If `NUXT_PUBLIC_GTAG_ID` is not set, the tools will build successfully but Google Analytics tracking will be disabled.
+
 ## Deployment Architecture
 
 ### Multi-Cloud Infrastructure as Code
@@ -244,7 +289,107 @@ tests/
 
 ## Prerequisites
 
-- Node.js 20+ (LTS)
+- Node.js 20+ (LTS) - managed via Volta (recommended)
 - AWS CLI with configured profiles (`dev`, `prd`)
 - AWS CDK CLI (`npm install -g aws-cdk`)
 - Playwright for testing (`npx playwright install`)
+
+## Node.js Version Management with Volta
+
+This project uses [Volta](https://volta.sh/) for Node.js version management to ensure consistent Node.js versions across all development environments and CI/CD pipelines.
+
+### What is Volta?
+
+Volta is a hassle-free JavaScript tool manager that:
+- Automatically switches to the correct Node.js version for each project
+- Ensures team members use the same Node.js version
+- Eliminates "works on my machine" issues
+- Integrates seamlessly with CI/CD environments
+
+### Installing Volta
+
+**macOS/Linux:**
+```bash
+curl https://get.volta.sh | bash
+```
+
+**After installation, restart your terminal and verify:**
+```bash
+volta --version
+```
+
+### Using Volta in This Project
+
+The project has Node.js version pinned to **20.19.5** in all tool `package.json` files:
+
+```json
+{
+  "volta": {
+    "node": "20.19.5"
+  }
+}
+```
+
+When you `cd` into any tool directory, Volta automatically switches to Node.js 20.19.5.
+
+### Common Volta Commands
+
+```bash
+# Install a specific Node.js version globally
+volta install node@20.19.5
+
+# Pin Node.js version for current project
+volta pin node@20.19.5
+
+# Check current Node.js version
+node --version
+
+# List all installed Node.js versions
+volta list node
+```
+
+### Updating Node.js Version
+
+To update the Node.js version across all tools:
+
+```bash
+# Install new Node.js version
+volta install node@20.x.x
+
+# Pin the version in each tool
+for dir in tools/*/; do
+  cd "$dir"
+  volta pin node@20.x.x
+  cd ../..
+done
+```
+
+This will update the `volta` field in each tool's `package.json`.
+
+### CI/CD Integration
+
+GitHub Actions workflow automatically uses Volta when the `volta` field is present in `package.json`. The workflow includes:
+
+```yaml
+- name: Setup Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version-file: 'tools/${{ matrix.tool }}/package.json'
+```
+
+If Volta is not available in CI/CD, the build will fall back to the Node.js version specified in the workflow (Node.js 20).
+
+### Troubleshooting
+
+**Volta not switching versions:**
+```bash
+# Ensure Volta is in your PATH
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+```
+
+**To verify Volta is managing Node.js:**
+```bash
+which node
+# Should show: ~/.volta/bin/node
+```
