@@ -22,7 +22,7 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Convert between Unix timestamps and human-readable dates' },
         {
           'http-equiv': 'Content-Security-Policy',
-          content: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none';"
+          content: "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none';"
         },
         { name: 'keywords', content: 'unix time, timestamp, converter, epoch, date' }
       ]
