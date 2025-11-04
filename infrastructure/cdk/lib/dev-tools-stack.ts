@@ -45,7 +45,7 @@ export class DevToolsStack extends cdk.Stack {
         contentSecurityPolicy: {
           contentSecurityPolicy: [
             "default-src 'self'",
-            "script-src 'self' 'wasm-unsafe-eval'",
+            "script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' 'storage.ko-fi.com' 'www.googletagmanager.com'",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https:",
             "font-src 'self' data:",
