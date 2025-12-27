@@ -155,6 +155,7 @@ const badgerImageGeneratorUrl = computed(() => getToolUrl.value('badger-image-ge
 const posterSplitterUrl = computed(() => getToolUrl.value('poster-splitter'))
 const mapDistanceCalculatorUrl = computed(() => getToolUrl.value('map-distance-calculator'))
 const amazonUrlNormalizerUrl = computed(() => getToolUrl.value('amazon-url-normalizer'))
+const notesUrl = computed(() => getToolUrl.value('notes'))
 
 // Tool data provider using Tool interface
 const allTools = computed<Tool[]>(() => [
@@ -341,6 +342,14 @@ const allTools = computed<Tool[]>(() => [
     icon: '🔗',
     url: amazonUrlNormalizerUrl.value,
     tags: ['amazon', 'url', 'asin', 'normalize', 'shortener', 'clean']
+  },
+  {
+    id: 'notes',
+    name: 'AI Notes',
+    description: 'AI-powered note-taking app with folder organization and smart features',
+    icon: '📝',
+    url: notesUrl.value,
+    tags: ['notes', 'ai', 'markdown', 'organization', 'productivity']
   }
 ])
 
