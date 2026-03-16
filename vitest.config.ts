@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config'
 import { resolve } from 'path'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   esbuild: {
@@ -11,8 +11,8 @@ export default defineConfig({
         moduleResolution: 'bundler',
         esModuleInterop: true,
         strict: true,
-      }
-    }
+      },
+    },
   },
   test: {
     globals: true,
@@ -22,11 +22,11 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: ['tools/*/utils/**/*.ts', 'tools/shared/utils/**/*.ts'],
-    }
+    },
   },
   resolve: {
     alias: {
-      '@shared': resolve(__dirname, 'tools/shared')
-    }
-  }
+      '@shared': resolve(__dirname, 'tools/shared'),
+    },
+  },
 })

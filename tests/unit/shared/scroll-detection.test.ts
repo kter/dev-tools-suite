@@ -1,6 +1,10 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { calculateScrollPercentage, isPageContentShort, throttleScrollEvent } from '../../../tools/shared/utils/scroll-detection'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  calculateScrollPercentage,
+  isPageContentShort,
+  throttleScrollEvent,
+} from '../../../tools/shared/utils/scroll-detection'
 
 describe('calculateScrollPercentage', () => {
   beforeEach(() => {
@@ -13,7 +17,7 @@ describe('calculateScrollPercentage', () => {
     const mockContainer = {
       scrollTop: 0,
       scrollHeight: 1000,
-      clientHeight: 500
+      clientHeight: 500,
     } as HTMLElement
     expect(calculateScrollPercentage(mockContainer)).toBe(0)
   })
@@ -22,7 +26,7 @@ describe('calculateScrollPercentage', () => {
     const mockContainer = {
       scrollTop: 500,
       scrollHeight: 1000,
-      clientHeight: 500
+      clientHeight: 500,
     } as HTMLElement
     expect(calculateScrollPercentage(mockContainer)).toBe(100)
   })
@@ -31,7 +35,7 @@ describe('calculateScrollPercentage', () => {
     const mockContainer = {
       scrollTop: 250,
       scrollHeight: 1000,
-      clientHeight: 500
+      clientHeight: 500,
     } as HTMLElement
     expect(calculateScrollPercentage(mockContainer)).toBe(50)
   })
@@ -40,7 +44,7 @@ describe('calculateScrollPercentage', () => {
     const mockContainer = {
       scrollTop: 0,
       scrollHeight: 500,
-      clientHeight: 500
+      clientHeight: 500,
     } as HTMLElement
     expect(calculateScrollPercentage(mockContainer)).toBe(0)
   })
@@ -50,7 +54,7 @@ describe('isPageContentShort', () => {
   it('returns true when content fits in viewport', () => {
     const mockContainer = {
       scrollHeight: 400,
-      clientHeight: 500
+      clientHeight: 500,
     } as HTMLElement
     expect(isPageContentShort(mockContainer)).toBe(true)
   })
@@ -58,7 +62,7 @@ describe('isPageContentShort', () => {
   it('returns false when content is taller than viewport', () => {
     const mockContainer = {
       scrollHeight: 1000,
-      clientHeight: 500
+      clientHeight: 500,
     } as HTMLElement
     expect(isPageContentShort(mockContainer)).toBe(false)
   })

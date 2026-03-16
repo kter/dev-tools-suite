@@ -1,5 +1,25 @@
 pre-commit:
   commands:
+    format-check:
+      glob: "*.ts"
+      run: |
+        BIOME_FILES=$(echo {staged_files} | tr ' ' '\n' | grep -E \
+          '^(tests/|tools/[^/]+/utils/|tools/shared/|vitest\.config\.ts$|playwright\.config\.ts$)' \
+          | tr '\n' ' ')
+        if [ -n "$BIOME_FILES" ]; then
+          npx biome format $BIOME_FILES
+        fi
+      fail_text: "Biome format check failed. Run: npm run format"
+    lint-staged:
+      glob: "*.ts"
+      run: |
+        BIOME_FILES=$(echo {staged_files} | tr ' ' '\n' | grep -E \
+          '^(tests/|tools/[^/]+/utils/|tools/shared/|vitest\.config\.ts$|playwright\.config\.ts$)' \
+          | tr '\n' ' ')
+        if [ -n "$BIOME_FILES" ]; then
+          npx biome lint --diagnostic-level=error $BIOME_FILES && npx oxlint $BIOME_FILES
+        fi
+      fail_text: "Lint errors found. Run: npm run lint"
     unit-tests:
       run: npx vitest run
 

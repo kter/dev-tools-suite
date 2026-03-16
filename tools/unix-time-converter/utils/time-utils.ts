@@ -16,7 +16,7 @@ export function convertUnixToHuman(unixTimestamp: number): UnixToHumanResult {
   const date = new Date(unixTimestamp * 1000)
   return {
     local: date.toLocaleString(),
-    utc: date.toUTCString()
+    utc: date.toUTCString(),
   }
 }
 
@@ -34,6 +34,6 @@ export function convertHumanToUnix(dateStr: string, timeStr: string): HumanToUni
 
   return {
     local: Math.floor(localDate.getTime() / 1000).toString(),
-    utc: Math.floor(utcDate.getTime() / 1000).toString()
+    utc: Math.floor(utcDate.getTime() / 1000).toString(),
   }
 }

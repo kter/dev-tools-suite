@@ -20,30 +20,34 @@ export function buildFlagString(flags: RegexFlags): string {
   return flagString
 }
 
-export function parseRegexMatches(pattern: string, testString: string, flags: RegexFlags): RegexMatch[] {
+export function parseRegexMatches(
+  pattern: string,
+  testString: string,
+  flags: RegexFlags
+): RegexMatch[] {
   const flagString = buildFlagString(flags)
   const regex = new RegExp(pattern, flagString)
   const foundMatches: RegexMatch[] = []
-  let match: RegExpExecArray | null
-
   if (flags.global) {
-    while ((match = regex.exec(testString)) !== null) {
+    let match = regex.exec(testString)
+    while (match !== null) {
       foundMatches.push({
         value: match[0],
         index: match.index!,
-        groups: match.slice(1)
+        groups: match.slice(1),
       })
       if (match[0] === '') {
         regex.lastIndex++
       }
+      match = regex.exec(testString)
     }
   } else {
-    match = regex.exec(testString)
+    const match = regex.exec(testString)
     if (match) {
       foundMatches.push({
         value: match[0],
         index: match.index!,
-        groups: match.slice(1)
+        groups: match.slice(1),
       })
     }
   }

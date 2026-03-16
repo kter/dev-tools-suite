@@ -1,5 +1,11 @@
-import { describe, it, expect } from 'vitest'
-import { calculateIP, isValidIP, intToIP, ipToBinary, getNetworkClass } from '../../../tools/ip-calculator/utils/ip-utils'
+import { describe, expect, it } from 'vitest'
+import {
+  calculateIP,
+  getNetworkClass,
+  intToIP,
+  ipToBinary,
+  isValidIP,
+} from '../../../tools/ip-calculator/utils/ip-utils'
 
 describe('isValidIP', () => {
   it('returns true for valid IPv4 addresses', () => {
@@ -20,9 +26,9 @@ describe('isValidIP', () => {
 
 describe('intToIP', () => {
   it('converts integer to IP address string', () => {
-    expect(intToIP(0xC0A80101)).toBe('192.168.1.1')
+    expect(intToIP(0xc0a80101)).toBe('192.168.1.1')
     expect(intToIP(0x00000000)).toBe('0.0.0.0')
-    expect(intToIP(0xFFFFFFFF)).toBe('255.255.255.255')
+    expect(intToIP(0xffffffff)).toBe('255.255.255.255')
   })
 })
 

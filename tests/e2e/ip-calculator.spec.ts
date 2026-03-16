@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { getToolUrl } from './helpers/url'
 
 const BASE_URL = getToolUrl('ip-calculator')
@@ -16,7 +16,9 @@ test.describe('IP Calculator', () => {
     await expect(page.getByText('255.255.255.0')).toBeVisible()
     await expect(page.getByText('192.168.1.0')).toBeVisible()
     await expect(page.getByText('192.168.1.255')).toBeVisible()
-    await expect(page.getByText('Class C', { exact: false }).or(page.getByText('C', { exact: true }))).toBeVisible()
+    await expect(
+      page.getByText('Class C', { exact: false }).or(page.getByText('C', { exact: true }))
+    ).toBeVisible()
   })
 
   test('shows correct usable host count for /24', async ({ page }) => {

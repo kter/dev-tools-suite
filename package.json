@@ -6,9 +6,16 @@
     "test:unit:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:all": "npm run test:unit && npm run test:e2e",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "format": "biome format --write tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "format:check": "biome format tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "lint": "biome lint --diagnostic-level=error tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts && oxlint tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "lint:biome": "biome lint --diagnostic-level=error tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "lint:oxlint": "oxlint tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "check": "biome check --write tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.7",
     "@playwright/test": "^1.53.2",
     "@types/he": "^1.2.3",
     "@types/js-yaml": "^4.0.9",
@@ -16,6 +23,7 @@
     "he": "^1.2.0",
     "js-yaml": "^4.1.0",
     "lefthook": "^1.6.0",
+    "oxlint": "1.56.0",
     "playwright": "^1.53.2",
     "toml": "^3.0.0",
     "typescript": "^5.2.0",

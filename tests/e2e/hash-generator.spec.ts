@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { getToolUrl } from './helpers/url'
 
 const BASE_URL = getToolUrl('hash-generator')
@@ -22,7 +22,9 @@ test.describe('Hash Generator', () => {
     await input.fill('hello')
 
     // SHA-256 of "hello"
-    await expect(page.getByText('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824')).toBeVisible()
+    await expect(
+      page.getByText('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824')
+    ).toBeVisible()
   })
 
   test('shows empty state with no input', async ({ page }) => {

@@ -16,13 +16,10 @@ const toolPorts: Record<string, number> = {
 export function getToolUrl(tool: string, path = ''): string {
   let base: string
   if (TARGET === 'prd') {
-    base = tool === 'landing-page'
-      ? 'https://devtools.site'
-      : `https://${tool}.devtools.site`
+    base = tool === 'landing-page' ? 'https://devtools.site' : `https://${tool}.devtools.site`
   } else if (TARGET === 'dev') {
-    base = tool === 'landing-page'
-      ? 'https://dev.devtools.site'
-      : `https://${tool}.dev.devtools.site`
+    base =
+      tool === 'landing-page' ? 'https://dev.devtools.site' : `https://${tool}.dev.devtools.site`
   } else {
     const port = toolPorts[tool] ?? 3000
     base = `http://localhost:${port}`

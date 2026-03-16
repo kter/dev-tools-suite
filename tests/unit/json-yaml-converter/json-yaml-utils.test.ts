@@ -1,9 +1,13 @@
-import { describe, it, expect } from 'vitest'
-import { parseInput, formatOutput, stringifyToml } from '../../../tools/json-yaml-converter/utils/json-yaml-utils'
+import { describe, expect, it } from 'vitest'
+import {
+  formatOutput,
+  parseInput,
+  stringifyToml,
+} from '../../../tools/json-yaml-converter/utils/json-yaml-utils'
 
 const defaultFormatOptions = {
   prettyFormat: true,
-  jsonIndent: '2'
+  jsonIndent: '2',
 }
 
 const sampleData = { name: 'John', age: 30, active: true }

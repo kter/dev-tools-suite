@@ -24,20 +24,22 @@ export function parseInput(inputText: string, inputFormat: SupportedFormat): unk
   }
 }
 
-export function formatOutput(data: unknown, outputFormat: SupportedFormat, options: FormatOptions): string {
+export function formatOutput(
+  data: unknown,
+  outputFormat: SupportedFormat,
+  options: FormatOptions
+): string {
   switch (outputFormat) {
     case 'json': {
       const indentValue = options.jsonIndent === 'tab' ? '\t' : parseInt(options.jsonIndent)
-      return options.prettyFormat
-        ? JSON.stringify(data, null, indentValue)
-        : JSON.stringify(data)
+      return options.prettyFormat ? JSON.stringify(data, null, indentValue) : JSON.stringify(data)
     }
     case 'yaml':
       return yaml.dump(data, {
         indent: 2,
         lineWidth: -1,
         noRefs: true,
-        sortKeys: false
+        sortKeys: false,
       })
     case 'toml':
       return stringifyToml(data as Record<string, unknown>)

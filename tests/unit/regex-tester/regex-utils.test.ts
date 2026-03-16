@@ -1,16 +1,23 @@
-import { describe, it, expect } from 'vitest'
-import { buildFlagString, parseRegexMatches, performReplace, escapeHtml } from '../../../tools/regex-tester/utils/regex-utils'
+import { describe, expect, it } from 'vitest'
+import {
+  buildFlagString,
+  escapeHtml,
+  parseRegexMatches,
+  performReplace,
+} from '../../../tools/regex-tester/utils/regex-utils'
 
 const defaultFlags = {
   global: true,
   ignoreCase: false,
   multiline: false,
-  dotAll: false
+  dotAll: false,
 }
 
 describe('buildFlagString', () => {
   it('returns empty string for no flags', () => {
-    expect(buildFlagString({ global: false, ignoreCase: false, multiline: false, dotAll: false })).toBe('')
+    expect(
+      buildFlagString({ global: false, ignoreCase: false, multiline: false, dotAll: false })
+    ).toBe('')
   })
 
   it('returns "g" for global only', () => {
@@ -22,7 +29,9 @@ describe('buildFlagString', () => {
   })
 
   it('returns "gims" for all flags', () => {
-    expect(buildFlagString({ global: true, ignoreCase: true, multiline: true, dotAll: true })).toBe('gims')
+    expect(buildFlagString({ global: true, ignoreCase: true, multiline: true, dotAll: true })).toBe(
+      'gims'
+    )
   })
 })
 
@@ -47,29 +56,35 @@ describe('parseRegexMatches', () => {
   })
 
   it('captures groups', () => {
-    const matches = parseRegexMatches('(\\w+)@(\\w+)', 'test@example', { ...defaultFlags, global: false })
+    const matches = parseRegexMatches('(\\w+)@(\\w+)', 'test@example', {
+      ...defaultFlags,
+      global: false,
+    })
     expect(matches[0].groups).toEqual(['test', 'example'])
   })
 
   it('matches case-insensitively when ignoreCase is true', () => {
-    const matches = parseRegexMatches('hello', 'Hello World HELLO', { ...defaultFlags, ignoreCase: true })
+    const matches = parseRegexMatches('hello', 'Hello World HELLO', {
+      ...defaultFlags,
+      ignoreCase: true,
+    })
     expect(matches).toHaveLength(2)
   })
 })
 
 describe('performReplace', () => {
   it('replaces first occurrence without global flag', () => {
-    const regex = new RegExp('foo')
+    const regex = /foo/
     expect(performReplace('foo bar foo', regex, 'baz')).toBe('baz bar foo')
   })
 
   it('replaces all occurrences with global flag', () => {
-    const regex = new RegExp('foo', 'g')
+    const regex = /foo/g
     expect(performReplace('foo bar foo', regex, 'baz')).toBe('baz bar baz')
   })
 
   it('supports capture group references', () => {
-    const regex = new RegExp('(\\w+)@(\\w+)', 'g')
+    const regex = /(\w+)@(\w+)/g
     expect(performReplace('user@host', regex, '$2@$1')).toBe('host@user')
   })
 })

@@ -1,4 +1,4 @@
-.PHONY: test test-unit test-unit-watch test-unit-coverage test-e2e test-e2e-dev test-all lint help
+.PHONY: test test-unit test-unit-watch test-unit-coverage test-e2e test-e2e-dev test-all lint lint-tool format format-check check help
 
 # Default target
 .DEFAULT_GOAL := test
@@ -31,14 +31,30 @@ test-e2e-dev:
 test-all:
 	npm run test:unit && npm run test:e2e
 
-## Run ESLint for a specific tool (TOOL=ip-calculator required)
+## Format Biome-scope TS files in place
+format:
+	npx biome format --write tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts
+
+## Check formatting (non-destructive, exits 1 if changes needed)
+format-check:
+	npx biome format tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts
+
+## Run Biome + Oxlint on Biome-scope TS files
 lint:
+	npx biome lint --diagnostic-level=error tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts
+	npx oxlint tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts
+
+## Run ESLint for a specific tool (TOOL=ip-calculator required)
+lint-tool:
 ifdef TOOL
 	cd tools/$(TOOL) && npx eslint .
 else
-	@echo "Usage: make lint TOOL=<tool-name>"
-	@echo "Example: make lint TOOL=ip-calculator"
+	@echo "Usage: make lint-tool TOOL=<tool-name>"
 endif
+
+## Format + lint + import organize in one pass
+check:
+	npx biome check --write tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts
 
 ## Show available targets
 help:

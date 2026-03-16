@@ -3,7 +3,7 @@
  * Provides Ko-fi donation widget functionality across all dev tools
  */
 
-import { ref, readonly, type Ref } from 'vue'
+import { type Ref, readonly, ref } from 'vue'
 import type { KofiWidgetConfig, KofiWidgetState } from '../types/kofi'
 
 declare global {
@@ -20,7 +20,7 @@ export function useKofiWidget() {
   const state: Ref<KofiWidgetState> = ref({
     isLoaded: false,
     isVisible: false,
-    loadError: false
+    loadError: false,
   })
 
   let config: KofiWidgetConfig | null = null
@@ -34,7 +34,7 @@ export function useKofiWidget() {
     state.value = {
       isLoaded: false,
       isVisible: false,
-      loadError: false
+      loadError: false,
     }
   }
 
@@ -77,7 +77,6 @@ export function useKofiWidget() {
           handleLoadError()
         }
       }, 5000)
-
     } catch (error) {
       console.error('Failed to load Ko-fi widget:', error)
       handleLoadError()
@@ -96,10 +95,10 @@ export function useKofiWidget() {
     try {
       // Create Ko-fi widget configuration
       const kofiConfig = {
-        'type': config.type,
+        type: config.type,
         'floating-chat.donateButton.text': config.buttonText,
         'floating-chat.donateButton.background-color': config.backgroundColor,
-        'floating-chat.donateButton.text-color': config.textColor
+        'floating-chat.donateButton.text-color': config.textColor,
       }
 
       // Initialize Ko-fi widget
@@ -109,9 +108,8 @@ export function useKofiWidget() {
       state.value = {
         isLoaded: true,
         isVisible: true,
-        loadError: false
+        loadError: false,
       }
-
     } catch (error) {
       console.error('Failed to initialize Ko-fi widget:', error)
       handleLoadError()
@@ -125,7 +123,7 @@ export function useKofiWidget() {
     state.value = {
       isLoaded: false,
       isVisible: false,
-      loadError: true
+      loadError: true,
     }
     // Silent failure - no error messages to user
   }
@@ -154,7 +152,7 @@ export function useKofiWidget() {
       state: readonly(state),
       load,
       hide,
-      show
+      show,
     })
   }
 
@@ -163,6 +161,6 @@ export function useKofiWidget() {
     state: readonly(state),
     load,
     hide,
-    show
+    show,
   }
 }

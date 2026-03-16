@@ -1,5 +1,8 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { convertUnixToHuman, convertHumanToUnix } from '../../../tools/unix-time-converter/utils/time-utils'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import {
+  convertHumanToUnix,
+  convertUnixToHuman,
+} from '../../../tools/unix-time-converter/utils/time-utils'
 
 // Use UTC timezone to make tests deterministic
 const originalTZ = process.env.TZ
