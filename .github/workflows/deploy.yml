@@ -31,6 +31,38 @@ env:
   NODE_VERSION: '20'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .nuxt/tsconfig.json stubs (for tools that need them)
+        run: |
+          for tool in ip-calculator string-converter unix-time-converter character-code-converter; do
+            mkdir -p tools/$tool/.nuxt
+            echo '{"compilerOptions":{}}' > tools/$tool/.nuxt/tsconfig.json
+          done
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-coverage
+          path: coverage/
+
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
@@ -128,8 +160,8 @@ jobs:
           fi
 
   deploy:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.matrix != '{"include":[]}'
+    needs: [detect-changes, test]
+    if: needs.detect-changes.outputs.matrix != '{"include":[]}' && needs.test.result == 'success'
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}

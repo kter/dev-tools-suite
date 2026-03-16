@@ -278,6 +278,7 @@
 <script setup lang="ts">
 import { decodeJwt } from 'jose'
 import KofiButton from '../shared/components/KofiButton.vue'
+import { getAlgorithmDescription, formatTimestamp, formatClaimValue } from './utils/jwt-utils'
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
@@ -314,39 +315,6 @@ const standardClaims = [
   { key: 'iat', name: 'Issued At', description: 'Issued at time' },
   { key: 'jti', name: 'JWT ID', description: 'Unique identifier' }
 ]
-
-const getAlgorithmDescription = (alg: string): string => {
-  const descriptions: { [key: string]: string } = {
-    'HS256': 'HMAC using SHA-256',
-    'HS384': 'HMAC using SHA-384',
-    'HS512': 'HMAC using SHA-512',
-    'RS256': 'RSA using SHA-256',
-    'RS384': 'RSA using SHA-384',
-    'RS512': 'RSA using SHA-512',
-    'ES256': 'ECDSA using P-256 and SHA-256',
-    'ES384': 'ECDSA using P-384 and SHA-384',
-    'ES512': 'ECDSA using P-521 and SHA-512',
-    'PS256': 'RSA PSS using SHA-256',
-    'PS384': 'RSA PSS using SHA-384',
-    'PS512': 'RSA PSS using SHA-512',
-    'none': 'No signature'
-  }
-  return descriptions[alg] || 'Unknown algorithm'
-}
-
-const formatTimestamp = (timestamp: number): string => {
-  return new Date(timestamp * 1000).toLocaleString()
-}
-
-const formatClaimValue = (key: string, value: any): string => {
-  if (key === 'exp' || key === 'nbf' || key === 'iat') {
-    return formatTimestamp(value)
-  }
-  if (Array.isArray(value)) {
-    return value.join(', ')
-  }
-  return String(value)
-}
 
 const expirationStatus = computed(() => {
   if (!decodedToken.value?.payload.exp) {

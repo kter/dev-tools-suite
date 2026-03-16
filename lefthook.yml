@@ -1,0 +1,15 @@
+pre-commit:
+  commands:
+    unit-tests:
+      run: npx vitest run
+
+pre-push:
+  commands:
+    unit-tests:
+      run: npx vitest run --coverage
+    e2e-dev:
+      run: |
+        BRANCH=$(git rev-parse --abbrev-ref HEAD)
+        if [ "$BRANCH" = "develop" ]; then
+          TARGET=dev npx playwright test --project=dev
+        fi
