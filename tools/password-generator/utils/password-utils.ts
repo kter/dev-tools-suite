@@ -23,17 +23,26 @@ export function getCharacterSet(options: PasswordOptions): string {
   if (options.includeSymbols) charset += SYMBOL_CHARS
 
   if (options.excludeSimilar) {
-    charset = charset.split('').filter(char => !SIMILAR_CHARS.includes(char)).join('')
+    charset = charset
+      .split('')
+      .filter(char => !SIMILAR_CHARS.includes(char))
+      .join('')
   }
 
   if (options.excludeAmbiguous) {
-    charset = charset.split('').filter(char => !AMBIGUOUS_CHARS.includes(char)).join('')
+    charset = charset
+      .split('')
+      .filter(char => !AMBIGUOUS_CHARS.includes(char))
+      .join('')
   }
 
   return charset
 }
 
-export function getSecureRandomInt(max: number, cryptoImpl?: { getRandomValues: (arr: Uint32Array) => void }): number {
+export function getSecureRandomInt(
+  max: number,
+  cryptoImpl?: { getRandomValues: (arr: Uint32Array) => void }
+): number {
   const crypto = cryptoImpl ?? (typeof globalThis !== 'undefined' ? globalThis.crypto : undefined)
   if (crypto && crypto.getRandomValues) {
     const array = new Uint32Array(1)

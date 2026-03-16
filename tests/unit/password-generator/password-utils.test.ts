@@ -1,5 +1,12 @@
-import { describe, it, expect } from 'vitest'
-import { getCharacterSet, getSecureRandomInt, UPPERCASE_CHARS, LOWERCASE_CHARS, NUMBER_CHARS, SYMBOL_CHARS } from '../../../tools/password-generator/utils/password-utils'
+import { describe, expect, it } from 'vitest'
+import {
+  getCharacterSet,
+  getSecureRandomInt,
+  LOWERCASE_CHARS,
+  NUMBER_CHARS,
+  SYMBOL_CHARS,
+  UPPERCASE_CHARS,
+} from '../../../tools/password-generator/utils/password-utils'
 
 const defaultOptions = {
   includeUppercase: true,
@@ -7,22 +14,34 @@ const defaultOptions = {
   includeNumbers: true,
   includeSymbols: false,
   excludeSimilar: false,
-  excludeAmbiguous: false
+  excludeAmbiguous: false,
 }
 
 describe('getCharacterSet', () => {
   it('returns uppercase chars when only uppercase selected', () => {
-    const charset = getCharacterSet({ ...defaultOptions, includeLowercase: false, includeNumbers: false })
+    const charset = getCharacterSet({
+      ...defaultOptions,
+      includeLowercase: false,
+      includeNumbers: false,
+    })
     expect(charset).toBe(UPPERCASE_CHARS)
   })
 
   it('returns lowercase chars when only lowercase selected', () => {
-    const charset = getCharacterSet({ ...defaultOptions, includeUppercase: false, includeNumbers: false })
+    const charset = getCharacterSet({
+      ...defaultOptions,
+      includeUppercase: false,
+      includeNumbers: false,
+    })
     expect(charset).toBe(LOWERCASE_CHARS)
   })
 
   it('returns combined charset for multiple types', () => {
-    const charset = getCharacterSet({ ...defaultOptions, includeNumbers: false, includeSymbols: false })
+    const charset = getCharacterSet({
+      ...defaultOptions,
+      includeNumbers: false,
+      includeSymbols: false,
+    })
     expect(charset).toBe(UPPERCASE_CHARS + LOWERCASE_CHARS)
   })
 
@@ -36,7 +55,11 @@ describe('getCharacterSet', () => {
   })
 
   it('excludes ambiguous characters when excludeAmbiguous is true', () => {
-    const charset = getCharacterSet({ ...defaultOptions, includeSymbols: true, excludeAmbiguous: true })
+    const charset = getCharacterSet({
+      ...defaultOptions,
+      includeSymbols: true,
+      excludeAmbiguous: true,
+    })
     expect(charset).not.toContain('{')
     expect(charset).not.toContain('}')
     expect(charset).not.toContain('[')
@@ -50,7 +73,7 @@ describe('getCharacterSet', () => {
       includeNumbers: false,
       includeSymbols: false,
       excludeSimilar: false,
-      excludeAmbiguous: false
+      excludeAmbiguous: false,
     })
     expect(charset).toBe('')
   })
@@ -76,7 +99,7 @@ describe('getSecureRandomInt', () => {
     const mockCrypto = {
       getRandomValues: (arr: Uint32Array) => {
         arr[0] = 42
-      }
+      },
     }
     expect(getSecureRandomInt(100, mockCrypto)).toBe(42)
   })

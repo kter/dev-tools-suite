@@ -1,5 +1,16 @@
-import { describe, it, expect } from 'vitest'
-import { base64Encode, base64Decode, urlEncode, urlDecode, htmlEscape, htmlUnescape, snakeToCamel, camelToSnake, toUpperCase, toLowerCase } from '../../../tools/string-converter/utils/string-utils'
+import { describe, expect, it } from 'vitest'
+import {
+  base64Decode,
+  base64Encode,
+  camelToSnake,
+  htmlEscape,
+  htmlUnescape,
+  snakeToCamel,
+  toLowerCase,
+  toUpperCase,
+  urlDecode,
+  urlEncode,
+} from '../../../tools/string-converter/utils/string-utils'
 
 describe('base64Encode / base64Decode', () => {
   it('encodes ASCII text to Base64', () => {
@@ -28,7 +39,9 @@ describe('urlEncode / urlDecode', () => {
   })
 
   it('encodes special URL characters', () => {
-    expect(urlEncode('https://example.com/search?q=test')).toBe('https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dtest')
+    expect(urlEncode('https://example.com/search?q=test')).toBe(
+      'https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dtest'
+    )
   })
 
   it('round-trips URLs', () => {
@@ -44,7 +57,9 @@ describe('urlEncode / urlDecode', () => {
 
 describe('htmlEscape / htmlUnescape', () => {
   it('escapes HTML tags', () => {
-    expect(htmlEscape('<script>alert("xss")</script>')).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;')
+    expect(htmlEscape('<script>alert("xss")</script>')).toBe(
+      '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
+    )
   })
 
   it('escapes ampersand', () => {

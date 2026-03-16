@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest'
-import { getAlgorithmDescription, formatTimestamp, formatClaimValue } from '../../../tools/jwt-decoder/utils/jwt-utils'
+import { describe, expect, it } from 'vitest'
+import {
+  formatClaimValue,
+  formatTimestamp,
+  getAlgorithmDescription,
+} from '../../../tools/jwt-decoder/utils/jwt-utils'
 
 describe('getAlgorithmDescription', () => {
   it('returns description for known algorithms', () => {
@@ -15,7 +19,20 @@ describe('getAlgorithmDescription', () => {
   })
 
   it('handles all standard algorithms', () => {
-    const algorithms = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'PS256', 'PS384', 'PS512']
+    const algorithms = [
+      'HS256',
+      'HS384',
+      'HS512',
+      'RS256',
+      'RS384',
+      'RS512',
+      'ES256',
+      'ES384',
+      'ES512',
+      'PS256',
+      'PS384',
+      'PS512',
+    ]
     for (const alg of algorithms) {
       expect(getAlgorithmDescription(alg)).not.toBe('Unknown algorithm')
     }
@@ -58,7 +75,9 @@ describe('formatClaimValue', () => {
   })
 
   it('formats array values as comma-separated string', () => {
-    expect(formatClaimValue('aud', ['api.example.com', 'example.com'])).toBe('api.example.com, example.com')
+    expect(formatClaimValue('aud', ['api.example.com', 'example.com'])).toBe(
+      'api.example.com, example.com'
+    )
   })
 
   it('converts other values to string', () => {

@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { convertChar, encodeFullText } from '../../../tools/character-code-converter/utils/char-code-utils'
+import { describe, expect, it } from 'vitest'
+import {
+  convertChar,
+  encodeFullText,
+} from '../../../tools/character-code-converter/utils/char-code-utils'
 
 describe('convertChar', () => {
   it('converts ASCII character "A"', () => {

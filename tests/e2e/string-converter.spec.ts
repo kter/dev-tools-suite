@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { getToolUrl } from './helpers/url'
 
 const BASE_URL = getToolUrl('string-converter')

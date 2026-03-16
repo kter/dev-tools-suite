@@ -24,12 +24,7 @@ export function isValidIP(ip: string): boolean {
 }
 
 export function intToIP(int: number): string {
-  return [
-    (int >>> 24) & 0xFF,
-    (int >>> 16) & 0xFF,
-    (int >>> 8) & 0xFF,
-    int & 0xFF
-  ].join('.')
+  return [(int >>> 24) & 0xff, (int >>> 16) & 0xff, (int >>> 8) & 0xff, int & 0xff].join('.')
 }
 
 export function getNetworkClass(firstOctet: number): string {
@@ -42,7 +37,8 @@ export function getNetworkClass(firstOctet: number): string {
 }
 
 export function ipToBinary(ip: string): string {
-  return ip.split('.')
+  return ip
+    .split('.')
     .map(octet => parseInt(octet).toString(2).padStart(8, '0'))
     .join('.')
 }
@@ -67,16 +63,17 @@ export function calculateIP(input: string): IPCalculation {
   const ipParts = ipAddress.split('.').map(part => parseInt(part))
   const ipInt = (ipParts[0] << 24) + (ipParts[1] << 16) + (ipParts[2] << 8) + ipParts[3]
 
-  const subnetMaskInt = (0xFFFFFFFF << (32 - cidr)) >>> 0
+  const subnetMaskInt = (0xffffffff << (32 - cidr)) >>> 0
   const networkInt = (ipInt & subnetMaskInt) >>> 0
   // Note: JavaScript's >>> is limited to 32-bit, so special-case /32 and /0
-  const broadcastInt = cidr === 32
-    ? networkInt
-    : cidr === 0
-      ? 0xFFFFFFFF >>> 0
-      : (networkInt | (0xFFFFFFFF >>> cidr)) >>> 0
+  const broadcastInt =
+    cidr === 32
+      ? networkInt
+      : cidr === 0
+        ? 0xffffffff >>> 0
+        : (networkInt | (0xffffffff >>> cidr)) >>> 0
 
-  const totalHosts = Math.pow(2, 32 - cidr)
+  const totalHosts = 2 ** (32 - cidr)
   const usableHosts = totalHosts > 2 ? totalHosts - 2 : 0
 
   return {
@@ -91,6 +88,6 @@ export function calculateIP(input: string): IPCalculation {
     usableHosts,
     networkClass: getNetworkClass(ipParts[0]),
     ipBinary: ipToBinary(ipAddress),
-    subnetMaskBinary: ipToBinary(intToIP(subnetMaskInt))
+    subnetMaskBinary: ipToBinary(intToIP(subnetMaskInt)),
   }
 }
