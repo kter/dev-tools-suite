@@ -13,7 +13,8 @@ This repository contains a collection of developer utility tools (Hash Generator
 - **tools/***: Individual Nuxt 3 applications (SPA mode, TypeScript, Tailwind CSS) with their own package.json and dependencies
 - **infrastructure/cdk**: AWS CDK infrastructure code (TypeScript)
 - **infrastructure/terraform**: Google Cloud Terraform infrastructure code
-- **tests/**: Playwright E2E tests
+- **tests/unit/**: Vitest unit tests for tool utility functions
+- **tests/e2e/**: Playwright E2E tests
 
 ## Shared Rules
 
@@ -46,12 +47,53 @@ This repository contains a collection of developer utility tools (Hash Generator
 ### Testing
 
 ```bash
-# Run E2E tests (from root)
-npx playwright test
+# Run unit tests (from root)
+npm run test:unit
+# or
+make test
 
-# Run specific tool test
-npx playwright test tests/password-generator.spec.js
+# Run unit tests for a specific tool
+make test TOOL=ip-calculator
+
+# Run unit tests with coverage
+npm run test:unit:coverage
+# or
+make test-unit
+
+# Run unit tests in watch mode
+npm run test:unit:watch
+# or
+make test-unit-watch
+
+# Run E2E tests against localhost (requires dev servers running)
+npm run test:e2e
+# or
+make test-e2e
+
+# Run E2E tests against dev.devtools.site
+make test-e2e-dev
+
+# Run all tests (unit + E2E)
+npm run test:all
+# or
+make test-all
+
+# Run specific E2E spec file
+npx playwright test tests/e2e/ip-calculator.spec.ts
 ```
+
+#### Notes on unit testing setup
+
+Some tools (ip-calculator, string-converter, unix-time-converter, character-code-converter) require a `.nuxt/tsconfig.json` stub file to be present before running unit tests. These stubs are created automatically in CI (see deploy.yml), but for local testing, if you see a `TSConfckParseError`, run:
+
+```bash
+for tool in ip-calculator string-converter unix-time-converter character-code-converter; do
+  mkdir -p tools/$tool/.nuxt
+  echo '{"compilerOptions":{}}' > tools/$tool/.nuxt/tsconfig.json
+done
+```
+
+These files are gitignored (`.nuxt/` is in `.gitignore`).
 
 ### Tool Development
 

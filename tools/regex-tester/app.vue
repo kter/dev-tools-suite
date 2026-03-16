@@ -295,6 +295,7 @@
 
 <script setup lang="ts">
 import KofiButton from '../shared/components/KofiButton.vue'
+import { buildFlagString, escapeHtml } from './utils/regex-utils'
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
 
@@ -472,12 +473,6 @@ const generateHighlightedText = () => {
   result += escapeHtml(testString.value.slice(lastIndex))
   
   highlightedText.value = result
-}
-
-const escapeHtml = (text: string): string => {
-  const div = document.createElement('div')
-  div.textContent = text
-  return div.innerHTML
 }
 
 const performReplace = () => {

@@ -200,8 +200,8 @@
 </template>
 
 <script setup lang="ts">
-import * as he from 'he'
 import KofiButton from '../shared/components/KofiButton.vue'
+import { base64Encode, base64Decode, urlEncode, urlDecode, htmlEscape, htmlUnescape, snakeToCamel, camelToSnake, toUpperCase, toLowerCase } from './utils/string-utils'
 
 interface ConversionType {
   id: string
@@ -239,15 +239,7 @@ const conversionTypes: ConversionType[] = [
     id: 'base64-encode',
     name: 'Base64 Encode',
     description: 'Encode to Base64',
-    convert: (input: string) => {
-      if (!input) return ''
-      try {
-        // Use modern approach with proper UTF-8 handling
-        return btoa(unescape(encodeURIComponent(input)))
-      } catch (error) {
-        throw new Error('Failed to encode to Base64')
-      }
-    },
+    convert: base64Encode,
     reversible: true,
     examples: [
       { input: 'Hello World', output: 'SGVsbG8gV29ybGQ=' },
@@ -258,16 +250,7 @@ const conversionTypes: ConversionType[] = [
     id: 'base64-decode',
     name: 'Base64 Decode',
     description: 'Decode from Base64',
-    convert: (input: string) => {
-      if (!input) return ''
-      try {
-        // Use modern approach with proper UTF-8 handling
-        const decoded = atob(input.replace(/[^A-Za-z0-9+/]/g, ''))
-        return decodeURIComponent(escape(decoded))
-      } catch (error) {
-        throw new Error('Invalid Base64 input')
-      }
-    },
+    convert: base64Decode,
     reversible: true,
     examples: [
       { input: 'SGVsbG8gV29ybGQ=', output: 'Hello World' },
@@ -278,10 +261,7 @@ const conversionTypes: ConversionType[] = [
     id: 'url-encode',
     name: 'URL Encode',
     description: 'Encode for URL',
-    convert: (input: string) => {
-      if (!input) return ''
-      return encodeURIComponent(input)
-    },
+    convert: urlEncode,
     reversible: true,
     examples: [
       { input: 'Hello World!', output: 'Hello%20World!' },
@@ -292,14 +272,7 @@ const conversionTypes: ConversionType[] = [
     id: 'url-decode',
     name: 'URL Decode',
     description: 'Decode from URL',
-    convert: (input: string) => {
-      if (!input) return ''
-      try {
-        return decodeURIComponent(input)
-      } catch (error) {
-        throw new Error('Invalid URL encoded input')
-      }
-    },
+    convert: urlDecode,
     reversible: true,
     examples: [
       { input: 'Hello%20World!', output: 'Hello World!' },
@@ -310,10 +283,7 @@ const conversionTypes: ConversionType[] = [
     id: 'html-escape',
     name: 'HTML Escape',
     description: 'Escape HTML entities',
-    convert: (input: string) => {
-      if (!input) return ''
-      return he.encode(input)
-    },
+    convert: htmlEscape,
     reversible: true,
     examples: [
       { input: '<scr' + 'ipt>alert("hello")</scr' + 'ipt>', output: '&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;' },
@@ -324,10 +294,7 @@ const conversionTypes: ConversionType[] = [
     id: 'html-unescape',
     name: 'HTML Unescape',
     description: 'Unescape HTML entities',
-    convert: (input: string) => {
-      if (!input) return ''
-      return he.decode(input)
-    },
+    convert: htmlUnescape,
     reversible: true,
     examples: [
       { input: '&lt;script&gt;alert(&quot;hello&quot;)&lt;/script&gt;', output: '<scr' + 'ipt>alert("hello")</scr' + 'ipt>' },
@@ -338,10 +305,7 @@ const conversionTypes: ConversionType[] = [
     id: 'snake-to-camel',
     name: 'snake_case → camelCase',
     description: 'Convert to camelCase',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
-    },
+    convert: snakeToCamel,
     reversible: true,
     examples: [
       { input: 'user_name', output: 'userName' },
@@ -352,10 +316,7 @@ const conversionTypes: ConversionType[] = [
     id: 'camel-to-snake',
     name: 'camelCase → snake_case',
     description: 'Convert to snake_case',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')
-    },
+    convert: camelToSnake,
     reversible: true,
     examples: [
       { input: 'userName', output: 'user_name' },
@@ -366,10 +327,7 @@ const conversionTypes: ConversionType[] = [
     id: 'uppercase',
     name: 'UPPERCASE',
     description: 'Convert to uppercase',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.toUpperCase()
-    },
+    convert: toUpperCase,
     examples: [
       { input: 'Hello World', output: 'HELLO WORLD' },
       { input: 'test data', output: 'TEST DATA' }
@@ -379,10 +337,7 @@ const conversionTypes: ConversionType[] = [
     id: 'lowercase',
     name: 'lowercase',
     description: 'Convert to lowercase',
-    convert: (input: string) => {
-      if (!input) return ''
-      return input.toLowerCase()
-    },
+    convert: toLowerCase,
     examples: [
       { input: 'Hello World', output: 'hello world' },
       { input: 'TEST DATA', output: 'test data' }
