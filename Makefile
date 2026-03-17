@@ -1,6 +1,7 @@
 .PHONY: test test-unit test-unit-watch test-unit-coverage test-e2e test-e2e-dev test-all lint lint-tool format format-check check build deploy deploy-s3 deploy-invalidate help
 
 ENV ?= dev
+PARALLEL ?= 4
 
 TOOLS := hash-generator qr-generator unix-time-converter password-generator ip-calculator \
          markdown-preview placeholder-generator ip-info timezone-converter string-converter \
@@ -80,12 +81,13 @@ ifndef TOOL
 endif
 	@STACK_NAME="DevToolsStack-$(ENV)"; \
 	TOOL_KEY=$$(echo "$(TOOL)" | tr -d '-'); \
-	BUCKET_NAME=$$(aws cloudformation describe-stacks \
+	BUCKET_NAME=$$(aws --profile "$(ENV)" \
+          cloudformation describe-stacks \
 	  --stack-name "$$STACK_NAME" \
 	  --query "Stacks[0].Outputs[?OutputKey=='$${TOOL_KEY}bucketname'].OutputValue" \
 	  --output text); \
 	echo "Syncing to s3://$$BUCKET_NAME/"; \
-	aws s3 sync tools/$(TOOL)/.output/public/ s3://$$BUCKET_NAME/ --delete
+	aws --profile "$(ENV)" s3 sync tools/$(TOOL)/.output/public/ s3://$$BUCKET_NAME/ --delete
 
 ## Invalidate CloudFront cache (TOOL=<tool-name> required, ENV=dev|prd default=dev)
 deploy-invalidate:
@@ -95,29 +97,25 @@ ifndef TOOL
 endif
 	@STACK_NAME="DevToolsStack-$(ENV)"; \
 	TOOL_KEY=$$(echo "$(TOOL)" | tr -d '-'); \
-	DISTRIBUTION_ID=$$(aws cloudformation describe-stacks \
+	DISTRIBUTION_ID=$$(aws --profile "$(ENV)" \
+          cloudformation describe-stacks \
 	  --stack-name "$$STACK_NAME" \
 	  --query "Stacks[0].Outputs[?OutputKey=='$${TOOL_KEY}distributionid'].OutputValue" \
 	  --output text); \
 	echo "Invalidating CloudFront distribution $$DISTRIBUTION_ID"; \
-	aws cloudfront create-invalidation \
+	PAGER=cat aws --profile "$(ENV)" \
+          cloudfront create-invalidation \
 	  --distribution-id "$$DISTRIBUTION_ID" \
 	  --paths "/*"
 
-## Full deploy: build + S3 sync + CloudFront invalidation (TOOL=<tool> for single tool, omit for all tools, ENV=dev|prd default=dev)
+## Full deploy: build + S3 sync + CloudFront invalidation (TOOL=<tool> for single tool, omit for all tools, ENV=dev|prd default=dev, PARALLEL=N default=4)
 deploy:
 ifdef TOOL
 	$(MAKE) build TOOL=$(TOOL) ENV=$(ENV)
 	$(MAKE) deploy-s3 TOOL=$(TOOL) ENV=$(ENV)
 	$(MAKE) deploy-invalidate TOOL=$(TOOL) ENV=$(ENV)
 else
-	@for tool in $(TOOLS); do \
-	  echo "=== Deploying $$tool ($(ENV)) ==="; \
-	  $(MAKE) build TOOL=$$tool ENV=$(ENV) && \
-	  $(MAKE) deploy-s3 TOOL=$$tool ENV=$(ENV) && \
-	  $(MAKE) deploy-invalidate TOOL=$$tool ENV=$(ENV) \
-	  || echo "ERROR: $$tool deploy failed"; \
-	done
+	@printf '%s\n' $(TOOLS) | xargs -P $(PARALLEL) -I{} $(MAKE) deploy TOOL={} ENV=$(ENV)
 endif
 
 ## Show available targets
