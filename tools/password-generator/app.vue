@@ -286,9 +286,9 @@ const passwordLength = ref(16)
 const includeUppercase = ref(true)
 const includeLowercase = ref(true)
 const includeNumbers = ref(true)
-const includeSymbols = ref(false)
-const excludeSimilar = ref(false)
-const excludeAmbiguous = ref(false)
+const includeSymbols = ref(true)
+const excludeSimilar = ref(true)
+const excludeAmbiguous = ref(true)
 const requireAllTypes = ref(false)
 
 // Password display
