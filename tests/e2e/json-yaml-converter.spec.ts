@@ -25,8 +25,8 @@ test.describe('JSON/YAML Converter', () => {
     const textarea = page.locator('textarea').first()
     await textarea.fill(SAMPLE_JSON)
 
-    await expect(page.locator('textarea').nth(1)).toContainText('name: John Doe')
-    await expect(page.locator('textarea').nth(1)).toContainText('age: 30')
+    await expect(page.locator('textarea').nth(1)).toHaveValue(/name: John Doe/)
+    await expect(page.locator('textarea').nth(1)).toHaveValue(/age: 30/)
   })
 
   test('converts YAML to JSON', async ({ page }) => {
@@ -40,8 +40,8 @@ test.describe('JSON/YAML Converter', () => {
     await page.locator('textarea').first().fill(yamlInput)
 
     const output = page.locator('textarea').nth(1)
-    await expect(output).toContainText('"name": "John Doe"')
-    await expect(output).toContainText('"age": 30')
+    await expect(output).toHaveValue(/"name": "John Doe"/)
+    await expect(output).toHaveValue(/"age": 30/)
   })
 
   test('shows validation error for invalid JSON', async ({ page }) => {

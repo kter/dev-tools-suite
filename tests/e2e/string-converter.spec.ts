@@ -32,14 +32,14 @@ test.describe('String Converter', () => {
   })
 
   test('converts snake_case to camelCase', async ({ page }) => {
-    await page.locator('button:has-text("snake_case")').click()
+    await page.locator('button:has-text("snake_case → camelCase")').click()
     await page.locator('textarea').first().fill('user_name')
 
     await expect(page.locator('textarea').nth(1)).toHaveValue('userName')
   })
 
   test('converts camelCase to snake_case', async ({ page }) => {
-    await page.locator('button:has-text("camelCase")').click()
+    await page.locator('button:has-text("camelCase → snake_case")').click()
     await page.locator('textarea').first().fill('userName')
 
     await expect(page.locator('textarea').nth(1)).toHaveValue('user_name')

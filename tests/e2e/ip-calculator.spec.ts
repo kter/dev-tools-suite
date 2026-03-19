@@ -25,7 +25,7 @@ test.describe('IP Calculator', () => {
     const input = page.locator('#ip-input')
     await input.fill('192.168.1.1/24')
 
-    await expect(page.getByText('254')).toBeVisible()
+    await expect(page.getByText('254', { exact: true })).toBeVisible()
   })
 
   test('shows error for invalid IP input', async ({ page }) => {
@@ -47,6 +47,8 @@ test.describe('IP Calculator', () => {
     await input.fill('10.0.0.0/8')
 
     await expect(page.getByText('255.0.0.0')).toBeVisible()
-    await expect(page.getByText('A')).toBeVisible()
+    await expect(
+      page.getByText('Class A', { exact: false }).or(page.getByText('A', { exact: true }))
+    ).toBeVisible()
   })
 })

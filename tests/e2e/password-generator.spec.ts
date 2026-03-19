@@ -30,7 +30,7 @@ test.describe('Password Generator', () => {
   })
 
   test('shows password strength indicator', async ({ page }) => {
-    await expect(page.getByText(/strength/i)).toBeVisible()
+    await expect(page.getByText(/strength/i).first()).toBeVisible()
   })
 
   test('can toggle password visibility', async ({ page }) => {

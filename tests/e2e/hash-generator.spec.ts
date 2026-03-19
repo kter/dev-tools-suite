@@ -31,9 +31,8 @@ test.describe('Hash Generator', () => {
     const input = page.locator('textarea, input[type="text"]').first()
     await input.fill('')
 
-    // Should show empty or placeholder hashes
-    const hashDisplays = page.locator('.font-mono')
-    await expect(hashDisplays.first()).toBeVisible()
+    // Should show placeholder text when input is empty
+    await expect(page.getByText('Enter text to generate hash').first()).toBeVisible()
   })
 
   test('can copy hash to clipboard', async ({ page }) => {

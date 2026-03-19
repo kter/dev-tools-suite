@@ -42,7 +42,7 @@ test.describe('Character Code Converter', () => {
 
   test('clears results when input is cleared', async ({ page }) => {
     await page.locator('textarea').fill('Hello')
-    await expect(page.locator('tbody tr')).toBeVisible()
+    await expect(page.locator('tbody tr').first()).toBeVisible()
 
     await page.locator('textarea').fill('')
     await expect(page.locator('tbody')).not.toBeVisible()

@@ -17,15 +17,15 @@ test.describe('JWT Decoder', () => {
     await page.locator('textarea').fill(SAMPLE_JWT)
 
     await expect(page.getByText('Valid JWT token structure')).toBeVisible()
-    await expect(page.getByText('Header')).toBeVisible()
-    await expect(page.getByText('Payload')).toBeVisible()
-    await expect(page.getByText('Signature')).toBeVisible()
+    await expect(page.getByText('Header').first()).toBeVisible()
+    await expect(page.getByText('Payload').first()).toBeVisible()
+    await expect(page.getByText('Signature').first()).toBeVisible()
   })
 
   test('shows algorithm in header section', async ({ page }) => {
     await page.locator('textarea').fill(SAMPLE_JWT)
 
-    await expect(page.getByText('HS256')).toBeVisible()
+    await expect(page.getByText('HS256').first()).toBeVisible()
     await expect(page.getByText('HMAC using SHA-256')).toBeVisible()
   })
 

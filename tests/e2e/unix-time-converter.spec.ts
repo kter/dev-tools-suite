@@ -28,7 +28,7 @@ test.describe('Unix Time Converter', () => {
     const input = page.locator('input[type="number"]')
     await input.fill('946684800')
 
-    await expect(page.getByText('2000')).toBeVisible()
+    await expect(page.getByText('2000').first()).toBeVisible()
   })
 
   test('converts date and time to Unix timestamp', async ({ page }) => {
@@ -39,7 +39,7 @@ test.describe('Unix Time Converter', () => {
     await timeInput.fill('00:00')
 
     // Should show Unix timestamp
-    await expect(page.getByText('946684800')).toBeVisible()
+    await expect(page.getByText('946684800').first()).toBeVisible()
   })
 
   test('loads common timestamp presets', async ({ page }) => {
@@ -47,6 +47,6 @@ test.describe('Unix Time Converter', () => {
     await expect(epochButton).toBeVisible()
     await epochButton.click()
 
-    await expect(page.getByText('1970')).toBeVisible()
+    await expect(page.getByText('1970').first()).toBeVisible()
   })
 })
