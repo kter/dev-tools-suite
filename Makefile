@@ -2,6 +2,7 @@
 
 ENV ?= dev
 PARALLEL ?= 4
+AWS = aws --profile "$(ENV)"
 
 TOOLS := hash-generator qr-generator unix-time-converter password-generator ip-calculator \
          markdown-preview placeholder-generator ip-info timezone-converter string-converter \
@@ -81,13 +82,12 @@ ifndef TOOL
 endif
 	@STACK_NAME="DevToolsStack-$(ENV)"; \
 	TOOL_KEY=$$(echo "$(TOOL)" | tr -d '-'); \
-	BUCKET_NAME=$$(aws --profile "$(ENV)" \
-          cloudformation describe-stacks \
+	BUCKET_NAME=$$($(AWS) cloudformation describe-stacks \
 	  --stack-name "$$STACK_NAME" \
 	  --query "Stacks[0].Outputs[?OutputKey=='$${TOOL_KEY}bucketname'].OutputValue" \
 	  --output text); \
 	echo "Syncing to s3://$$BUCKET_NAME/"; \
-	aws --profile "$(ENV)" s3 sync tools/$(TOOL)/.output/public/ s3://$$BUCKET_NAME/ --delete
+	$(AWS) s3 sync tools/$(TOOL)/.output/public/ s3://$$BUCKET_NAME/ --delete
 
 ## Invalidate CloudFront cache (TOOL=<tool-name> required, ENV=dev|prd default=dev)
 deploy-invalidate:
@@ -97,16 +97,15 @@ ifndef TOOL
 endif
 	@STACK_NAME="DevToolsStack-$(ENV)"; \
 	TOOL_KEY=$$(echo "$(TOOL)" | tr -d '-'); \
-	DISTRIBUTION_ID=$$(aws --profile "$(ENV)" \
-          cloudformation describe-stacks \
+	DISTRIBUTION_ID=$$($(AWS) cloudformation describe-stacks \
 	  --stack-name "$$STACK_NAME" \
 	  --query "Stacks[0].Outputs[?OutputKey=='$${TOOL_KEY}distributionid'].OutputValue" \
 	  --output text); \
 	echo "Invalidating CloudFront distribution $$DISTRIBUTION_ID"; \
-	PAGER=cat aws --profile "$(ENV)" \
-          cloudfront create-invalidation \
+	$(AWS) cloudfront create-invalidation \
 	  --distribution-id "$$DISTRIBUTION_ID" \
-	  --paths "/*"
+	  --paths "/*" \
+	  --no-paginate
 
 ## Full deploy: build + S3 sync + CloudFront invalidation (TOOL=<tool> for single tool, omit for all tools, ENV=dev|prd default=dev, PARALLEL=N default=4)
 deploy:

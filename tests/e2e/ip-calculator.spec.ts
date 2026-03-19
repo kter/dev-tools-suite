@@ -16,9 +16,7 @@ test.describe('IP Calculator', () => {
     await expect(page.getByText('255.255.255.0')).toBeVisible()
     await expect(page.getByText('192.168.1.0')).toBeVisible()
     await expect(page.getByText('192.168.1.255')).toBeVisible()
-    await expect(
-      page.getByText('Class C', { exact: false }).or(page.getByText('C', { exact: true }))
-    ).toBeVisible()
+    await expect(page.getByText('Network Class:').locator('..').locator('code')).toContainText('C')
   })
 
   test('shows correct usable host count for /24', async ({ page }) => {
@@ -47,8 +45,6 @@ test.describe('IP Calculator', () => {
     await input.fill('10.0.0.0/8')
 
     await expect(page.getByText('255.0.0.0')).toBeVisible()
-    await expect(
-      page.getByText('Class A', { exact: false }).or(page.getByText('A', { exact: true }))
-    ).toBeVisible()
+    await expect(page.getByText('Network Class:').locator('..').locator('code')).toContainText('A')
   })
 })
