@@ -468,8 +468,9 @@ const startRecording = () => {
       }
     }
     
-    mediaRecorder.value.onstop = () => {
+    mediaRecorder.value.onstop = async () => {
       recordedBlob.value = new Blob(chunks, { type: 'audio/webm' })
+      await nextTick()
       setupAudioPlayer()
     }
     
