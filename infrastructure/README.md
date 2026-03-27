@@ -33,7 +33,7 @@ infrastructure/
 
 ### For AWS (CDK)
 - AWS CLI configured with appropriate profiles (`dev`, `prd`)
-- AWS CDK CLI (`npm install -g aws-cdk`)
+- `mise` (`mise install` installs AWS CLI and AWS CDK from [`.mise.toml`](/home/ttakahashi/workspace/dev-tools-suite/.mise.toml))
 - Node.js 20+
 
 ### For Google Cloud (Terraform)
@@ -46,6 +46,9 @@ infrastructure/
 ### AWS Infrastructure (CDK)
 
 ```bash
+# Ensure mise-managed tools are installed
+mise install
+
 # Deploy to development
 cd infrastructure/cdk
 AWS_PROFILE=dev npm run cdk deploy DevToolsStack-dev -- -c environment=dev --require-approval never
@@ -77,6 +80,9 @@ cd infrastructure/terraform
 After both AWS and GCP infrastructures are deployed, set up multi-cloud routing:
 
 ```bash
+# Ensure mise-managed tools are installed
+mise install
+
 # Deploy multi-cloud routing stack
 cd infrastructure/cdk
 AWS_PROFILE=dev npm run cdk deploy MultiCloudRoutingStack-dev -- -c environment=dev \

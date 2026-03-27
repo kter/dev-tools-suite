@@ -32,13 +32,16 @@ A collection of developer utility tools built with Nuxt 3 and deployed on AWS an
 
 - Node.js 20+ (LTS)
 - AWS CLI configured with dev/prd profiles
-- AWS CDK CLI (`npm install -g aws-cdk`)
+- `mise` (`mise install` installs Node.js, AWS CLI, and AWS CDK from [`.mise.toml`](/home/ttakahashi/workspace/dev-tools-suite/.mise.toml))
 - Google Cloud SDK and Terraform (for GCP infrastructure)
 - Firebase CLI (`npm install -g firebase-tools`)
 
 ### Local Development
 
 ```bash
+# Install mise-managed tools
+mise install
+
 # Install dependencies
 npm install
 
@@ -55,6 +58,9 @@ Infrastructure should be deployed manually by administrators:
 
 **AWS Infrastructure (CDK)**:
 ```bash
+# Ensure mise-managed tools are installed
+mise install
+
 # Deploy AWS development environment
 cd infrastructure/cdk
 AWS_PROFILE=dev npm run cdk deploy DevToolsStack-dev -c environment=dev --require-approval never

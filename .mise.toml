@@ -1,3 +1,4 @@
 [tools]
 node = "20.19.5"
 awscli = "latest"
+"npm:aws-cdk" = "2.100.0"
