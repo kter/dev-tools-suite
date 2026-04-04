@@ -13,8 +13,8 @@ export function useScrollPosition(threshold: number = 70): ScrollPositionReturn 
   const isAtThreshold = ref(false);
   const isShortPage = ref(false);
 
-  let scrollTimer: NodeJS.Timeout | null = null;
-  let resizeTimer: NodeJS.Timeout | null = null;
+  let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
   const calculateScrollPercentage = (): void => {
     const scrollY = window.scrollY || window.pageYOffset;

@@ -16,6 +16,10 @@ export interface Tool {
   icon?: string
   /** Optional search tags for enhanced discoverability */
   tags?: string[]
+  /** Optional status label shown in the UI (e.g., "PRD -> DEV") */
+  statusLabel?: string
+  /** Optional visual variant for the status label */
+  statusVariant?: 'default' | 'warning'
 }
 
 /**
@@ -60,6 +64,12 @@ export function validateTool(tool: unknown): tool is Tool {
         return false
       }
     }
+  }
+  if (t.statusLabel !== undefined && (typeof t.statusLabel !== 'string' || t.statusLabel.trim() === '')) {
+    return false
+  }
+  if (t.statusVariant !== undefined && t.statusVariant !== 'default' && t.statusVariant !== 'warning') {
+    return false
   }
 
   return true
