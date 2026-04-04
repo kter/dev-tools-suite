@@ -149,6 +149,7 @@ export class DevToolsStack extends cdk.Stack {
       domainNames: [`${toolName}.${domain}`],
       certificate,
       defaultRootObject: 'index.html',
+      enableIpv6: false,
       errorResponses: [
         {
           httpStatus: 404,
@@ -239,6 +240,7 @@ export class DevToolsStack extends cdk.Stack {
       domainNames: [domain],
       certificate,
       defaultRootObject: 'index.html',
+      enableIpv6: false,
       errorResponses: [
         {
           httpStatus: 404,
