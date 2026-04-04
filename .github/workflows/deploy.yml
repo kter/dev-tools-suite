@@ -48,7 +48,7 @@ jobs:
 
       - name: Create .nuxt/tsconfig.json stubs (for tools that need them)
         run: |
-          for tool in ip-calculator string-converter unix-time-converter character-code-converter; do
+          for tool in ip-calculator string-converter unix-time-converter character-code-converter landing-page; do
             mkdir -p tools/$tool/.nuxt
             echo '{"compilerOptions":{}}' > tools/$tool/.nuxt/tsconfig.json
           done
