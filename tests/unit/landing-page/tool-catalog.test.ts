@@ -15,6 +15,7 @@ describe('landing-page tool catalog', () => {
     expect(findTool('easy-print', true).url).toBe('https://easy-print.dev.devtools.site')
     expect(findTool('oil-dashboard', true).url).toBe('https://oil-dashboard.dev.devtools.site')
     expect(findTool('code-map', true).url).toBe('https://codemap.dev.devtools.site')
+    expect(findTool('routine-ops', true).url).toBe('https://routine.dev.devtools.site/')
   })
 
   it('builds the new external service URLs for prd', () => {
@@ -22,6 +23,7 @@ describe('landing-page tool catalog', () => {
     expect(findTool('easy-print', false).url).toBe('https://easy-print.devtools.site')
     expect(findTool('oil-dashboard', false).url).toBe('https://oil-dashboard.devtools.site')
     expect(findTool('code-map', false).url).toBe('https://codemap.dev.devtools.site')
+    expect(findTool('routine-ops', false).url).toBe('https://routine.devtools.site/')
   })
 
   it('adds PRD fallback warning badges only where required', () => {
@@ -45,11 +47,12 @@ describe('landing-page tool catalog', () => {
   it('keeps the new services appended after AI Notes in the requested order', () => {
     const toolIds = buildToolCatalog(false).map(tool => tool.id)
 
-    expect(toolIds.slice(-4)).toEqual([
+    expect(toolIds.slice(-5)).toEqual([
       'version-checker',
       'easy-print',
       'oil-dashboard',
       'code-map',
+      'routine-ops',
     ])
   })
 })

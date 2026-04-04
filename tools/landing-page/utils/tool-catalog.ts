@@ -247,5 +247,15 @@ export function buildToolCatalog(isDevEnvironment: boolean): Tool[] {
       tags: ['code', 'map'],
       ...(isDevEnvironment ? {} : { statusLabel: 'PRD -> DEV', statusVariant: 'warning' as const }),
     },
+    {
+      id: 'routine-ops',
+      name: 'RoutineOps',
+      description: 'Open the RoutineOps service',
+      icon: '🧭',
+      url: isDevEnvironment
+        ? 'https://routine.dev.devtools.site/'
+        : 'https://routine.devtools.site/',
+      tags: ['routine', 'ops'],
+    },
   ]
 }
