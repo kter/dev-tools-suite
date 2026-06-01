@@ -227,6 +227,8 @@ export function buildToolCatalog(isDevEnvironment: boolean): Tool[] {
         ? 'https://easy-print.dev.devtools.site'
         : 'https://easy-print.devtools.site',
       tags: ['easy', 'print'],
+      statusLabel: 'Coming Soon',
+      statusVariant: 'warning' as const,
     },
     {
       id: 'oil-dashboard',

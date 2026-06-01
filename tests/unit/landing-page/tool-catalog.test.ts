@@ -35,7 +35,10 @@ describe('landing-page tool catalog', () => {
       statusLabel: 'PRD -> DEV',
       statusVariant: 'warning',
     })
-    expect(findTool('easy-print', false).statusLabel).toBeUndefined()
+    expect(findTool('easy-print', false)).toMatchObject({
+      statusLabel: 'Coming Soon',
+      statusVariant: 'warning',
+    })
     expect(findTool('oil-dashboard', false).statusLabel).toBeUndefined()
   })
 
