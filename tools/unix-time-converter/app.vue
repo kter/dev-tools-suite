@@ -212,11 +212,11 @@ const updateCurrentTime = () => {
 
 // Convert Unix timestamp to human readable
 const handleConvertUnixToHuman = () => {
-  if (!unixInput.value) {
+  if (unixInput.value === '' || unixInput.value === null || unixInput.value === undefined) {
     unixResult.value = { local: '', utc: '' }
     return
   }
-  const timestamp = parseInt(unixInput.value)
+  const timestamp = parseInt(String(unixInput.value))
   unixResult.value = convertUnixToHuman(timestamp)
 }
 
