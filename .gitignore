@@ -44,3 +44,7 @@ pids
 
 # AWS
 .aws-sam/
+
+# Test artifacts (generated)
+coverage/
+test-results/

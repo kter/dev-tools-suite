@@ -259,5 +259,14 @@ export function buildToolCatalog(isDevEnvironment: boolean): Tool[] {
         : 'https://routine.devtools.site/',
       tags: ['routine', 'ops'],
     },
+    {
+      id: 'yoyaku-kun',
+      name: 'AI Summarizer',
+      description:
+        'LINE bot that summarizes URLs and text into concise Japanese summaries using AI',
+      icon: '🤖',
+      url: 'https://line.me/R/ti/p/@390decxm',
+      tags: ['line', 'bot', 'ai', 'summary', 'url', 'text'],
+    },
   ]
 }

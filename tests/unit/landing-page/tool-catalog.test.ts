@@ -50,12 +50,18 @@ describe('landing-page tool catalog', () => {
   it('keeps the new services appended after AI Notes in the requested order', () => {
     const toolIds = buildToolCatalog(false).map(tool => tool.id)
 
-    expect(toolIds.slice(-5)).toEqual([
+    expect(toolIds.slice(-6)).toEqual([
       'version-checker',
       'easy-print',
       'oil-dashboard',
       'code-map',
       'routine-ops',
+      'yoyaku-kun',
     ])
+  })
+
+  it('uses the hardcoded LINE friend-add link for yoyaku-kun in both envs', () => {
+    expect(findTool('yoyaku-kun', true).url).toBe('https://line.me/R/ti/p/@390decxm')
+    expect(findTool('yoyaku-kun', false).url).toBe('https://line.me/R/ti/p/@390decxm')
   })
 })
