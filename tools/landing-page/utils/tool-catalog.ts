@@ -268,5 +268,14 @@ export function buildToolCatalog(isDevEnvironment: boolean): Tool[] {
       url: 'https://line.me/R/ti/p/@390decxm',
       tags: ['line', 'bot', 'ai', 'summary', 'url', 'text'],
     },
+    {
+      id: 'linux-pkg',
+      name: 'Linux Packages',
+      description:
+        'Personal RPM packages for Fedora Linux — auto-brightness, zenith-wallpaper, and more',
+      icon: '📦',
+      url: 'https://repo.devtools.site',
+      tags: ['linux', 'fedora', 'rpm', 'package'],
+    },
   ]
 }

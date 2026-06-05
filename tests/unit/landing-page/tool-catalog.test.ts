@@ -50,18 +50,24 @@ describe('landing-page tool catalog', () => {
   it('keeps the new services appended after AI Notes in the requested order', () => {
     const toolIds = buildToolCatalog(false).map(tool => tool.id)
 
-    expect(toolIds.slice(-6)).toEqual([
+    expect(toolIds.slice(-7)).toEqual([
       'version-checker',
       'easy-print',
       'oil-dashboard',
       'code-map',
       'routine-ops',
       'yoyaku-kun',
+      'linux-pkg',
     ])
   })
 
   it('uses the hardcoded LINE friend-add link for yoyaku-kun in both envs', () => {
     expect(findTool('yoyaku-kun', true).url).toBe('https://line.me/R/ti/p/@390decxm')
     expect(findTool('yoyaku-kun', false).url).toBe('https://line.me/R/ti/p/@390decxm')
+  })
+
+  it('uses the hardcoded repo URL for linux-pkg in both envs', () => {
+    expect(findTool('linux-pkg', true).url).toBe('https://repo.devtools.site')
+    expect(findTool('linux-pkg', false).url).toBe('https://repo.devtools.site')
   })
 })
