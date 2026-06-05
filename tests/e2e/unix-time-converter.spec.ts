@@ -21,7 +21,7 @@ test.describe('Unix Time Converter', () => {
     const input = page.locator('input[type="number"]')
     await input.fill('0')
 
-    await expect(page.getByText('1970')).toBeVisible()
+    await expect(page.getByText('1970').first()).toBeVisible()
   })
 
   test('converts Y2K timestamp', async ({ page }) => {
