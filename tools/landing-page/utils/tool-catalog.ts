@@ -277,5 +277,14 @@ export function buildToolCatalog(isDevEnvironment: boolean): Tool[] {
       url: 'https://repo.devtools.site',
       tags: ['linux', 'fedora', 'rpm', 'package'],
     },
+    {
+      id: 'satellite',
+      name: 'Satellite Tracker',
+      description:
+        'Visualize thousands of satellites in real-time 3D and see what is flying overhead at your location',
+      icon: '🛰️',
+      url: getToolUrl('satellite'),
+      tags: ['satellite', '3d', 'space', 'orbit', 'tracking', 'gps'],
+    },
   ]
 }
