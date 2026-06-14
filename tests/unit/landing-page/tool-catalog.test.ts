@@ -50,7 +50,7 @@ describe('landing-page tool catalog', () => {
   it('keeps the new services appended after AI Notes in the requested order', () => {
     const toolIds = buildToolCatalog(false).map(tool => tool.id)
 
-    expect(toolIds.slice(-8)).toEqual([
+    expect(toolIds.slice(-9)).toEqual([
       'version-checker',
       'easy-print',
       'oil-dashboard',
@@ -59,12 +59,18 @@ describe('landing-page tool catalog', () => {
       'yoyaku-kun',
       'linux-pkg',
       'satellite',
+      'aws-cert-mgmt',
     ])
   })
 
   it('builds environment-specific URLs for the satellite tracker', () => {
     expect(findTool('satellite', true).url).toBe('https://satellite.dev.devtools.site')
     expect(findTool('satellite', false).url).toBe('https://satellite.devtools.site')
+  })
+
+  it('builds environment-specific URLs for the AWS cert expiry tool', () => {
+    expect(findTool('aws-cert-mgmt', true).url).toBe('https://aws-cert-mgmt.dev.devtools.site')
+    expect(findTool('aws-cert-mgmt', false).url).toBe('https://aws-cert-mgmt.devtools.site')
   })
 
   it('uses the hardcoded LINE friend-add link for yoyaku-kun in both envs', () => {

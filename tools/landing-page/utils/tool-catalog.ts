@@ -286,5 +286,14 @@ export function buildToolCatalog(isDevEnvironment: boolean): Tool[] {
       url: getToolUrl('satellite'),
       tags: ['satellite', '3d', 'space', 'orbit', 'tracking', 'gps'],
     },
+    {
+      id: 'aws-cert-mgmt',
+      name: 'AWS Cert Expiry',
+      description:
+        'Track your AWS certification expiry dates from your public Credly profile, sorted by days remaining',
+      icon: '📜',
+      url: getToolUrl('aws-cert-mgmt'),
+      tags: ['aws', 'certification', 'credly', 'expiry', 'badge', 'cloud'],
+    },
   ]
 }
