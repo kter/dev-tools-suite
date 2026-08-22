@@ -7,9 +7,9 @@ pre-commit:
           '^(tests/|tools/[^/]+/utils/|tools/shared/|vitest\.config\.ts$|playwright\.config\.ts$)' \
           | tr '\n' ' ')
         if [ -n "$BIOME_FILES" ]; then
-          npx biome format $BIOME_FILES
+          bun run biome format $BIOME_FILES
         fi
-      fail_text: "Biome format check failed. Run: npm run format"
+      fail_text: "Biome format check failed. Run: bun run format"
     lint-staged:
       glob: "*.ts"
       run: |
@@ -17,19 +17,19 @@ pre-commit:
           '^(tests/|tools/[^/]+/utils/|tools/shared/|vitest\.config\.ts$|playwright\.config\.ts$)' \
           | tr '\n' ' ')
         if [ -n "$BIOME_FILES" ]; then
-          npx biome lint --diagnostic-level=error $BIOME_FILES && npx oxlint $BIOME_FILES
+          bun run biome lint --diagnostic-level=error $BIOME_FILES && bun run oxlint $BIOME_FILES
         fi
-      fail_text: "Lint errors found. Run: npm run lint"
+      fail_text: "Lint errors found. Run: bun run lint"
     unit-tests:
-      run: npx vitest run
+      run: bun run test:unit
 
 pre-push:
   commands:
     unit-tests:
-      run: npx vitest run --coverage
+      run: bun run test:unit:coverage
     e2e-dev:
       run: |
         BRANCH=$(git rev-parse --abbrev-ref HEAD)
         if [ "$BRANCH" = "develop" ]; then
-          TARGET=dev npx playwright test --project=dev
+          TARGET=dev bun run playwright test --project=dev
         fi

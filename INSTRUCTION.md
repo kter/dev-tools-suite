@@ -72,9 +72,9 @@ repo-root/
 1. `tools/qr-generator/` に Nuxt 3 SPA を作成
    - 入力 → QRコード生成（`qrcode` ライブラリ）
    - `nuxt.config.ts` の `ssr: false`, `baseURL: '/qr-generator/'`
-   - `npm run generate` で `dist/` 作成
+   - `bun run generate` で `dist/` 作成
 2. `infrastructure/cdk/` に、qr-generator 用の S3 + CloudFront 構築コードを作成
-3. `npm run cdk deploy` で S3に静的サイトをアップロードし、CloudFrontで配信
+3. `bun run cdk deploy` で S3に静的サイトをアップロードし、CloudFrontで配信
 4. 他のツールも順次追加（mic-checker → jwt-decoder …）
 
 ---
@@ -85,4 +85,3 @@ repo-root/
 - ただし、ルートパッケージに `workspaces` を設定してもよい（任意）
 - FastAPIアプリはAPI Gateway + Lambda(Python)で動かす前提
 - S3デプロイ用に `aws s3 sync dist s3://bucket-name` コマンドを併用可
-

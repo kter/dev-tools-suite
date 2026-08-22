@@ -48,7 +48,7 @@ This repository contains a collection of developer utility tools (Hash Generator
 
 ```bash
 # Run unit tests (from root)
-npm run test:unit
+bun run test:unit
 # or
 make test
 
@@ -56,17 +56,17 @@ make test
 make test TOOL=ip-calculator
 
 # Run unit tests with coverage
-npm run test:unit:coverage
+bun run test:unit:coverage
 # or
 make test-unit
 
 # Run unit tests in watch mode
-npm run test:unit:watch
+bun run test:unit:watch
 # or
 make test-unit-watch
 
 # Run E2E tests against localhost (requires dev servers running)
-npm run test:e2e
+bun run test:e2e
 # or
 make test-e2e
 
@@ -74,12 +74,12 @@ make test-e2e
 make test-e2e-dev
 
 # Run all tests (unit + E2E)
-npm run test:all
+bun run test:all
 # or
 make test-all
 
 # Run specific E2E spec file
-npx playwright test tests/e2e/ip-calculator.spec.ts
+bun run playwright test tests/e2e/ip-calculator.spec.ts
 ```
 
 #### Notes on unit testing setup
@@ -100,18 +100,18 @@ These files are gitignored (`.nuxt/` is in `.gitignore`).
 ```bash
 # Run individual tool in dev mode
 cd tools/hash-generator
-npm install  # Install dependencies first
-npm run dev
+bun install --frozen-lockfile  # Install dependencies first
+bun run dev
 
 # Build specific tool for production
 cd tools/hash-generator
-npm run generate
+bun run generate
 
 # Build all tools (run from root)
 for dir in tools/*/; do
   echo "Building $(basename "$dir")..."
   cd "$dir"
-  npm install && npm run generate
+  bun install --frozen-lockfile && bun run generate
   cd ../..
 done
 ```
@@ -123,14 +123,14 @@ done
 ```bash
 # Deploy AWS infrastructure to dev environment
 cd infrastructure/cdk
-AWS_PROFILE=dev npm run cdk deploy DevToolsStack-dev -c environment=dev --require-approval never
+AWS_PROFILE=dev bun run cdk deploy DevToolsStack-dev -c environment=dev --require-approval never
 
 # Deploy AWS infrastructure to production
 cd infrastructure/cdk
-AWS_PROFILE=prd npm run cdk deploy DevToolsStack-prd -c environment=prd --require-approval never
+AWS_PROFILE=prd bun run cdk deploy DevToolsStack-prd -c environment=prd --require-approval never
 
 # Destroy AWS infrastructure (careful! requires explicit user approval)
-AWS_PROFILE=dev npm run cdk destroy DevToolsStack-dev -c environment=dev --require-approval never
+AWS_PROFILE=dev bun run cdk destroy DevToolsStack-dev -c environment=dev --require-approval never
 ```
 
 #### Google Cloud Infrastructure (Terraform)

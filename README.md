@@ -31,10 +31,11 @@ A collection of developer utility tools built with Nuxt 3 and deployed on AWS an
 ### Prerequisites
 
 - Node.js 20+ (LTS)
+- Bun 1.4.0
 - AWS CLI configured with dev/prd profiles
-- `mise` (`mise install` installs Node.js, AWS CLI, and AWS CDK from [`.mise.toml`](/home/ttakahashi/workspace/dev-tools-suite/.mise.toml))
+- `mise` (`mise install` installs Node.js, Bun, and AWS CLI from `.mise.toml`)
 - Google Cloud SDK and Terraform (for GCP infrastructure)
-- Firebase CLI (`npm install -g firebase-tools`)
+- Firebase CLI (`bun add --global firebase-tools`)
 
 ### Local Development
 
@@ -42,12 +43,13 @@ A collection of developer utility tools built with Nuxt 3 and deployed on AWS an
 # Install mise-managed tools
 mise install
 
-# Install dependencies
-npm install
+# Install root dependencies
+bun install --frozen-lockfile
 
 # Run hash-generator locally
 cd tools/hash-generator
-npm run dev
+bun install --frozen-lockfile
+bun run dev
 ```
 
 ### Deployment
@@ -63,10 +65,10 @@ mise install
 
 # Deploy AWS development environment
 cd infrastructure/cdk
-AWS_PROFILE=dev npm run cdk deploy DevToolsStack-dev -c environment=dev --require-approval never
+AWS_PROFILE=dev bun run cdk deploy DevToolsStack-dev -c environment=dev --require-approval never
 
 # Deploy AWS production environment
-AWS_PROFILE=prd npm run cdk deploy DevToolsStack-prd -c environment=prd --require-approval never
+AWS_PROFILE=prd bun run cdk deploy DevToolsStack-prd -c environment=prd --require-approval never
 ```
 
 **Google Cloud Infrastructure (Terraform)**:
@@ -159,17 +161,17 @@ Each tool includes comprehensive Playwright E2E tests:
 
 ```bash
 # Run tests for a specific tool
-npx playwright test tests/password-generator.spec.js
+bun run playwright test tests/e2e/password-generator.spec.ts
 
 # Run all tests
-npx playwright test
+bun run test:e2e
 ```
 
 ## 🔧 Troubleshooting
 
 ### Common Issues
 
-- **fsevents errors on GitHub Actions**: Fixed by using `npm install` instead of `npm ci` in workflows
+- **Frozen lockfile errors**: Run `bun install` in the affected package and commit its `bun.lock`
 - **Platform-specific packages**: Root package.json is kept minimal to avoid platform conflicts
 
 ### Multi-Cloud Specific Issues

@@ -29,6 +29,7 @@ permissions:
 
 env:
   NODE_VERSION: '20'
+  BUN_VERSION: '1.4.0'
 
 jobs:
   test:
@@ -41,10 +42,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Create .nuxt/tsconfig.json stubs (for tools that need them)
         run: |
@@ -54,7 +59,7 @@ jobs:
           done
 
       - name: Run unit tests
-        run: npm run test:unit
+        run: bun run test:unit
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
@@ -81,52 +86,76 @@ jobs:
           filters: |
             hash-generator:
               - 'tools/hash-generator/**'
+              - 'tools/shared/**'
             qr-generator:
               - 'tools/qr-generator/**'
+              - 'tools/shared/**'
             unix-time-converter:
               - 'tools/unix-time-converter/**'
+              - 'tools/shared/**'
             password-generator:
               - 'tools/password-generator/**'
+              - 'tools/shared/**'
             ip-calculator:
               - 'tools/ip-calculator/**'
+              - 'tools/shared/**'
             markdown-preview:
               - 'tools/markdown-preview/**'
+              - 'tools/shared/**'
             placeholder-generator:
               - 'tools/placeholder-generator/**'
+              - 'tools/shared/**'
             ip-info:
               - 'tools/ip-info/**'
+              - 'tools/shared/**'
             timezone-converter:
               - 'tools/timezone-converter/**'
+              - 'tools/shared/**'
             string-converter:
               - 'tools/string-converter/**'
+              - 'tools/shared/**'
             code-diff:
               - 'tools/code-diff/**'
+              - 'tools/shared/**'
             mic-test:
               - 'tools/mic-test/**'
+              - 'tools/shared/**'
             json-yaml-converter:
               - 'tools/json-yaml-converter/**'
+              - 'tools/shared/**'
             jwt-decoder:
               - 'tools/jwt-decoder/**'
+              - 'tools/shared/**'
             regex-tester:
               - 'tools/regex-tester/**'
+              - 'tools/shared/**'
             lorem-ipsum-generator:
               - 'tools/lorem-ipsum-generator/**'
+              - 'tools/shared/**'
             image-converter:
               - 'tools/image-converter/**'
+              - 'tools/shared/**'
             timer:
               - 'tools/timer/**'
+              - 'tools/shared/**'
             character-code-converter:
               - 'tools/character-code-converter/**'
+              - 'tools/shared/**'
             badger-image-generator:
               - 'tools/badger-image-generator/**'
+              - 'tools/shared/**'
             poster-splitter:
               - 'tools/poster-splitter/**'
+              - 'tools/shared/**'
             map-distance-calculator:
               - 'tools/map-distance-calculator/**'
+              - 'tools/shared/**'
             amazon-url-normalizer:
               - 'tools/amazon-url-normalizer/**'
+              - 'tools/shared/**'
             landing-page:
               - 'tools/landing-page/**'
+              - 'tools/shared/**'
 
       - name: Set matrix for deployment
         id: set-matrix
@@ -177,8 +206,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: 'tools/${{ matrix.tool }}/package-lock.json'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -191,8 +223,8 @@ jobs:
           NUXT_PUBLIC_GTAG_ID: ${{ secrets.NUXT_PUBLIC_GTAG_ID }}
         run: |
           cd tools/${{ matrix.tool }}
-          npm ci
-          npm run generate
+          bun install --frozen-lockfile
+          bun run generate
 
       - name: Get stack outputs
         id: stack-outputs

@@ -33,7 +33,7 @@ infrastructure/
 
 ### For AWS (CDK)
 - AWS CLI configured with appropriate profiles (`dev`, `prd`)
-- `mise` (`mise install` installs AWS CLI and AWS CDK from [`.mise.toml`](/home/ttakahashi/workspace/dev-tools-suite/.mise.toml))
+- `mise` (`mise install` installs Node.js, Bun, and AWS CLI from the repository `.mise.toml`)
 - Node.js 20+
 
 ### For Google Cloud (Terraform)
@@ -51,11 +51,11 @@ mise install
 
 # Deploy to development
 cd infrastructure/cdk
-AWS_PROFILE=dev npm run cdk deploy DevToolsStack-dev -- -c environment=dev --require-approval never
+AWS_PROFILE=dev bun run cdk deploy DevToolsStack-dev -- -c environment=dev --require-approval never
 
 # Deploy to production
 cd infrastructure/cdk
-AWS_PROFILE=prd npm run cdk deploy DevToolsStack-prd -- -c environment=prd --require-approval never
+AWS_PROFILE=prd bun run cdk deploy DevToolsStack-prd -- -c environment=prd --require-approval never
 ```
 
 ### Google Cloud Infrastructure (Terraform)
@@ -85,7 +85,7 @@ mise install
 
 # Deploy multi-cloud routing stack
 cd infrastructure/cdk
-AWS_PROFILE=dev npm run cdk deploy MultiCloudRoutingStack-dev -- -c environment=dev \
+AWS_PROFILE=dev bun run cdk deploy MultiCloudRoutingStack-dev -- -c environment=dev \
   -c gcpLoadBalancerIp=<GCP_LB_IP> --require-approval never
 ```
 
