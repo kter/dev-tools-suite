@@ -1,18 +1,18 @@
-import { ref, onMounted, onUnmounted } from 'vue';
-import type { Ref } from 'vue';
+import type { Ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import {
-  detectScrollContainer,
   calculateScrollPercentage,
+  detectScrollContainer,
   isPageContentShort,
-  throttleScrollEvent
-} from '../utils/scroll-detection';
+  throttleScrollEvent,
+} from '../utils/scroll-detection'
 
 interface ScrollPositionReturn {
-  scrollPercentage: Ref<number>;
-  isAtThreshold: Ref<boolean>;
-  isShortPage: Ref<boolean>;
-  scrollContainer: Ref<HTMLElement | null>;
-  cleanup: () => void;
+  scrollPercentage: Ref<number>
+  isAtThreshold: Ref<boolean>
+  isShortPage: Ref<boolean>
+  scrollContainer: Ref<HTMLElement | null>
+  cleanup: () => void
 }
 
 /**
@@ -24,134 +24,134 @@ interface ScrollPositionReturn {
  * @returns ScrollPositionReturn - Reactive scroll state
  */
 export function useScrollPosition(threshold: number = 70): ScrollPositionReturn {
-  const scrollPercentage = ref(0);
-  const isAtThreshold = ref(false);
-  const isShortPage = ref(false);
-  const scrollContainer = ref<HTMLElement | null>(null);
+  const scrollPercentage = ref(0)
+  const isAtThreshold = ref(false)
+  const isShortPage = ref(false)
+  const scrollContainer = ref<HTMLElement | null>(null)
 
-  let throttledHandler: (() => void) | null = null;
-  let resizeHandler: (() => void) | null = null;
+  let throttledHandler: (() => void) | null = null
+  let resizeHandler: (() => void) | null = null
 
   const calculateScrollState = (): void => {
-    const container = scrollContainer.value;
+    const container = scrollContainer.value
     if (!container) {
-      return;
+      return
     }
 
     // Check if page is too short to scroll
-    const isShort = isPageContentShort(container);
-    isShortPage.value = isShort;
+    const isShort = isPageContentShort(container)
+    isShortPage.value = isShort
 
     if (isShort) {
-      scrollPercentage.value = 0;
-      isAtThreshold.value = false;
-      return;
+      scrollPercentage.value = 0
+      isAtThreshold.value = false
+      return
     }
 
     // Calculate scroll percentage
-    const percentage = calculateScrollPercentage(container);
-    scrollPercentage.value = percentage;
+    const percentage = calculateScrollPercentage(container)
+    scrollPercentage.value = percentage
 
     // Check if at or beyond threshold
-    isAtThreshold.value = percentage >= threshold;
-  };
+    isAtThreshold.value = percentage >= threshold
+  }
 
   const handleResize = (): void => {
     // Re-detect scroll container on resize as layout may have changed
-    const newContainer = detectScrollContainer();
+    const newContainer = detectScrollContainer()
     if (newContainer !== scrollContainer.value) {
       // Remove old listeners
       if (scrollContainer.value && throttledHandler) {
         if (scrollContainer.value === document.body) {
-          window.removeEventListener('scroll', throttledHandler);
+          window.removeEventListener('scroll', throttledHandler)
         } else {
-          scrollContainer.value.removeEventListener('scroll', throttledHandler);
+          scrollContainer.value.removeEventListener('scroll', throttledHandler)
         }
       }
 
       // Update container reference
-      scrollContainer.value = newContainer;
+      scrollContainer.value = newContainer
 
       // Add new listeners
       if (throttledHandler) {
         if (newContainer === document.body) {
-          window.addEventListener('scroll', throttledHandler, { passive: true });
+          window.addEventListener('scroll', throttledHandler, { passive: true })
         } else {
-          newContainer.addEventListener('scroll', throttledHandler, { passive: true });
+          newContainer.addEventListener('scroll', throttledHandler, { passive: true })
         }
       }
     }
 
     // Recalculate scroll state
-    calculateScrollState();
-  };
+    calculateScrollState()
+  }
 
   const cleanup = (): void => {
     if (scrollContainer.value && throttledHandler) {
       if (scrollContainer.value === document.body) {
-        window.removeEventListener('scroll', throttledHandler);
+        window.removeEventListener('scroll', throttledHandler)
       } else {
-        scrollContainer.value.removeEventListener('scroll', throttledHandler);
+        scrollContainer.value.removeEventListener('scroll', throttledHandler)
       }
     }
 
     if (resizeHandler) {
-      window.removeEventListener('resize', resizeHandler);
-      window.removeEventListener('orientationchange', resizeHandler);
+      window.removeEventListener('resize', resizeHandler)
+      window.removeEventListener('orientationchange', resizeHandler)
     }
 
-    throttledHandler = null;
-    resizeHandler = null;
-  };
+    throttledHandler = null
+    resizeHandler = null
+  }
 
   const initializeScrollDetection = (): void => {
     try {
       // Auto-detect the appropriate scroll container
-      scrollContainer.value = detectScrollContainer();
+      scrollContainer.value = detectScrollContainer()
 
       // Create throttled scroll handler
-      throttledHandler = throttleScrollEvent(calculateScrollState, 100);
+      throttledHandler = throttleScrollEvent(calculateScrollState, 100)
 
       // Create throttled resize handler
-      resizeHandler = throttleScrollEvent(handleResize, 100);
+      resizeHandler = throttleScrollEvent(handleResize, 100)
 
       // Initial calculation
-      calculateScrollState();
+      calculateScrollState()
 
       // Add event listeners
       if (scrollContainer.value === document.body) {
-        window.addEventListener('scroll', throttledHandler, { passive: true });
+        window.addEventListener('scroll', throttledHandler, { passive: true })
       } else {
-        scrollContainer.value.addEventListener('scroll', throttledHandler, { passive: true });
+        scrollContainer.value.addEventListener('scroll', throttledHandler, { passive: true })
       }
 
-      window.addEventListener('resize', resizeHandler);
-      window.addEventListener('orientationchange', resizeHandler);
+      window.addEventListener('resize', resizeHandler)
+      window.addEventListener('orientationchange', resizeHandler)
     } catch (error) {
-      console.warn('Error initializing scroll detection:', error);
+      console.warn('Error initializing scroll detection:', error)
 
       // Fallback to basic document body detection
-      scrollContainer.value = document.body;
-      isShortPage.value = document.documentElement.scrollHeight <= window.innerHeight;
-      scrollPercentage.value = 0;
-      isAtThreshold.value = false;
+      scrollContainer.value = document.body
+      isShortPage.value = document.documentElement.scrollHeight <= window.innerHeight
+      scrollPercentage.value = 0
+      isAtThreshold.value = false
     }
-  };
+  }
 
   onMounted(() => {
     // Use nextTick equivalent to ensure DOM is ready
-    setTimeout(initializeScrollDetection, 0);
-  });
+    setTimeout(initializeScrollDetection, 0)
+  })
 
   onUnmounted(() => {
-    cleanup();
-  });
+    cleanup()
+  })
 
   return {
     scrollPercentage,
     isAtThreshold,
     isShortPage,
     scrollContainer,
-    cleanup
-  };
+    cleanup,
+  }
 }

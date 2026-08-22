@@ -3,7 +3,8 @@
  * Based on contracts/tool-search-api.ts specifications
  */
 
-import type { Tool, SearchConfig } from './search'
+import type { SearchConfig } from './search'
+import type { Tool } from './tool'
 
 /**
  * Props for ToolSearch overlay component

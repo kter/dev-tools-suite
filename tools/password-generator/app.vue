@@ -267,6 +267,7 @@
 
 <script setup lang="ts">
 import KofiButton from '../shared/components/KofiButton.vue'
+import { getCharacterSet, getSecureRandomInt, UPPERCASE_CHARS, LOWERCASE_CHARS, NUMBER_CHARS, SYMBOL_CHARS, SIMILAR_CHARS, AMBIGUOUS_CHARS } from './utils/password-utils'
 // SEO protection for dev environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   useHead({
@@ -285,9 +286,9 @@ const passwordLength = ref(16)
 const includeUppercase = ref(true)
 const includeLowercase = ref(true)
 const includeNumbers = ref(true)
-const includeSymbols = ref(false)
-const excludeSimilar = ref(false)
-const excludeAmbiguous = ref(false)
+const includeSymbols = ref(true)
+const excludeSimilar = ref(true)
+const excludeAmbiguous = ref(true)
 const requireAllTypes = ref(false)
 
 // Password display
@@ -296,13 +297,13 @@ const showPassword = ref(true)
 const copiedMessage = ref('')
 const passwordHistory = ref<string[]>([])
 
-// Character sets
-const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz'
-const numberChars = '0123456789'
-const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?'
-const similarChars = '0Ol1I'
-const ambiguousChars = '{}[]()//\\\'";,<>~'
+// Character sets (from utils)
+const uppercaseChars = UPPERCASE_CHARS
+const lowercaseChars = LOWERCASE_CHARS
+const numberChars = NUMBER_CHARS
+const symbolChars = SYMBOL_CHARS
+const similarChars = SIMILAR_CHARS
+const ambiguousChars = AMBIGUOUS_CHARS
 
 // Computed properties
 const canGenerate = computed(() => {
@@ -318,7 +319,7 @@ const displayPassword = computed(() => {
 
 const passwordEntropy = computed(() => {
   if (!generatedPassword.value) return 0
-  const charsetSize = getCharacterSet().length
+  const charsetSize = getCurrentCharacterSet().length
   return Math.floor(Math.log2(Math.pow(charsetSize, generatedPassword.value.length)))
 })
 
@@ -339,42 +340,21 @@ const passwordStrength = computed(() => {
 })
 
 // Helper functions
-const getCharacterSet = () => {
-  let charset = ''
-  
-  if (includeUppercase.value) charset += uppercaseChars
-  if (includeLowercase.value) charset += lowercaseChars
-  if (includeNumbers.value) charset += numberChars
-  if (includeSymbols.value) charset += symbolChars
-  
-  // Remove similar characters if requested
-  if (excludeSimilar.value) {
-    charset = charset.split('').filter(char => !similarChars.includes(char)).join('')
-  }
-  
-  // Remove ambiguous characters if requested
-  if (excludeAmbiguous.value) {
-    charset = charset.split('').filter(char => !ambiguousChars.includes(char)).join('')
-  }
-  
-  return charset
-}
-
-const getSecureRandomInt = (max: number) => {
-  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
-    const array = new Uint32Array(1)
-    window.crypto.getRandomValues(array)
-    return array[0] % max
-  } else {
-    // Fallback for non-secure environments
-    return Math.floor(Math.random() * max)
-  }
+const getCurrentCharacterSet = () => {
+  return getCharacterSet({
+    includeUppercase: includeUppercase.value,
+    includeLowercase: includeLowercase.value,
+    includeNumbers: includeNumbers.value,
+    includeSymbols: includeSymbols.value,
+    excludeSimilar: excludeSimilar.value,
+    excludeAmbiguous: excludeAmbiguous.value
+  })
 }
 
 const generatePassword = () => {
   if (!canGenerate.value) return
-  
-  const charset = getCharacterSet()
+
+  const charset = getCurrentCharacterSet()
   if (charset.length === 0) return
   
   let password = ''

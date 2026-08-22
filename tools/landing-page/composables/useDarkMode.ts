@@ -5,7 +5,7 @@ export function useDarkMode() {
 
   const initializeTheme = () => {
     // Simple theme initialization
-    if (process.client) {
+    if (import.meta.client) {
       const stored = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -22,7 +22,7 @@ export function useDarkMode() {
   const toggleTheme = () => {
     isDark.value = !isDark.value;
 
-    if (process.client) {
+    if (import.meta.client) {
       if (isDark.value) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('theme', 'dark');

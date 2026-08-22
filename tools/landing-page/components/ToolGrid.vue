@@ -26,8 +26,8 @@
             >
               {{ tool.name }}
             </h3>
-            <span class="tool-status">
-              Available
+            <span :class="getStatusClasses(tool)">
+              {{ tool.statusLabel || 'Available' }}
             </span>
           </div>
         </div>
@@ -105,6 +105,16 @@ const selectTool = (tool: Tool): void => {
   emit('select', tool)
 }
 
+const getStatusClasses = (tool: Tool): string[] => {
+  const classes = ['tool-status']
+
+  if (tool.statusVariant === 'warning') {
+    classes.push('tool-status-warning')
+  }
+
+  return classes
+}
+
 // Get default icon for tools that don't have one
 const getDefaultIcon = (toolName: string): string => {
   // Simple icon mapping based on tool name
@@ -179,6 +189,10 @@ defineExpose({
 .tool-status {
   @apply inline-block px-2 py-1 text-xs bg-green-100 dark:bg-green-900;
   @apply text-green-800 dark:text-green-200 rounded-full;
+}
+
+.tool-status-warning {
+  @apply bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200;
 }
 
 .tool-description {

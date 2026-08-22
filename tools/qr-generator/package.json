@@ -2,11 +2,12 @@
   "name": "qr-generator",
   "version": "1.0.42",
   "private": true,
+  "packageManager": "bun@1.4.0",
   "scripts": {
-    "build": "npx nuxi build",
-    "dev": "npx nuxi dev",
-    "generate": "npx nuxi generate",
-    "preview": "npx nuxi preview"
+    "build": "nuxi build",
+    "dev": "nuxi dev",
+    "generate": "nuxi generate",
+    "preview": "nuxi preview"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",

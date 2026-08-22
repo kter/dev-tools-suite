@@ -29,8 +29,45 @@ permissions:
 
 env:
   NODE_VERSION: '20'
+  BUN_VERSION: '1.4.0'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Create .nuxt/tsconfig.json stubs (for tools that need them)
+        run: |
+          for tool in ip-calculator string-converter unix-time-converter character-code-converter landing-page; do
+            mkdir -p tools/$tool/.nuxt
+            echo '{"compilerOptions":{}}' > tools/$tool/.nuxt/tsconfig.json
+          done
+
+      - name: Run unit tests
+        run: bun run test:unit:coverage
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: unit-test-coverage
+          path: coverage/
+
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
@@ -38,63 +75,87 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
       - name: Detect changes
         id: changes
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: |
             hash-generator:
               - 'tools/hash-generator/**'
+              - 'tools/shared/**'
             qr-generator:
               - 'tools/qr-generator/**'
+              - 'tools/shared/**'
             unix-time-converter:
               - 'tools/unix-time-converter/**'
+              - 'tools/shared/**'
             password-generator:
               - 'tools/password-generator/**'
+              - 'tools/shared/**'
             ip-calculator:
               - 'tools/ip-calculator/**'
+              - 'tools/shared/**'
             markdown-preview:
               - 'tools/markdown-preview/**'
+              - 'tools/shared/**'
             placeholder-generator:
               - 'tools/placeholder-generator/**'
+              - 'tools/shared/**'
             ip-info:
               - 'tools/ip-info/**'
+              - 'tools/shared/**'
             timezone-converter:
               - 'tools/timezone-converter/**'
+              - 'tools/shared/**'
             string-converter:
               - 'tools/string-converter/**'
+              - 'tools/shared/**'
             code-diff:
               - 'tools/code-diff/**'
+              - 'tools/shared/**'
             mic-test:
               - 'tools/mic-test/**'
+              - 'tools/shared/**'
             json-yaml-converter:
               - 'tools/json-yaml-converter/**'
+              - 'tools/shared/**'
             jwt-decoder:
               - 'tools/jwt-decoder/**'
+              - 'tools/shared/**'
             regex-tester:
               - 'tools/regex-tester/**'
+              - 'tools/shared/**'
             lorem-ipsum-generator:
               - 'tools/lorem-ipsum-generator/**'
+              - 'tools/shared/**'
             image-converter:
               - 'tools/image-converter/**'
+              - 'tools/shared/**'
             timer:
               - 'tools/timer/**'
+              - 'tools/shared/**'
             character-code-converter:
               - 'tools/character-code-converter/**'
+              - 'tools/shared/**'
             badger-image-generator:
               - 'tools/badger-image-generator/**'
+              - 'tools/shared/**'
             poster-splitter:
               - 'tools/poster-splitter/**'
+              - 'tools/shared/**'
             map-distance-calculator:
               - 'tools/map-distance-calculator/**'
+              - 'tools/shared/**'
             amazon-url-normalizer:
               - 'tools/amazon-url-normalizer/**'
+              - 'tools/shared/**'
             landing-page:
               - 'tools/landing-page/**'
+              - 'tools/shared/**'
 
       - name: Set matrix for deployment
         id: set-matrix
@@ -128,8 +189,8 @@ jobs:
           fi
 
   deploy:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.matrix != '{"include":[]}'
+    needs: [detect-changes, test]
+    if: needs.detect-changes.outputs.matrix != '{"include":[]}' && needs.test.result == 'success'
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
@@ -139,17 +200,20 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: 'tools/${{ matrix.tool }}/package-lock.json'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ap-northeast-1
@@ -159,8 +223,8 @@ jobs:
           NUXT_PUBLIC_GTAG_ID: ${{ secrets.NUXT_PUBLIC_GTAG_ID }}
         run: |
           cd tools/${{ matrix.tool }}
-          npm ci
-          npm run generate
+          bun install --frozen-lockfile
+          bun run generate
 
       - name: Get stack outputs
         id: stack-outputs

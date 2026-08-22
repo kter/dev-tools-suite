@@ -10,7 +10,7 @@ export const KOFI_CONFIG: KofiWidgetConfig = {
   type: 'floating-chat',
   buttonText: 'Support me',
   backgroundColor: '#00b9fe',
-  textColor: '#fff'
+  textColor: '#fff',
 }
 
 /**

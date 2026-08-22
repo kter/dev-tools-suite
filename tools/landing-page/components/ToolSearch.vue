@@ -95,7 +95,15 @@
             @mouseenter="highlightItem(index)"
           >
             <div class="tool-content">
-              <h3 class="tool-name" data-testid="tool-name">{{ tool.name }}</h3>
+              <div class="tool-header">
+                <h3 class="tool-name" data-testid="tool-name">{{ tool.name }}</h3>
+                <span
+                  v-if="tool.statusLabel"
+                  :class="getStatusBadgeClasses(tool)"
+                >
+                  {{ tool.statusLabel }}
+                </span>
+              </div>
               <p class="tool-description" data-testid="tool-description">{{ tool.description }}</p>
             </div>
 
@@ -280,6 +288,16 @@ const getResultItemClasses = (index: number): string[] => {
   return classes
 }
 
+const getStatusBadgeClasses = (tool: Tool): string[] => {
+  const classes = ['tool-status-badge']
+
+  if (tool.statusVariant === 'warning') {
+    classes.push('tool-status-badge-warning')
+  }
+
+  return classes
+}
+
 // Scroll selected item into view
 const scrollToSelectedItem = (): void => {
   nextTick(() => {
@@ -380,8 +398,21 @@ defineExpose({
   @apply flex-1 min-w-0;
 }
 
+.tool-header {
+  @apply flex items-center gap-2 min-w-0;
+}
+
 .tool-name {
   @apply font-medium text-gray-900 truncate;
+}
+
+.tool-status-badge {
+  @apply inline-flex items-center px-2 py-0.5 text-xs rounded-full;
+  @apply bg-slate-100 text-slate-700 flex-shrink-0;
+}
+
+.tool-status-badge-warning {
+  @apply bg-amber-100 text-amber-800;
 }
 
 .tool-description {

@@ -44,7 +44,7 @@
                 type="number"
                 placeholder="1640995200"
                 class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                @input="convertUnixToHuman"
+                @input="handleConvertUnixToHuman"
               />
             </div>
             <div v-if="unixResult.local" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -71,7 +71,7 @@
                   v-model="dateInput"
                   type="date"
                   class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  @input="convertHumanToUnix"
+                  @input="handleConvertHumanToUnix"
                 />
               </div>
               <div>
@@ -80,7 +80,7 @@
                   v-model="timeInput"
                   type="time"
                   class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  @input="convertHumanToUnix"
+                  @input="handleConvertHumanToUnix"
                 />
               </div>
             </div>
@@ -138,6 +138,7 @@
 
 <script setup lang="ts">
 import KofiButton from '../shared/components/KofiButton.vue'
+import { convertUnixToHuman, convertHumanToUnix } from './utils/time-utils'
 // SEO protection for dev environment
 if (process.client && window.location.hostname.includes('dev.devtools.site')) {
   useHead({
@@ -210,50 +211,24 @@ const updateCurrentTime = () => {
 }
 
 // Convert Unix timestamp to human readable
-const convertUnixToHuman = () => {
-  if (!unixInput.value) {
+const handleConvertUnixToHuman = () => {
+  if (unixInput.value === '' || unixInput.value === null || unixInput.value === undefined) {
     unixResult.value = { local: '', utc: '' }
     return
   }
-
-  const timestamp = parseInt(unixInput.value)
-  if (isNaN(timestamp)) {
-    unixResult.value = { local: 'Invalid timestamp', utc: 'Invalid timestamp' }
-    return
-  }
-
-  const date = new Date(timestamp * 1000)
-  unixResult.value = {
-    local: date.toLocaleString(),
-    utc: date.toUTCString()
-  }
+  const timestamp = parseInt(String(unixInput.value))
+  unixResult.value = convertUnixToHuman(timestamp)
 }
 
 // Convert human readable to Unix timestamp
-const convertHumanToUnix = () => {
-  if (!dateInput.value || !timeInput.value) {
-    humanResult.value = { local: '', utc: '' }
-    return
-  }
-
-  const localDate = new Date(`${dateInput.value}T${timeInput.value}`)
-  const utcDate = new Date(`${dateInput.value}T${timeInput.value}Z`)
-
-  if (isNaN(localDate.getTime()) || isNaN(utcDate.getTime())) {
-    humanResult.value = { local: 'Invalid date/time', utc: 'Invalid date/time' }
-    return
-  }
-
-  humanResult.value = {
-    local: Math.floor(localDate.getTime() / 1000).toString(),
-    utc: Math.floor(utcDate.getTime() / 1000).toString()
-  }
+const handleConvertHumanToUnix = () => {
+  humanResult.value = convertHumanToUnix(dateInput.value, timeInput.value)
 }
 
 // Use preset timestamp
 const usePreset = (timestamp: number) => {
   unixInput.value = timestamp.toString()
-  convertUnixToHuman()
+  handleConvertUnixToHuman()
 }
 
 // Dark mode
@@ -269,11 +244,11 @@ onMounted(() => {
   updateCurrentTime()
   // Update current time every second
   setInterval(updateCurrentTime, 1000)
-  
+
   // Set default date and time to current
   const now = new Date()
   dateInput.value = now.toISOString().split('T')[0]
   timeInput.value = now.toTimeString().split(' ')[0].substring(0, 5)
-  convertHumanToUnix()
+  handleConvertHumanToUnix()
 })
 </script>

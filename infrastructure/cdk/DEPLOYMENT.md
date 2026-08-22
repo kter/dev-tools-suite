@@ -18,10 +18,10 @@ Due to Route 53 permissions limitations in CDK execution roles, SSL certificates
 
 ```bash
 # Deploy development environment with existing certificate
-npx cdk deploy CertificateStack-dev --context existingCertificateArn=arn:aws:acm:us-east-1:ACCOUNT:certificate/CERTIFICATE-ID
+bun run cdk deploy CertificateStack-dev --context existingCertificateArn=arn:aws:acm:us-east-1:ACCOUNT:certificate/CERTIFICATE-ID
 
 # Deploy production environment with existing certificate
-npx cdk deploy CertificateStack-prd --context existingCertificateArn=arn:aws:acm:us-east-1:ACCOUNT:certificate/CERTIFICATE-ID
+bun run cdk deploy CertificateStack-prd --context existingCertificateArn=arn:aws:acm:us-east-1:ACCOUNT:certificate/CERTIFICATE-ID
 ```
 
 ### Alternative: Fix CDK Execution Role Permissions

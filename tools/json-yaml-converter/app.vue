@@ -242,9 +242,9 @@
 </template>
 
 <script setup lang="ts">
-import yaml from 'js-yaml'
-import toml from 'toml'
 import KofiButton from '../shared/components/KofiButton.vue'
+import { parseInput, formatOutput, stringifyToml } from './utils/json-yaml-utils'
+import type { SupportedFormat } from './utils/json-yaml-utils'
 
 // Initialize dark mode
 const { initializeTheme } = useDarkMode()
@@ -312,106 +312,37 @@ city = "New York"
 country = "USA"`
 }
 
-const parseInput = () => {
-  if (!inputText.value.trim()) {
-    inputError.value = ''
-    return null
-  }
-
-  try {
-    switch (inputFormat.value) {
-      case 'json':
-        return JSON.parse(inputText.value)
-      case 'yaml':
-        return yaml.load(inputText.value)
-      case 'toml':
-        return toml.parse(inputText.value)
-      default:
-        throw new Error('Unsupported input format')
-    }
-  } catch (error) {
-    inputError.value = `Invalid ${inputFormat.value.toUpperCase()}: ${error.message}`
-    return null
-  }
-}
-
-const formatOutput = (data: any) => {
-  try {
-    switch (outputFormat.value) {
-      case 'json':
-        const indentValue = jsonIndent.value === 'tab' ? '\t' : parseInt(jsonIndent.value)
-        return prettyFormat.value 
-          ? JSON.stringify(data, null, indentValue)
-          : JSON.stringify(data)
-      case 'yaml':
-        return yaml.dump(data, {
-          indent: 2,
-          lineWidth: -1,
-          noRefs: true,
-          sortKeys: false
-        })
-      case 'toml':
-        // Simple TOML stringification (basic implementation)
-        return stringifyToml(data)
-      default:
-        throw new Error('Unsupported output format')
-    }
-  } catch (error) {
-    conversionError.value = `Conversion error: ${error.message}`
-    return ''
-  }
-}
-
-// Basic TOML stringifier
-const stringifyToml = (obj: any, prefix = ''): string => {
-  let result = ''
-  const tables: { [key: string]: any } = {}
-  
-  // Handle primitive values first
-  for (const [key, value] of Object.entries(obj)) {
-    if (value === null || value === undefined) continue
-    
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      tables[key] = value
-    } else {
-      const fullKey = prefix ? `${prefix}.${key}` : key
-      if (Array.isArray(value)) {
-        result += `${key} = ${JSON.stringify(value)}\n`
-      } else if (typeof value === 'string') {
-        result += `${key} = "${value}"\n`
-      } else {
-        result += `${key} = ${value}\n`
-      }
-    }
-  }
-  
-  // Handle nested objects as tables
-  for (const [key, value] of Object.entries(tables)) {
-    const fullKey = prefix ? `${prefix}.${key}` : key
-    result += `\n[${fullKey}]\n`
-    result += stringifyToml(value, fullKey)
-  }
-  
-  return result
-}
-
 const convertData = () => {
   inputError.value = ''
   conversionError.value = ''
-  
+
   if (!inputText.value.trim()) {
     outputText.value = ''
     return
   }
 
-  const parsedData = parseInput()
-  if (parsedData === null) {
+  let parsedData: unknown
+  try {
+    parsedData = parseInput(inputText.value, inputFormat.value as SupportedFormat)
+    if (parsedData === null) {
+      outputText.value = ''
+      return
+    }
+  } catch (error: unknown) {
+    inputError.value = `Invalid ${inputFormat.value.toUpperCase()}: ${(error as Error).message}`
     outputText.value = ''
     return
   }
 
-  const formattedOutput = formatOutput(parsedData)
-  outputText.value = formattedOutput
+  try {
+    outputText.value = formatOutput(parsedData, outputFormat.value as SupportedFormat, {
+      prettyFormat: prettyFormat.value,
+      jsonIndent: jsonIndent.value
+    })
+  } catch (error: unknown) {
+    conversionError.value = `Conversion error: ${(error as Error).message}`
+    outputText.value = ''
+  }
 }
 
 const handleInputChange = () => {

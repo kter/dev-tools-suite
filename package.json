@@ -1,9 +1,36 @@
 {
-  "devDependencies": {
-    "@playwright/test": "^1.53.2",
-    "playwright": "^1.53.2"
+  "packageManager": "bun@1.4.0",
+  "scripts": {
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:all": "bun run test:unit && bun run test:e2e",
+    "prepare": "lefthook install",
+    "format": "biome format --write tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "format:check": "biome format tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "lint": "biome lint --diagnostic-level=error tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts && oxlint tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "lint:biome": "biome lint --diagnostic-level=error tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "lint:oxlint": "oxlint tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts",
+    "check": "biome check --write tests/ tools/*/utils/ tools/shared/ vitest.config.ts playwright.config.ts"
   },
-  "volta": {
-    "node": "20.19.5"
+  "devDependencies": {
+    "@biomejs/biome": "2.4.7",
+    "@playwright/test": "^1.53.2",
+    "@types/he": "^1.2.3",
+    "@types/js-yaml": "^4.0.9",
+    "@vitest/coverage-v8": "^2.0.0",
+    "he": "^1.2.0",
+    "js-yaml": "^4.1.0",
+    "lefthook": "^1.6.0",
+    "oxlint": "1.56.0",
+    "playwright": "^1.53.2",
+    "toml": "^3.0.0",
+    "typescript": "^5.2.0",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "jsdom": "^29.0.0"
   }
 }

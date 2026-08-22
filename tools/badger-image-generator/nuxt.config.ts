@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   ],
   app: {
     head: {
+      title: 'Badger2040 Image Generator - DevTools',
       meta: [
         {
           'http-equiv': 'Content-Security-Policy',
