@@ -186,4 +186,4 @@ bun run test:e2e
 - Ensure Google Cloud credentials are set up for Terraform
 - Check GitHub Actions secrets for `GOOGLE_CLOUD_SA_KEY` and repository variables
 
-For detailed troubleshooting steps, see `CLAUDE.md` in the project root.
+For detailed troubleshooting steps, see `AGENTS.md` in the project root.
